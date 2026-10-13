@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AD Group — строительная компания</title>
+<meta name="description" content="Демо-сайт строительной компании AD Group: жилые и коммерческие комплексы, проект Vatan Residence, калькулятор инвестиций.">
+<meta name="theme-color" content="#171F38">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Lexend+Giga:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="header" id="header">
+  <div class="wrap header__in">
+    <a href="#top" class="logo" aria-label="AD Group"><img src="assets/logo-ad.png" alt="AD Group" class="logo__img"></a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#projects" data-i18n="nav.projects"></a>
+      <a href="#about" data-i18n="nav.about"></a>
+      <a href="#vatan">Vatan</a>
+      <a href="#calculator" data-i18n="nav.invest"></a>
+      <a href="#news" data-i18n="nav.news"></a>
+      <a href="#contacts" data-i18n="nav.contacts"></a>
+    </nav>
+    <div class="header__tools">
+      <div class="lang" role="group" aria-label="Language">
+        <button data-lang="ru" class="is-on">RU</button><button data-lang="uz">UZ</button><button data-lang="en">EN</button>
+      </div>
+      <a class="phone" href="tel:+998712000000">+998 71 200 00 00</a>
+      <button class="btn btn--sm" data-open-call data-i18n="cta.call"></button>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__art" id="heroArt" aria-hidden="true"></div>
+    <div class="wrap hero__in">
+      <p class="eyebrow" data-i18n="hero.eyebrow"></p>
+      <h1 class="hero__title" data-i18n="hero.title"></h1>
+      <p class="hero__lead" data-i18n="hero.lead"></p>
+      <div class="hero__cta">
+        <a href="#projects" class="btn btn--light" data-i18n="hero.cta1"></a>
+        <a href="#about" class="btn btn--ghost" data-i18n="hero.cta2"></a>
+      </div>
+    </div>
+    <div class="wrap hero__stats">
+      <div><b>2011</b><span data-i18n="hero.s1"></span></div>
+      <div><b>25+</b><span data-i18n="hero.s2"></span></div>
+      <div><b>3&nbsp;000</b><span data-i18n="hero.s3"></span></div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="sec" id="projects">
+    <div class="wrap">
+      <div class="sec__head reveal">
+        <h2 class="h2" data-i18n="projects.title"></h2>
+        <div class="filters" id="filters" role="tablist">
+          <button class="chip is-on" data-f="all" data-i18n="projects.all"></button>
+          <button class="chip" data-f="residential" data-i18n="projects.res"></button>
+          <button class="chip" data-f="commercial" data-i18n="projects.com"></button>
+          <button class="chip" data-f="done" data-i18n="projects.done"></button>
+        </div>
+      </div>
+      <div class="grid" id="projectGrid"></div>
+      <p class="note" data-i18n="demo.note"></p>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="sec sec--dark" id="about">
+    <div class="wrap about">
+      <div class="reveal">
+        <p class="eyebrow" data-i18n="about.eyebrow"></p>
+        <h2 class="h2" data-i18n="about.title"></h2>
+        <p class="lead" data-i18n="about.text"></p>
+      </div>
+      <div class="stats">
+        <div class="stat reveal"><b data-count="400000">0</b><span data-i18n="about.s1"></span></div>
+        <div class="stat reveal"><b data-count="3000">0</b><span data-i18n="about.s2"></span></div>
+        <div class="stat reveal"><b data-count="25">0</b><span data-i18n="about.s3"></span></div>
+        <div class="stat reveal"><b data-count="8000">0</b><span data-i18n="about.s4"></span></div>
+      </div>
+    </div>
+    <div class="wrap mission reveal">
+      <div class="mission__mark" aria-hidden="true"></div>
+      <blockquote>
+        <p data-i18n="mission.quote"></p>
+        <footer data-i18n="mission.by"></footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- VATAN -->
+  <section class="vatan" id="vatan">
+    <div class="wrap vatan__in">
+      <div class="vatan__text reveal">
+        <img src="assets/logo-vatan.png" alt="Vatan Residence" class="vatan__logo">
+        <h2 class="vatan__title" data-i18n="vatan.title"></h2>
+        <p data-i18n="vatan.text"></p>
+        <ul class="vatan__list">
+          <li data-i18n="vatan.l1"></li><li data-i18n="vatan.l2"></li><li data-i18n="vatan.l3"></li>
+        </ul>
+        <button class="btn btn--gold" data-open-call data-i18n="vatan.cta"></button>
+      </div>
+      <div class="vatan__roofs reveal" aria-hidden="true">
+        <div class="roof r1"><span data-i18n="vatan.t1"></span></div>
+        <div class="roof r2"><span data-i18n="vatan.t2"></span></div>
+        <div class="roof r3"><span data-i18n="vatan.t3"></span></div>
+        <div class="roof r4"><span data-i18n="vatan.t4"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section class="sec" id="calculator">
+    <div class="wrap">
+      <div class="sec__head reveal">
+        <h2 class="h2" data-i18n="calc.title"></h2>
+        <p class="lead lead--sm" data-i18n="calc.lead"></p>
+      </div>
+      <div class="calc reveal">
+        <form class="calc__form" id="calcForm" onsubmit="return false">
+          <div class="seg" id="cur"><button type="button" class="is-on" data-cur="USD">USD</button><button type="button" data-cur="UZS">UZS</button></div>
+          <label><span data-i18n="calc.area"></span><input type="number" id="cArea" value="60" min="10" max="500"></label>
+          <label><span data-i18n="calc.price"></span><input type="number" id="cPrice" value="900" min="1"></label>
+          <label><span data-i18n="calc.down"></span><input type="range" id="cDown" min="10" max="90" value="30"><em id="cDownV">30%</em></label>
+          <label><span data-i18n="calc.term"></span><input type="range" id="cTerm" min="6" max="60" step="6" value="36"><em id="cTermV">36</em></label>
+          <label><span data-i18n="calc.rate"></span><input type="number" id="cRate" value="12700" min="1"></label>
+        </form>
+        <div class="calc__out">
+          <div class="cmp">
+            <div class="cmp__col cmp__col--ad"><small data-i18n="calc.ad"></small><b id="oAd">—</b><span id="oAdG"></span></div>
+            <div class="cmp__col"><small data-i18n="calc.bank"></small><b id="oBank">—</b><span id="oBankG"></span></div>
+          </div>
+          <div class="calc__sum"><div><small data-i18n="calc.total"></small><b id="oTotal">—</b></div><div><small data-i18n="calc.monthly"></small><b id="oMonth">—</b></div><div class="win"><small data-i18n="calc.diff"></small><b id="oDiff">—</b></div></div>
+          <p class="note" data-i18n="calc.note"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="sec sec--tint" id="history">
+    <div class="wrap">
+      <div class="sec__head reveal">
+        <h2 class="h2" data-i18n="history.title"></h2>
+        <div class="arrows"><button data-car="history" data-dir="-1" aria-label="prev">←</button><button data-car="history" data-dir="1" aria-label="next">→</button></div>
+      </div>
+      <div class="car" id="history-car" tabindex="0" aria-label="history"></div>
+    </div>
+  </section>
+
+  <!-- NEWS -->
+  <section class="sec" id="news">
+    <div class="wrap">
+      <div class="sec__head reveal">
+        <h2 class="h2" data-i18n="news.title"></h2>
+        <div class="arrows"><button data-car="news" data-dir="-1" aria-label="prev">←</button><button data-car="news" data-dir="1" aria-label="next">→</button></div>
+      </div>
+      <div class="car" id="news-car" tabindex="0" aria-label="news"></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="wrap cta__in reveal">
+      <h2 class="h2" data-i18n="cta2.title"></h2>
+      <button class="btn btn--light" data-open-call data-i18n="cta.call"></button>
+    </div>
+  </section>
+</main>
+
+<footer class="footer" id="contacts">
+  <div class="wrap footer__in">
+    <div>
+      <img src="assets/logo-ad.png" alt="AD Group" class="logo__img logo__img--w">
+      <p class="footer__slogan" data-i18n="footer.slogan"></p>
+      <div class="social"><a href="#" aria-label="Telegram">TG</a><a href="#" aria-label="Instagram">IG</a><a href="#" aria-label="Facebook">FB</a><a href="#" aria-label="YouTube">YT</a></div>
+    </div>
+    <div>
+      <h3 data-i18n="footer.nav"></h3>
+      <a href="#projects" data-i18n="nav.projects"></a><a href="#about" data-i18n="nav.about"></a><a href="#calculator" data-i18n="nav.invest"></a><a href="#news" data-i18n="nav.news"></a>
+    </div>
+    <div>
+      <h3 data-i18n="nav.contacts"></h3>
+      <a href="tel:+998712000000">+998 71 200 00 00</a>
+      <a href="mailto:adgroup@gmail.com">adgroup@gmail.com</a>
+      <span data-i18n="footer.addr"></span>
+    </div>
+  </div>
+  <div class="wrap footer__bot">
+    <small data-i18n="footer.disc"></small>
+    <small>© 2011–2026 AD Group</small>
+  </div>
+</footer>
+
+<button class="totop" id="toTop" aria-label="Up">↑</button>
+
+<dialog class="modal" id="callModal">
+  <form method="dialog" class="modal__in" id="callForm">
+    <button class="modal__x" value="cancel" aria-label="Close">×</button>
+    <h3 data-i18n="call.title"></h3>
+    <p data-i18n="call.text"></p>
+    <input name="name" required data-i18n-ph="call.name">
+    <input name="phone" type="tel" required data-i18n-ph="call.phone" value="+998 ">
+    <textarea name="q" rows="3" data-i18n-ph="call.q"></textarea>
+    <button class="btn" type="submit" data-i18n="call.send"></button>
+    <p class="modal__ok" id="callOk" hidden data-i18n="call.ok"></p>
+  </form>
+</dialog>
+
+<div class="cookie" id="cookie" hidden>
+  <span data-i18n="cookie.text"></span>
+  <button class="btn btn--sm btn--light" id="cookieOk" data-i18n="cookie.ok"></button>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
