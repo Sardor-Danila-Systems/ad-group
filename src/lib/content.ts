@@ -1,5 +1,10 @@
 /* Demo content. All numbers, names (except Vatan Residence) and news are placeholders. */
-window.I18N = {
+export type Lang = "ru" | "uz" | "en";
+export type L10n = Record<Lang, string>;
+export type ProjectKind = "vatan" | "tower" | "slab" | "stepped" | "blocks";
+export type Status = "build" | "done" | "plan";
+export interface Project { id: string; cat: "residential" | "commercial"; status: Status; year: number; kind: ProjectKind; name: L10n; desc: L10n; from?: number }
+export const I18N: Record<Lang, Record<string, string>> = {
   ru: {
     'nav.projects': 'Проекты', 'nav.about': 'О компании', 'nav.invest': 'Инвесторам', 'nav.news': 'Новости', 'nav.contacts': 'Контакты',
     'cta.call': 'Заказать звонок',
@@ -98,8 +103,8 @@ window.I18N = {
   }
 };
 
-window.DATA = {
-  projects: [
+export const DATA = {
+  projects: <Project[]>[
     { id: 'vatan', cat: 'residential', status: 'build', year: 2027, kind: 'vatan',
       name: { ru: 'Vatan Residence', uz: 'Vatan Residence', en: 'Vatan Residence' },
       desc: { ru: 'Жилой комплекс комфорт-класса', uz: 'Qulaylik darajasidagi turar-joy majmuasi', en: 'Comfort-class residential complex' }, from: 780 },
