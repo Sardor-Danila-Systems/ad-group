@@ -12,6 +12,8 @@ export function Reveal({ children, className, as: Tag = "div" }: { children: Rea
   useEffect(() => {
     const el = ref.current;
     if (!el || !("IntersectionObserver" in window)) return;
+    // Already on screen at mount: show as-is, otherwise it would flash out and back in.
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.9) return;
     setArmed(true);
     const io = new IntersectionObserver(
       ([e]) => {
@@ -61,9 +63,12 @@ export function Counter({ to, className }: { to: number; className?: string }) {
     return () => io.disconnect();
   }, [to]);
 
+  const text = (n: number) => n.toLocaleString("ru-RU").replace(/\u00a0/g, " ");
+  // The final value is rendered invisibly in the same grid cell so the box keeps its width while counting.
   return (
-    <b ref={ref} className={className}>
-      {v.toLocaleString("ru-RU").replace(/ /g, " ")}
+    <b ref={ref} className={cn("grid whitespace-nowrap", className)}>
+      <span aria-hidden="true" className="invisible col-start-1 row-start-1">{text(to)}</span>
+      <span className="col-start-1 row-start-1">{text(v)}</span>
     </b>
   );
 }
