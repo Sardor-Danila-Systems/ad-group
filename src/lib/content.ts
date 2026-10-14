@@ -3,7 +3,7 @@ export type Lang = "ru" | "uz" | "en";
 export type L10n = Record<Lang, string>;
 export type ProjectKind = "vatan" | "tower" | "slab" | "stepped" | "blocks";
 export type Status = "build" | "done" | "plan";
-export interface Project { id: string; cat: "residential" | "commercial"; status: Status; year: number; kind: ProjectKind; name: L10n; desc: L10n; from?: number }
+export interface Project { id: string; cat: "residential" | "commercial"; status: Status; year: number; kind: ProjectKind; photo?: string; name: L10n; desc: L10n; from?: number }
 export const I18N: Record<Lang, Record<string, string>> = {
   ru: {
     'nav.projects': 'Проекты', 'nav.about': 'О компании', 'nav.invest': 'Инвесторам', 'nav.news': 'Новости', 'nav.contacts': 'Контакты',
@@ -24,7 +24,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'vatan.title': 'Kelajagingizni mustahkam poydevor ustiga quring',
     'vatan.text': 'Vatan Residence — жилой комплекс в составе AD Group. «Постройте своё будущее на прочном фундаменте»: дома, созданные с любовью, где каждый метр продуман для жизни.',
     'vatan.l1': 'Продуманные планировки', 'vatan.l2': 'Благоустроенные дворы без машин', 'vatan.l3': 'Рассрочка от застройщика',
-    'vatan.cta': 'Узнать о Vatan Residence',
+    'vatan.cta': 'Узнать о Vatan Residence', 'vatan.gallery': 'Галерея', 'vatan.gallery.note': 'Визуализации проекта',
     'vatan.t1': 'Новый уровень жизни', 'vatan.t2': 'Дом, построенный с любовью', 'vatan.t3': 'Построен для вас — Vatan', 'vatan.t4': 'Строим будущее на прочном фундаменте',
     'calc.title': 'Инвестиционный калькулятор', 'calc.lead': 'Сравните покупку квартиры в рассрочку с размещением тех же средств на банковском депозите.',
     'calc.area': 'Площадь, м²', 'calc.price': 'Цена за м²', 'calc.down': 'Первый взнос', 'calc.term': 'Срок, мес.', 'calc.rate': 'Курс USD → UZS',
@@ -56,7 +56,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'vatan.title': 'Kelajagingizni mustahkam poydevor ustiga quring',
     'vatan.text': 'Vatan Residence — AD Group tarkibidagi turar-joy majmuasi. Mehr bilan qurilgan maskan, har bir kvadrat metri hayot uchun o‘ylab yaratilgan.',
     'vatan.l1': 'O‘ylangan rejalashtirishlar', 'vatan.l2': 'Mashinasiz obod hovlilar', 'vatan.l3': 'Quruvchidan bo‘lib to‘lash',
-    'vatan.cta': 'Vatan Residence haqida bilish',
+    'vatan.cta': 'Vatan Residence haqida bilish', 'vatan.gallery': 'Galereya', 'vatan.gallery.note': 'Loyiha vizualizatsiyalari',
     'vatan.t1': 'Yangi darajadagi yashash tarzi', 'vatan.t2': 'Mehr bilan qurilgan maskan', 'vatan.t3': 'Siz uchun qurilgan haqiqiy Vatan', 'vatan.t4': 'Kelajagingizni mustahkam poydevor ustiga quring',
     'calc.title': 'Investitsiya kalkulyatori', 'calc.lead': 'Kvartirani bo‘lib to‘lab sotib olishni xuddi shu mablag‘larni bank depozitiga qo‘yish bilan solishtiring.',
     'calc.area': 'Maydon, m²', 'calc.price': '1 m² narxi', 'calc.down': 'Birinchi badal', 'calc.term': 'Muddat, oy', 'calc.rate': 'USD → UZS kursi',
@@ -88,7 +88,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'vatan.title': 'Build your future on a solid foundation',
     'vatan.text': 'Vatan Residence is a residential complex within AD Group. Homes built with love, where every square metre is designed for living.',
     'vatan.l1': 'Thoughtful floor plans', 'vatan.l2': 'Landscaped car-free courtyards', 'vatan.l3': 'Developer instalments',
-    'vatan.cta': 'Learn about Vatan Residence',
+    'vatan.cta': 'Learn about Vatan Residence', 'vatan.gallery': 'Gallery', 'vatan.gallery.note': 'Project renders',
     'vatan.t1': 'A new level of living', 'vatan.t2': 'A home built with love', 'vatan.t3': 'Built for you — a true Vatan', 'vatan.t4': 'Build your future on a solid foundation',
     'calc.title': 'Investment calculator', 'calc.lead': 'Compare buying an apartment in instalments with putting the same money into a bank deposit.',
     'calc.area': 'Area, m²', 'calc.price': 'Price per m²', 'calc.down': 'Down payment', 'calc.term': 'Term, months', 'calc.rate': 'USD → UZS rate',
@@ -105,7 +105,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
 
 export const DATA = {
   projects: <Project[]>[
-    { id: 'vatan', cat: 'residential', status: 'build', year: 2027, kind: 'vatan',
+    { id: 'vatan', cat: 'residential', status: 'build', year: 2027, kind: 'vatan', photo: '/vatan/08.jpg',
       name: { ru: 'Vatan Residence', uz: 'Vatan Residence', en: 'Vatan Residence' },
       desc: { ru: 'Жилой комплекс комфорт-класса', uz: 'Qulaylik darajasidagi turar-joy majmuasi', en: 'Comfort-class residential complex' }, from: 780 },
     { id: 'tower', cat: 'commercial', status: 'build', year: 2027, kind: 'tower',
