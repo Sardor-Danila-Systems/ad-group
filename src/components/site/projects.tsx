@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -46,7 +47,7 @@ export function Projects() {
           {list.map((p) => {
             const vatan = p.kind === "vatan";
             return (
-              <Card key={p.id} className="group gap-0 overflow-hidden rounded-[18px] border-0 bg-white p-0 shadow-sm ring-0 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl">
+              <Card key={p.id} className="group relative gap-0 overflow-hidden rounded-[18px] border-0 bg-white p-0 shadow-sm ring-0 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl">
                 <div
                   className={cn(
                     "relative aspect-[3/2] overflow-hidden text-white",
@@ -70,9 +71,9 @@ export function Projects() {
                   <div className="mt-5 flex items-center gap-3.5 text-sm text-muted-foreground">
                     <span>{p.year}</span>
                     {p.from && <span className="font-semibold text-gold">{t("price.from")} ${p.from}/m²</span>}
-                    <a href="#" className="ml-auto inline-flex items-center gap-1 font-semibold text-navy">
+                    <Link href={`/projects/${p.id}`} className="ml-auto inline-flex items-center gap-1 font-semibold text-navy after:absolute after:inset-0">
                       {t("projects.more")} <ArrowRightIcon className="size-4" />
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </Card>

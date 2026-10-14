@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/reveal";
 import { VatanGallery } from "@/components/site/vatan-gallery";
@@ -68,8 +69,13 @@ export function Vatan() {
 function VatanCta() {
   const { t, openCall } = useSite();
   return (
-    <Button onClick={openCall} size="lg" className="h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-vatan hover:bg-gold-light">
-      {t("vatan.cta")}
-    </Button>
+    <div className="flex flex-wrap gap-3">
+      <Button onClick={openCall} size="lg" className="h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-vatan hover:bg-gold-light">
+        {t("vatan.cta")}
+      </Button>
+      <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-gold/50 bg-transparent px-7 text-[15px] font-semibold text-gold-light hover:bg-gold/10 hover:text-gold-light">
+        <Link href="/projects/vatan">{t("vatan.more")}</Link>
+      </Button>
+    </div>
   );
 }

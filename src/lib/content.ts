@@ -3,7 +3,7 @@ export type Lang = "ru" | "uz" | "en";
 export type L10n = Record<Lang, string>;
 export type ProjectKind = "vatan" | "tower" | "slab" | "stepped" | "blocks";
 export type Status = "build" | "done" | "plan";
-export interface Project { id: string; cat: "residential" | "commercial"; status: Status; year: number; kind: ProjectKind; photo?: string; name: L10n; desc: L10n; from?: number }
+export interface Project { id: string; cat: "residential" | "commercial"; status: Status; year: number; kind: ProjectKind; photo?: string; long?: L10n; name: L10n; desc: L10n; from?: number }
 export const I18N: Record<Lang, Record<string, string>> = {
   ru: {
     'nav.projects': 'Проекты', 'nav.about': 'О компании', 'nav.invest': 'Инвесторам', 'nav.news': 'Новости', 'nav.contacts': 'Контакты',
@@ -21,8 +21,8 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'about.s1': 'м² введено в эксплуатацию', 'about.s2': 'семей получили дом', 'about.s3': 'комплексов сдано', 'about.s4': 'сотрудников',
     'mission.quote': 'Мы отвечаем за людей, за место и за время. Каждое здание — это обещание, которое нужно сдержать.',
     'mission.by': 'Имя Фамилия, сооснователь AD Group (демо)',
-    'vatan.title': 'Kelajagingizni mustahkam poydevor ustiga quring',
-    'vatan.text': 'Vatan Residence — жилой комплекс в составе AD Group. «Постройте своё будущее на прочном фундаменте»: дома, созданные с любовью, где каждый метр продуман для жизни.',
+    'vatan.title': 'Постройте будущее на прочном фундаменте',
+    'vatan.text': 'Vatan Residence — жилой комплекс в составе AD Group. Дома, созданные с любовью, где каждый метр продуман для жизни.',
     'vatan.l1': 'Продуманные планировки', 'vatan.l2': 'Благоустроенные дворы без машин', 'vatan.l3': 'Рассрочка от застройщика',
     'vatan.cta': 'Узнать о Vatan Residence', 'vatan.gallery': 'Галерея', 'vatan.gallery.note': 'Визуализации проекта',
     'vatan.t1': 'Новый уровень жизни', 'vatan.t2': 'Дом, построенный с любовью', 'vatan.t3': 'Построен для вас — Vatan', 'vatan.t4': 'Строим будущее на прочном фундаменте',
@@ -35,11 +35,12 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'footer.disc': 'Материалы сайта носят информационный характер и не являются публичной офертой.',
     'call.title': 'Заказать звонок', 'call.text': 'Оставьте контакты — менеджер перезвонит в рабочее время.', 'call.name': 'Ваше имя', 'call.phone': 'Телефон', 'call.q': 'Ваш вопрос', 'call.send': 'Отправить', 'call.ok': 'Спасибо! Это демо — заявка никуда не отправлена.',
     'cookie.text': 'Мы используем cookie, чтобы сайт работал лучше.', 'cookie.ok': 'Согласен',
+    'proj.back': 'Все проекты', 'proj.status': 'Статус', 'proj.year': 'Срок сдачи', 'proj.type': 'Тип', 'proj.price': 'Цена', 'proj.about': 'О проекте', 'proj.features': 'Преимущества', 'proj.cta': 'Оставить заявку', 'proj.other': 'Другие проекты', 'type.residential': 'Жилой комплекс', 'type.commercial': 'Коммерческая недвижимость', 'vatan.more': 'О проекте', 'loader.text': 'Загрузка',
     'cur.suffix': 'сум', 'price.from': 'от'
   },
   uz: {
     'nav.projects': 'Loyihalar', 'nav.about': 'Kompaniya haqida', 'nav.invest': 'Investorlarga', 'nav.news': 'Yangiliklar', 'nav.contacts': 'Aloqa',
-    'cta.call': 'Qo‘ng‘iroq buyurtma qilish',
+    'cta.call': 'Qo‘ng‘iroq so‘rash',
     'hero.eyebrow': 'AD Group · qurilish kompaniyasi',
     'hero.title': 'Kelajakni birga quramiz',
     'hero.lead': 'Aniq geometriya, mustahkam poydevor va ularda yashaydigan hamda ishlaydigan odamlarga e’tibor bilan qurilgan turar-joy va tijorat majmualari.',
@@ -67,6 +68,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'footer.disc': 'Sayt materiallari axborot xarakteriga ega va ommaviy oferta hisoblanmaydi.',
     'call.title': 'Qo‘ng‘iroq buyurtma qilish', 'call.text': 'Kontaktlaringizni qoldiring — menejer ish vaqtida qo‘ng‘iroq qiladi.', 'call.name': 'Ismingiz', 'call.phone': 'Telefon', 'call.q': 'Savolingiz', 'call.send': 'Yuborish', 'call.ok': 'Rahmat! Bu demo — ariza hech qayerga yuborilmadi.',
     'cookie.text': 'Sayt yaxshiroq ishlashi uchun cookie ishlatamiz.', 'cookie.ok': 'Roziman',
+    'proj.back': 'Barcha loyihalar', 'proj.status': 'Holati', 'proj.year': 'Topshirish muddati', 'proj.type': 'Turi', 'proj.price': 'Narxi', 'proj.about': 'Loyiha haqida', 'proj.features': 'Afzalliklar', 'proj.cta': 'Ariza qoldirish', 'proj.other': 'Boshqa loyihalar', 'type.residential': 'Turar-joy majmuasi', 'type.commercial': 'Tijorat ko‘chmas mulki', 'vatan.more': 'Loyiha haqida', 'loader.text': 'Yuklanmoqda',
     'cur.suffix': 'so‘m', 'price.from': 'dan'
   },
   en: {
@@ -99,6 +101,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'footer.disc': 'Website materials are for information only and are not a public offer.',
     'call.title': 'Request a call', 'call.text': 'Leave your contacts and a manager will call back during working hours.', 'call.name': 'Your name', 'call.phone': 'Phone', 'call.q': 'Your question', 'call.send': 'Send', 'call.ok': 'Thank you! This is a demo — nothing was sent.',
     'cookie.text': 'We use cookies to make the site work better.', 'cookie.ok': 'Agree',
+    'proj.back': 'All projects', 'proj.status': 'Status', 'proj.year': 'Completion', 'proj.type': 'Type', 'proj.price': 'Price', 'proj.about': 'About the project', 'proj.features': 'Highlights', 'proj.cta': 'Leave a request', 'proj.other': 'Other projects', 'type.residential': 'Residential complex', 'type.commercial': 'Commercial real estate', 'vatan.more': 'About the project', 'loader.text': 'Loading',
     'cur.suffix': 'UZS', 'price.from': 'from'
   }
 };
@@ -106,6 +109,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
 export const DATA = {
   projects: <Project[]>[
     { id: 'vatan', cat: 'residential', status: 'build', year: 2027, kind: 'vatan', photo: '/vatan/08.jpg',
+      long: { ru: 'Vatan Residence — жилой комплекс комфорт-класса с коммерческой галереей на первых этажах, благоустроенными дворами без машин, детскими площадками и террасой с бассейном на крыше. Фасады с национальным орнаментом вечером подсвечены, а панорамное остекление наполняет холлы светом.', uz: 'Vatan Residence — birinchi qavatlarida tijorat galereyasi, mashinasiz obod hovlilari, bolalar maydonchalari va tomida basseynli terrasasi bor qulaylik darajasidagi turar-joy majmuasi. Milliy naqshli jabhalar kechqurun yoritiladi, panoramali oynalar esa xollarni nurga to‘ldiradi.', en: 'Vatan Residence is a comfort-class residential complex with a retail gallery on the ground floors, car-free landscaped courtyards, playgrounds and a rooftop terrace with a pool. Facades with a national ornament are lit in the evening, and panoramic glazing fills the lobbies with light.' },
       name: { ru: 'Vatan Residence', uz: 'Vatan Residence', en: 'Vatan Residence' },
       desc: { ru: 'Жилой комплекс комфорт-класса', uz: 'Qulaylik darajasidagi turar-joy majmuasi', en: 'Comfort-class residential complex' }, from: 780 },
     { id: 'tower', cat: 'commercial', status: 'build', year: 2027, kind: 'tower',
