@@ -1,16 +1,27 @@
 # ad-group
 
-Демо-сайт строительной компании AD Group (по структуре — как txt.group, по фирменному стилю — брендбуки AD Group и Vatan Residence).
+Демо-сайт строительной компании AD Group (структура — как txt.group, стиль — брендбуки AD Group и Vatan Residence).
 
-Статика без сборки: открыть `index.html` или `python3 -m http.server 5173`.
+**Стек:** Next.js (App Router) · TypeScript · Tailwind CSS v4 · shadcn/ui (Radix).
 
-## Что внутри
-- `index.html` — хедер, hero, проекты с фильтром, о компании + счётчики, цитата, блок Vatan Residence, инвестиционный калькулятор, история, новости, форма «Заказать звонок», cookie-бар, футер
-- `css/styles.css` — токены бренда (#171F38, #D4DEE8; Vatan: #11264A / #C9935E)
-- `js/i18n.js` — тексты RU / UZ / EN и демо-данные
-- `js/main.js` — логика (язык, фильтры, калькулятор, карусели, модалка)
-- `assets/` — логотипы, вырезанные из брендбуков
+## Запуск
+
+```bash
+npm install
+npm run dev     # http://localhost:3000
+npm run build   # production-сборка (статическая)
+npm run lint
+```
+
+## Структура
+- `src/app/layout.tsx` — шрифты (next/font), метаданные, провайдеры
+- `src/app/page.tsx` — сборка секций
+- `src/app/globals.css` — токены бренда (#171F38, #D4DEE8; Vatan: #11264A / #C9935E) поверх переменных shadcn
+- `src/components/site/` — секции: header, hero, projects, about, vatan, calculator, carousels (история, новости), footer (CTA, подвал, cookie, «наверх»), call-dialog
+- `src/components/ui/` — компоненты shadcn (button, dialog, sheet, slider, carousel, toggle-group, card, …)
+- `src/lib/content.ts` — тексты RU / UZ / EN и демо-данные
+- `public/assets/` — логотипы, вырезанные из брендбуков
 
 ## Демо-ограничения
-Названия проектов (кроме Vatan Residence), цифры, новости, адрес и телефон — placeholder. Форма ничего не отправляет. Фото нет — здания нарисованы процедурным SVG.
+Названия проектов (кроме Vatan Residence), цифры, новости, адрес и телефон — placeholder. Форма звонка ничего не отправляет. Фото нет — здания нарисованы процедурным SVG (`building-art.tsx`).
 Шрифт заголовков Cairo Now Extended заменён на Lexend Giga, Delmon Delicate — на Cormorant Garamond.
