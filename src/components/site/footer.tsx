@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,10 +36,10 @@ export function Footer() {
           </div>
         </div>
         <Col title={t("footer.nav")}>
-          <a href="#projects">{t("nav.projects")}</a>
-          <a href="#about">{t("nav.about")}</a>
-          <a href="#calculator">{t("nav.invest")}</a>
-          <a href="#news">{t("nav.news")}</a>
+          <Link href="/#projects">{t("nav.projects")}</Link>
+          <Link href="/#about">{t("nav.about")}</Link>
+          <Link href="/#calculator">{t("nav.invest")}</Link>
+          <Link href="/#news">{t("nav.news")}</Link>
         </Col>
         <Col title={t("nav.contacts")}>
           <a href="tel:+998712000000">+998 71 200 00 00</a>

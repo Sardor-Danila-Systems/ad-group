@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Lexend_Giga, Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { Preloader } from "@/components/site/preloader";
 import { SiteProvider } from "@/components/site/site-provider";
 import "./globals.css";
 
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${jakarta.variable} ${giga.variable} ${cormorant.variable}`}
     >
       <body className="min-h-screen bg-background font-sans text-foreground">
+        <Preloader />
         <SiteProvider>
           {children}
           <Toaster />

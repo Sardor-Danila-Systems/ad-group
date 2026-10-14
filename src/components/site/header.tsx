@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MenuIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,12 +12,12 @@ import type { Lang } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "#projects", key: "nav.projects" },
-  { href: "#about", key: "nav.about" },
-  { href: "#vatan", key: "Vatan" },
-  { href: "#calculator", key: "nav.invest" },
-  { href: "#news", key: "nav.news" },
-  { href: "#contacts", key: "nav.contacts" },
+  { href: "/#projects", key: "nav.projects" },
+  { href: "/#about", key: "nav.about" },
+  { href: "/#vatan", key: "Vatan" },
+  { href: "/#calculator", key: "nav.invest" },
+  { href: "/#news", key: "nav.news" },
+  { href: "/#contacts", key: "nav.contacts" },
 ];
 
 export function Header() {
@@ -62,25 +63,25 @@ export function Header() {
       )}
     >
       <div className="mx-auto flex h-[76px] w-[min(1240px,100%-32px)] items-center gap-8 md:w-[min(1240px,100%-48px)]">
-        <a href="#top" aria-label="AD Group" className="shrink-0">
+        <Link href="/" aria-label="AD Group" className="shrink-0">
           <Image src="/assets/logo-ad.png" alt="AD Group" width={160} height={26} priority className="h-[26px] w-auto brightness-0 invert" />
-        </a>
-        <nav className="ml-auto hidden gap-7 text-sm font-medium lg:flex" aria-label="Main">
+        </Link>
+        <nav className="ml-auto hidden gap-6 text-sm font-medium whitespace-nowrap xl:flex" aria-label="Main">
           {NAV.map((n) => (
-            <a key={n.href} href={n.href} className="opacity-80 transition-opacity hover:opacity-100">
+            <Link key={n.href} href={n.href} className="opacity-80 transition-opacity hover:opacity-100">
               {label(n.key)}
-            </a>
+            </Link>
           ))}
         </nav>
-        <div className="ml-auto flex items-center gap-3 lg:ml-0">
+        <div className="ml-auto flex items-center gap-3 xl:ml-0">
           {langs}
-          <a href="tel:+998712000000" className="hidden text-sm font-semibold xl:block">+998 71 200 00 00</a>
-          <Button onClick={openCall} className="hidden h-10 rounded-full bg-ice px-5 text-navy hover:bg-white sm:inline-flex">
+          <a href="tel:+998712000000" className="hidden text-sm font-semibold whitespace-nowrap 2xl:block">+998 71 200 00 00</a>
+          <Button onClick={openCall} className="hidden h-10 rounded-full bg-ice px-5 whitespace-nowrap text-navy hover:bg-white sm:inline-flex">
             {t("cta.call")}
           </Button>
           <Sheet open={menu} onOpenChange={setMenu}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon-lg" className="text-white hover:bg-white/10 hover:text-white lg:hidden" aria-label="Menu">
+              <Button variant="ghost" size="icon-lg" className="text-white hover:bg-white/10 hover:text-white xl:hidden" aria-label="Menu">
                 <MenuIcon className="size-6" />
               </Button>
             </SheetTrigger>
@@ -88,9 +89,9 @@ export function Header() {
               <SheetTitle className="sr-only">Menu</SheetTitle>
               <nav className="flex flex-col">
                 {NAV.map((n) => (
-                  <a key={n.href} href={n.href} onClick={() => setMenu(false)} className="border-b border-white/10 py-4 text-lg">
+                  <Link key={n.href} href={n.href} onClick={() => setMenu(false)} className="border-b border-white/10 py-4 text-lg">
                     {label(n.key)}
-                  </a>
+                  </Link>
                 ))}
               </nav>
               <Button
