@@ -23,7 +23,7 @@ export function About() {
         <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[18px] bg-ice/15">
           {STATS.map(([n, k]) => (
             <Reveal key={k} className="bg-navy px-5 py-8 sm:p-9">
-              <Counter to={n} className="font-display block text-[clamp(26px,3.6vw,52px)] leading-none font-light" />
+              <Counter to={n} className="font-display text-[clamp(24px,2.7vw,42px)] leading-none font-light" />
               <span className="mt-3 block text-sm text-[#AEB8CF]">{t(k)}</span>
             </Reveal>
           ))}
