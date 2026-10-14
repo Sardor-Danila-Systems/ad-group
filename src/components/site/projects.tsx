@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ArrowRightIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -54,7 +55,11 @@ export function Projects() {
                       : "bg-gradient-to-b from-[#E4EBF2] to-ice [--b:var(--navy)] [--b2:#2c375a]",
                   )}
                 >
-                  <BuildingArt kind={p.kind} className="size-full transition-transform duration-500 group-hover:scale-105" />
+                  {p.photo ? (
+                    <Image src={p.photo} alt={p.name[lang]} fill sizes="(min-width: 1024px) 400px, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                  ) : (
+                    <BuildingArt kind={p.kind} className="size-full transition-transform duration-500 group-hover:scale-105" />
+                  )}
                   <Badge className={cn("absolute top-4 left-4 rounded-full border-0 px-3 py-1 text-xs font-semibold", p.status === "done" ? "bg-navy text-white" : "bg-white text-navy")}>
                     {t(`status.${p.status}`)}
                   </Badge>

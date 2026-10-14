@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/reveal";
+import { VatanGallery } from "@/components/site/vatan-gallery";
 import { useSite } from "@/components/site/site-provider";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +11,7 @@ const ROOFS = [
   { k: "vatan.t1", clip: "[clip-path:polygon(0_100%,100%_0,100%_100%)]", cls: "" },
   { k: "vatan.t2", clip: "[clip-path:polygon(50%_0,100%_100%,0_100%)]", cls: "" },
   { k: "vatan.t3", clip: "[clip-path:polygon(0_0,100%_100%,0_100%)]", cls: "" },
-  { k: "vatan.t4", clip: "[clip-path:polygon(60%_0,100%_0,100%_100%,20%_100%)]", cls: "col-span-2 min-h-[150px] !aspect-auto" },
+  { k: "vatan.t4", clip: "[clip-path:polygon(60%_0,100%_0,100%_100%,20%_100%)]", cls: "" },
 ];
 
 export function Vatan() {
@@ -31,18 +32,31 @@ export function Vatan() {
           </ul>
           <VatanCta />
         </Reveal>
-        <Reveal className="grid grid-cols-2 gap-3.5" >
+        <Reveal>
+          <div className="relative overflow-hidden rounded-[22px] shadow-2xl ring-1 ring-white/10">
+            <Image
+              src="/vatan/08.jpg"
+              alt="Vatan Residence"
+              width={1500}
+              height={1487}
+              priority={false}
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="h-auto w-full"
+            />
+          </div>
+        </Reveal>
+      </div>
+      <div className="mx-auto mt-[clamp(56px,7vw,96px)] w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
+        <VatanGallery />
+        <Reveal className="mt-[clamp(48px,6vw,80px)] grid grid-cols-2 gap-3.5 md:grid-cols-4">
           {ROOFS.map((r) => (
             <div
               key={r.k}
               aria-hidden="true"
-              className={cn(
-                "group relative flex aspect-square items-start overflow-hidden bg-[#0B1B38] p-[18px] font-serif text-[clamp(17px,1.7vw,22px)] leading-[1.15] transition-transform duration-300 hover:-translate-y-1",
-                r.cls,
-              )}
+              className="group relative flex aspect-square items-start overflow-hidden bg-[#0B1B38] p-[18px] font-serif text-[clamp(16px,1.6vw,22px)] leading-[1.15] transition-transform duration-300 hover:-translate-y-1"
             >
               <span className="relative z-10">{t(r.k)}</span>
-              <span className={cn("absolute inset-x-0 bottom-0 h-[62%] bg-gold", r.clip, r.cls && "h-full")} />
+              <span className={cn("absolute inset-x-0 bottom-0 h-[62%] bg-gold", r.clip)} />
             </div>
           ))}
         </Reveal>
