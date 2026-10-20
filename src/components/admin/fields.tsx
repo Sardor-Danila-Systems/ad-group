@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { shrinkInput } from "@/lib/client-image";
 import type { Fact, GalleryPhoto, L10n } from "@/lib/types";
 
 const LANGS = [
@@ -131,7 +132,11 @@ export function GalleryEditor({ name, initial, fileName }: { name: string; initi
       )}
       <div className="grid gap-2">
         <Label htmlFor={fileName}>Добавить фото</Label>
-        <Input id={fileName} name={fileName} type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={(e) => setCount(e.target.files?.length ?? 0)} className="h-auto bg-white py-2" />
+        <Input id={fileName} name={fileName} type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" onChange={async (e) => {
+            const input = e.currentTarget;
+            await shrinkInput(input);
+            setCount(input.files?.length ?? 0);
+          }} className="h-auto bg-white py-2" />
         <p className="text-xs text-muted-foreground">JPG, PNG, WebP или AVIF до 12 МБ. {count > 0 && `Выбрано: ${count}.`}</p>
       </div>
     </div>
@@ -153,7 +158,7 @@ export function ImageField({ label, fileName, currentName, removeName, current }
           <Button type="button" variant="outline" onClick={() => setRemoved(true)} className="gap-1.5"><LuX /> Убрать</Button>
         </div>
       )}
-      <Input id={fileName} name={fileName} type="file" accept="image/jpeg,image/png,image/webp,image/avif" className="h-auto bg-white py-2" />
+      <Input id={fileName} name={fileName} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={(e) => shrinkInput(e.currentTarget)} className="h-auto bg-white py-2" />
       <p className="text-xs text-muted-foreground">Новый файл заменит текущий. JPG, PNG, WebP или AVIF до 12 МБ.</p>
     </div>
   );
