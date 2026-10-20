@@ -4,11 +4,15 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-const MIN_MS = 1100;
+const MIN_MS = 1500;
+const OPEN_MS = 900;
 
-/** Full-screen splash for the first paint. Server-rendered so content never flashes beneath it. */
+/**
+ * Splash with the Vatan logo. Two marble curtains meet on a diagonal seam and
+ * slide apart once the page has loaded. Server-rendered so nothing flashes beneath it.
+ */
 export function Preloader() {
-  const [phase, setPhase] = useState<"show" | "hide" | "gone">("show");
+  const [phase, setPhase] = useState<"show" | "open" | "gone">("show");
 
   useEffect(() => {
     const start = performance.now();
@@ -17,8 +21,8 @@ export function Preloader() {
     const finish = () => {
       const wait = Math.max(0, MIN_MS - (performance.now() - start));
       t1 = setTimeout(() => {
-        setPhase("hide");
-        t2 = setTimeout(() => setPhase("gone"), 600);
+        setPhase("open");
+        t2 = setTimeout(() => setPhase("gone"), OPEN_MS);
       }, wait);
     };
     if (document.readyState === "complete") finish();
@@ -31,26 +35,25 @@ export function Preloader() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.style.overflow = phase === "show" ? "hidden" : "";
+    document.documentElement.style.overflow = phase === "gone" ? "" : "hidden";
     return () => {
       document.documentElement.style.overflow = "";
     };
   }, [phase]);
 
   if (phase === "gone") return null;
+  const open = phase === "open";
+  const curtain = "absolute inset-0 bg-marble-strong transition-transform ease-[cubic-bezier(0.77,0,0.18,1)]";
   return (
-    <div
-      role="status"
-      aria-label="Loading"
-      className={cn(
-        "fixed inset-0 z-[100] grid place-items-center bg-navy text-white transition-all duration-500 ease-out",
-        phase === "hide" && "pointer-events-none -translate-y-full opacity-0",
-      )}
-    >
-      <div className="flex w-[min(260px,70vw)] flex-col items-center gap-8">
-        <Image src="/assets/logo-ad.png" alt="AD Group" width={240} height={39} priority className="loader-logo h-auto w-full brightness-0 invert" />
-        <div className="h-px w-full overflow-hidden bg-white/15">
-          <div className="loader-bar h-full origin-left bg-gold-light" />
+    <div role="status" aria-label="Loading" className={cn("fixed inset-0 z-[100] overflow-hidden", open && "pointer-events-none")}>
+      <div className={cn(curtain, "curtain-left duration-[900ms]", open && "-translate-x-full")} />
+      <div className={cn(curtain, "curtain-right duration-[900ms]", open && "translate-x-full")} />
+      <div className={cn("absolute inset-0 grid place-items-center transition-all duration-500", open && "scale-95 opacity-0")}>
+        <div className="flex w-[min(300px,72vw)] flex-col items-center gap-8">
+          <Image src="/assets/logo-vatan.png" alt="Vatan Residence" width={300} height={96} priority className="loader-logo h-auto w-full" />
+          <div className="h-px w-full overflow-hidden bg-gold/25">
+            <div className="loader-bar h-full origin-left bg-gold" />
+          </div>
         </div>
       </div>
     </div>
@@ -60,10 +63,10 @@ export function Preloader() {
 /** Light-weight placeholder used while a route segment streams in. */
 export function RouteLoader() {
   return (
-    <div role="status" aria-label="Loading" className="grid min-h-svh place-items-center bg-navy">
+    <div role="status" aria-label="Loading" className="grid min-h-svh place-items-center bg-marble-strong">
       <div className="w-[min(200px,60vw)]">
-        <div className="h-px w-full overflow-hidden bg-white/15">
-          <div className="loader-bar h-full origin-left bg-gold-light" />
+        <div className="h-px w-full overflow-hidden bg-gold/25">
+          <div className="loader-bar h-full origin-left bg-gold" />
         </div>
       </div>
     </div>

@@ -41,10 +41,10 @@ export function Calculator() {
   };
 
   return (
-    <section id="calculator" className="py-[clamp(72px,9vw,128px)]">
+    <section id="calculator" className="bg-cream py-[clamp(72px,9vw,128px)]">
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
         <Reveal className="mb-12">
-          <h2 className="font-display text-[clamp(26px,3.4vw,44px)] leading-[1.15] font-normal tracking-tight">{t("calc.title")}</h2>
+          <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight">{t("calc.title")}</h2>
           <p className="mt-3 max-w-[56ch] text-muted-foreground">{t("calc.lead")}</p>
         </Reveal>
 
@@ -52,7 +52,7 @@ export function Calculator() {
           <form onSubmit={(e) => e.preventDefault()} className="grid content-start gap-6 rounded-[18px] bg-white p-6 sm:p-8">
             <ToggleGroup type="single" value={cur} onValueChange={(v) => v && switchCur(v as "USD" | "UZS")} spacing={0} className="w-fit rounded-full bg-background p-1">
               {(["USD", "UZS"] as const).map((c) => (
-                <ToggleGroupItem key={c} value={c} className="h-9 rounded-full px-5 text-[13px] font-semibold data-[state=on]:bg-navy data-[state=on]:text-white">
+                <ToggleGroupItem key={c} value={c} className="h-9 rounded-full px-5 text-[13px] font-semibold data-[state=on]:bg-ink data-[state=on]:text-white">
                   {c}
                 </ToggleGroupItem>
               ))}
@@ -77,14 +77,14 @@ export function Calculator() {
 
           <div className="rounded-[18px] bg-white p-6 sm:p-8">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="grid gap-1.5 rounded-2xl bg-navy p-6 text-white">
+              <div className="grid gap-1.5 rounded-2xl bg-ink p-6 text-white">
                 <small className="text-[13px] opacity-70">{t("calc.ad")}</small>
-                <b className="font-display text-[clamp(20px,2.2vw,30px)] leading-tight font-normal">{fmt(propertyValue)}</b>
+                <b className="font-display text-[clamp(26px,2.6vw,38px)] leading-tight font-medium">{fmt(propertyValue)}</b>
                 <span className="text-sm font-semibold text-gold-light">+{fmt(propertyValue - total)}</span>
               </div>
               <div className="grid gap-1.5 rounded-2xl bg-background p-6">
                 <small className="text-[13px] opacity-70">{t("calc.bank")}</small>
-                <b className="font-display text-[clamp(20px,2.2vw,30px)] leading-tight font-normal">{fmt(bank)}</b>
+                <b className="font-display text-[clamp(26px,2.6vw,38px)] leading-tight font-medium">{fmt(bank)}</b>
                 <span className="text-sm font-semibold text-muted-foreground">+{fmt(bank - total)}</span>
               </div>
             </div>
