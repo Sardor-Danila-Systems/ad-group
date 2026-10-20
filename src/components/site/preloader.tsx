@@ -36,6 +36,14 @@ export function Preloader() {
     };
   }, []);
 
+  // Tell the page when entrance animations may start (curtains opening, or no preloader at all).
+  useEffect(() => {
+    if (isAdmin || phase === "open") {
+      document.documentElement.setAttribute("data-ready", "1");
+      window.dispatchEvent(new Event("site-ready"));
+    }
+  }, [phase, isAdmin]);
+
   useEffect(() => {
     document.documentElement.style.overflow = isAdmin || phase === "gone" ? "" : "hidden";
     return () => {
