@@ -40,6 +40,7 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
             <Link href="/#projects" className="mb-8 inline-flex items-center gap-2 text-sm text-white/80 transition-colors hover:text-white">
               <LuArrowLeft className="size-4" /> {t("proj.back")}
             </Link>
+            {project.logo && <Image src={project.logo} alt="" width={240} height={80} className="mb-6 h-16 w-auto rounded-lg" />}
             <div className="mb-4">
               <Badge className="rounded-full border-0 bg-gold px-3 py-1 text-xs font-semibold text-ink">{t(`status.${project.status}`)}</Badge>
             </div>

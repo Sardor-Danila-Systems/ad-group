@@ -4,10 +4,11 @@ import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { assertAdmin, checkPassword, endSession, startSession, adminEnabled } from "@/lib/server/auth";
 import * as store from "@/lib/server/store";
-import type { Fact, GalleryPhoto, L10n, NewsItem, Project, ProjectKind, Status } from "@/lib/types";
+import type { Fact, GalleryPhoto, L10n, NewsItem, Project, ProjectKind, Settings, Status, Vacancy, VacancyType } from "@/lib/types";
 
 export interface FormState {
   error?: string;
+  saved?: boolean;
 }
 
 const str = (v: FormDataEntryValue | null, max = 5000) => String(v ?? "").trim().slice(0, max);
@@ -106,6 +107,21 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
     return { error: uploadMessage(e) };
   }
 
+  // Logo (same rules as the cover)
+  let logo = str(fd.get("logoCurrent"), 300) || undefined;
+  try {
+    const [newLogo] = uploads(fd, "logo");
+    if (newLogo) {
+      removedAssets.push(logo);
+      logo = (await store.saveImage(newLogo)).src;
+    } else if (str(fd.get("removeLogo"), 2) === "1") {
+      removedAssets.push(logo);
+      logo = undefined;
+    }
+  } catch (e) {
+    return { error: uploadMessage(e) };
+  }
+
   // Gallery: kept photos (client sends the remaining list, in order) + new uploads
   const keptRaw = jsonArray(fd, "gallery") as Partial<GalleryPhoto>[];
   const previous = existing?.gallery ?? [];
@@ -140,6 +156,8 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
     year: Number.isFinite(year) ? year : undefined,
     price: Number.isFinite(price) ? price : undefined,
     cover,
+    logo,
+    tagline: l10n(fd, "tagline", 160).ru ? l10n(fd, "tagline", 160) : undefined,
     gallery,
     name,
     desc: l10n(fd, "desc", 200),
@@ -211,3 +229,76 @@ export async function deleteLead(fd: FormData) {
   revalidatePath("/admin/leads");
 }
 
+
+/* ---------- vacancies ---------- */
+
+const VTYPES: VacancyType[] = ["full", "part", "remote", "contract"];
+
+export async function saveVacancy(_prev: FormState, fd: FormData): Promise<FormState> {
+  await assertAdmin();
+  const isNew = str(fd.get("isNew"), 2) === "1";
+  const id = str(fd.get("id"), 60) || `v${Date.now().toString(36)}`;
+  if (!/^[a-z0-9-]+$/i.test(id)) return { error: "Некорректный идентификатор." };
+  const title = l10n(fd, "title", 120);
+  if (!title.ru) return { error: "Укажите название вакансии (русский)." };
+
+  const existing = (await store.loadContent()).vacancies.find((v) => v.id === id);
+  if (isNew && existing) return { error: "Вакансия с таким идентификатором уже есть." };
+
+  const vacancy: Vacancy = {
+    id,
+    title,
+    dept: l10n(fd, "dept", 80),
+    city: l10n(fd, "city", 80),
+    type: VTYPES.find((t) => t === str(fd.get("type"), 20)) ?? "full",
+    summary: l10n(fd, "summary", 1500),
+    requirements: (jsonArray(fd, "requirements") as unknown[]).map(asL10n).filter((r) => r.ru),
+    open: str(fd.get("open"), 2) === "1",
+    createdAt: existing?.createdAt ?? new Date().toISOString(),
+  };
+  await store.saveVacancy(vacancy);
+  refresh(["/vacancies"]);
+  redirect("/admin/vacancies");
+}
+
+export async function deleteVacancy(fd: FormData) {
+  await assertAdmin();
+  await store.deleteVacancy(str(fd.get("id"), 60));
+  refresh(["/vacancies", "/admin/vacancies"]);
+}
+
+/* ---------- settings ---------- */
+
+export async function saveSettings(_prev: FormState, fd: FormData): Promise<FormState> {
+  await assertAdmin();
+  const current = (await store.loadContent()).settings;
+  const name = l10n(fd, "fname", 80);
+  if (!name.ru) return { error: "Укажите имя руководителя (русский)." };
+
+  let photo = str(fd.get("photoCurrent"), 300) || undefined;
+  try {
+    const [file] = uploads(fd, "photo");
+    if (file) photo = (await store.saveImage(file)).src;
+    else if (str(fd.get("removePhoto"), 2) === "1") photo = undefined;
+  } catch (e) {
+    return { error: uploadMessage(e) };
+  }
+  // Only the stored photo may be kept; never trust a path coming from the form.
+  if (photo && photo !== current.founder.photo && !photo.startsWith("/uploads/")) photo = current.founder.photo;
+
+  const handle = (v: FormDataEntryValue | null) => str(v, 60).replace(/^@/, "").replace(/[^\w.]/g, "");
+  const settings: Settings = {
+    founder: { name, role: l10n(fd, "frole", 120), quote: l10n(fd, "fquote", 400), p1: l10n(fd, "fp1", 800), p2: l10n(fd, "fp2", 800), photo },
+    contacts: {
+      phone: str(fd.get("phone"), 40),
+      email: str(fd.get("email"), 120),
+      address: l10n(fd, "address", 200),
+      hours: str(fd.get("hours"), 60),
+      instagram: handle(fd.get("instagram")),
+      telegram: handle(fd.get("telegram")),
+    },
+  };
+  await store.saveSettings(settings);
+  refresh(["/", "/vacancies", "/admin/settings"]);
+  return { saved: true };
+}

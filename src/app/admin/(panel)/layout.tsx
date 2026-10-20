@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { LuExternalLink, LuFileText, LuInbox, LuLayoutDashboard, LuLogOut, LuBuilding2 } from "react-icons/lu";
+import { LuBriefcase, LuBuilding2, LuExternalLink, LuFileText, LuInbox, LuLayoutDashboard, LuLogOut, LuSettings } from "react-icons/lu";
 import { logout } from "@/actions/admin";
 import { RouteLoader } from "@/components/site/preloader";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,9 @@ const NAV = [
   { href: "/admin", label: "Обзор", Icon: LuLayoutDashboard },
   { href: "/admin/projects", label: "ЖК и проекты", Icon: LuBuilding2 },
   { href: "/admin/news", label: "Новости", Icon: LuFileText },
+  { href: "/admin/vacancies", label: "Вакансии", Icon: LuBriefcase },
   { href: "/admin/leads", label: "Заявки", Icon: LuInbox },
+  { href: "/admin/settings", label: "Настройки", Icon: LuSettings },
 ];
 
 async function Gate({ children }: { children: React.ReactNode }) {

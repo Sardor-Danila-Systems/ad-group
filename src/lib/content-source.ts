@@ -1,6 +1,6 @@
 import { cacheTag } from "next/cache";
 import { loadContent } from "@/lib/server/store";
-import type { NewsItem, Project } from "@/lib/types";
+import type { NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
 /**
  * Public readers. Results are cached under the "content" tag and refreshed
@@ -22,4 +22,17 @@ export async function getNews(): Promise<NewsItem[]> {
   cacheTag("content");
   const { news } = await loadContent();
   return [...news].sort((a, b) => b.date.localeCompare(a.date));
+}
+
+export async function getVacancies(): Promise<Vacancy[]> {
+  "use cache";
+  cacheTag("content");
+  const { vacancies } = await loadContent();
+  return vacancies.filter((v) => v.open).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+}
+
+export async function getSettings(): Promise<Settings> {
+  "use cache";
+  cacheTag("content");
+  return (await loadContent()).settings;
 }

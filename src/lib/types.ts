@@ -23,6 +23,10 @@ export interface Project {
   /** Placeholder art style used when there is no cover photo. */
   kind: ProjectKind;
   cover?: string;
+  /** Logo shown on the project page hero and featured block (transparent PNG or any image). */
+  logo?: string;
+  /** Short slogan used as the featured-block headline. Falls back to the name. */
+  tagline?: L10n;
   gallery: GalleryPhoto[];
   name: L10n;
   desc: L10n;
@@ -51,4 +55,38 @@ export interface Lead {
   interest: string;
   message: string;
   source: string;
+}
+
+export type VacancyType = "full" | "part" | "remote" | "contract";
+
+export interface Vacancy {
+  id: string;
+  title: L10n;
+  dept: L10n;
+  city: L10n;
+  type: VacancyType;
+  summary: L10n;
+  requirements: L10n[];
+  /** Hidden vacancies stay in the admin but not on the site. */
+  open: boolean;
+  createdAt: string;
+}
+
+export interface Settings {
+  founder: {
+    name: L10n;
+    role: L10n;
+    quote: L10n;
+    p1: L10n;
+    p2: L10n;
+    photo?: string;
+  };
+  contacts: {
+    phone: string;
+    email: string;
+    address: L10n;
+    hours: string;
+    instagram: string;
+    telegram: string;
+  };
 }
