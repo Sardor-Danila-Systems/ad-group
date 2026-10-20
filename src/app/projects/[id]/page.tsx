@@ -1,25 +1,26 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProjectView } from "@/components/site/project-view";
-import { DATA } from "@/lib/content";
+import { getProject, getProjects } from "@/lib/content-source";
 
-export function generateStaticParams() {
-  return DATA.projects.map((p) => ({ id: p.id }));
+export async function generateStaticParams() {
+  return (await getProjects()).map((p) => ({ id: p.id }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/projects/[id]">): Promise<Metadata> {
   const { id } = await params;
-  const project = DATA.projects.find((p) => p.id === id);
+  const project = await getProject(id);
   if (!project) return {};
   return {
     title: `${project.name.ru} — AD Group`,
-    description: project.long?.ru ?? project.desc.ru,
-    openGraph: project.photo ? { images: [project.photo] } : undefined,
+    description: (project.long ?? project.desc).ru,
+    openGraph: project.cover ? { images: [project.cover] } : undefined,
   };
 }
 
 export default async function ProjectPage({ params }: PageProps<"/projects/[id]">) {
   const { id } = await params;
-  if (!DATA.projects.some((p) => p.id === id)) notFound();
-  return <ProjectView id={id} />;
+  const [project, all] = await Promise.all([getProject(id), getProjects()]);
+  if (!project) notFound();
+  return <ProjectView project={project} others={all.filter((p) => p.id !== id).slice(0, 3)} />;
 }

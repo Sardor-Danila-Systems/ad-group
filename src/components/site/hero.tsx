@@ -1,46 +1,51 @@
 "use client";
 
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { BuildingArt } from "@/components/site/building-art";
 import { useSite } from "@/components/site/site-provider";
 
 export function Hero() {
   const { t } = useSite();
   return (
-    <section className="relative isolate flex min-h-svh flex-col justify-center overflow-hidden bg-gradient-to-b from-navy to-[#1d2744] pt-32 text-white">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 text-ice [--b:#202A47] [--b2:#2A3556] after:absolute after:inset-0 after:bg-gradient-to-b after:from-navy after:from-10% after:to-transparent after:to-90% md:after:bg-gradient-to-r md:after:from-navy md:after:from-[18%] md:after:to-transparent md:after:to-70%"
-      >
-        <BuildingArt kind="stepped" w={1200} h={600} className="absolute -right-[40%] bottom-0 h-[60%] w-[140%] opacity-55 md:-right-[4%] md:h-[78%] md:w-[78%]" />
-        <BuildingArt kind="tower" w={900} h={520} className="absolute right-[30%] bottom-0 hidden h-[92%] w-[48%] opacity-35 [--b:#1B2440] md:block" />
-      </div>
-
-      <div className="mx-auto flex w-[min(1240px,100%-32px)] flex-1 flex-col justify-center pb-10 md:w-[min(1240px,100%-48px)]">
-        <p className="mb-5 text-[13px] font-semibold tracking-[.14em] text-gold-light uppercase">{t("hero.eyebrow")}</p>
-        <h1 className="font-display max-w-[12ch] text-[clamp(38px,6.4vw,92px)] leading-[1.04] font-light tracking-tight">{t("hero.title")}</h1>
-        <p className="mt-7 max-w-[48ch] text-[clamp(16px,1.5vw,19px)] text-[#C3CCDF]">{t("hero.lead")}</p>
-        <div className="mt-10 flex flex-wrap gap-3.5">
-          <Button asChild size="lg" className="h-12 rounded-full bg-ice px-7 text-[15px] font-semibold text-navy hover:bg-white">
-            <a href="#projects">{t("hero.cta1")}</a>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-ice/45 bg-transparent px-7 text-[15px] font-semibold text-white hover:bg-white/10 hover:text-white">
-            <a href="#about">{t("hero.cta2")}</a>
-          </Button>
-        </div>
-      </div>
-
-      <div className="relative mx-auto flex w-[min(1240px,100%-32px)] flex-wrap gap-x-14 gap-y-4 border-t border-ice/20 pt-7 pb-9 md:w-[min(1240px,100%-48px)]">
-        {[
-          ["2011", "hero.s1"],
-          ["25+", "hero.s2"],
-          ["3 000", "hero.s3"],
-        ].map(([n, k]) => (
-          <div key={k}>
-            <b className="font-display block text-[clamp(22px,2.4vw,32px)] font-normal">{n}</b>
-            <span className="text-[13px] text-[#AEB8CF]">{t(k)}</span>
+    <section className="relative isolate overflow-hidden bg-marble pt-[76px]">
+      <div className="mx-auto grid w-[min(1240px,100%-32px)] items-center gap-10 py-14 md:w-[min(1240px,100%-48px)] lg:min-h-[calc(100svh-76px)] lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:py-16">
+        <div>
+          <p className="mb-6 flex items-center gap-3 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">
+            <span aria-hidden="true" className="h-px w-10 bg-gold" />
+            {t("hero.eyebrow")}
+          </p>
+          <h1 className="font-display text-[clamp(46px,7vw,104px)] leading-[0.98] font-medium tracking-tight text-ink">{t("hero.title")}</h1>
+          <p className="mt-7 max-w-[46ch] text-[clamp(16px,1.4vw,19px)] text-ink/70">{t("hero.lead")}</p>
+          <div className="mt-10 flex flex-wrap gap-3.5">
+            <Button asChild size="lg" className="h-13 rounded-full bg-ink px-8 text-[15px] font-semibold text-paper hover:bg-ink-2">
+              <a href="#request">{t("lead.send")}</a>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="h-13 rounded-full border-gold bg-transparent px-8 text-[15px] font-semibold text-gold-deep hover:bg-gold/10 hover:text-gold-deep">
+              <a href="#projects">{t("hero.cta1")}</a>
+            </Button>
           </div>
-        ))}
+          <dl className="mt-14 flex flex-wrap gap-x-12 gap-y-5 border-t border-gold/30 pt-7">
+            {[
+              ["2011", "hero.s1"],
+              ["25+", "hero.s2"],
+              ["3 000", "hero.s3"],
+            ].map(([n, k]) => (
+              <div key={k}>
+                <dt className="font-display text-4xl font-medium text-gold-deep">{n}</dt>
+                <dd className="text-[13px] text-ink/60">{t(k)}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-[520px] lg:max-w-none">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-t-[999px] rounded-b-[28px] shadow-[0_40px_80px_-30px_rgba(60,45,20,0.5)] ring-1 ring-gold/40">
+            <Image src="/vatan/08.jpg" alt="Vatan Residence" fill priority sizes="(min-width: 1024px) 40vw, 90vw" className="object-cover" />
+          </div>
+          <div className="absolute -bottom-5 left-4 rounded-2xl bg-paper px-5 py-4 shadow-xl ring-1 ring-gold/30 sm:-left-6">
+            <Image src="/assets/logo-vatan.png" alt="Vatan Residence" width={150} height={48} className="h-9 w-auto" />
+          </div>
+        </div>
       </div>
     </section>
   );

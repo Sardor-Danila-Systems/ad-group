@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { I18N, type Lang } from "@/lib/content";
+import { I18N } from "@/lib/content";
+import type { Lang, Project } from "@/lib/types";
 import { CallDialog } from "@/components/site/call-dialog";
 import { useLocalValue } from "@/lib/local-store";
 
@@ -14,7 +15,7 @@ interface Ctx {
 
 const SiteCtx = createContext<Ctx | null>(null);
 
-export function SiteProvider({ children }: { children: React.ReactNode }) {
+export function SiteProvider({ children, projects }: { children: React.ReactNode; projects: Pick<Project, "id" | "name">[] }) {
   const [saved, setLang] = useLocalValue("lang", "ru");
   const lang: Lang = saved && saved in I18N ? (saved as Lang) : "ru";
   const [callOpen, setCallOpen] = useState(false);
@@ -36,7 +37,7 @@ export function SiteProvider({ children }: { children: React.ReactNode }) {
   return (
     <SiteCtx.Provider value={value}>
       {children}
-      <CallDialog open={callOpen} onOpenChange={setCallOpen} />
+      <CallDialog open={callOpen} onOpenChange={setCallOpen} projects={projects} />
     </SiteCtx.Provider>
   );
 }

@@ -3,79 +3,59 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ProjectGallery } from "@/components/site/project-gallery";
 import { Reveal } from "@/components/site/reveal";
-import { VatanGallery } from "@/components/site/vatan-gallery";
 import { useSite } from "@/components/site/site-provider";
-import { cn } from "@/lib/utils";
+import type { Project } from "@/lib/types";
 
-const ROOFS = [
-  { k: "vatan.t1", clip: "[clip-path:polygon(0_100%,100%_0,100%_100%)]", cls: "" },
-  { k: "vatan.t2", clip: "[clip-path:polygon(50%_0,100%_100%,0_100%)]", cls: "" },
-  { k: "vatan.t3", clip: "[clip-path:polygon(0_0,100%_100%,0_100%)]", cls: "" },
-  { k: "vatan.t4", clip: "[clip-path:polygon(60%_0,100%_0,100%_100%,20%_100%)]", cls: "" },
-];
-
-export function Vatan() {
-  const { t } = useSite();
+export function Vatan({ project }: { project: Project }) {
+  const { t, lang, openCall } = useSite();
   return (
-    <section id="vatan" className="relative overflow-hidden bg-vatan py-[clamp(72px,9vw,128px)] text-white">
+    <section id="vatan" className="bg-paper py-[clamp(72px,9vw,128px)]">
       <div className="mx-auto grid w-[min(1240px,100%-32px)] items-center gap-10 md:w-[min(1240px,100%-48px)] md:grid-cols-2 md:gap-16">
         <Reveal>
-          <Image src="/assets/logo-vatan.png" alt="Vatan Residence" width={300} height={76} className="mb-9 h-[76px] w-auto" />
-          <h2 className="font-serif text-[clamp(34px,4.4vw,60px)] leading-[1.05] font-medium text-gold-light">{t("vatan.title")}</h2>
-          <p className="mt-5 max-w-[52ch] text-[#C5CDE0]">{t("vatan.text")}</p>
-          <ul className="mt-7 mb-9 grid gap-2.5">
-            {["vatan.l1", "vatan.l2", "vatan.l3"].map((k) => (
-              <li key={k} className="relative pl-7 before:absolute before:top-[.55em] before:left-0 before:h-2.5 before:w-3.5 before:bg-gold before:[clip-path:polygon(50%_0,100%_100%,0_100%)]">
-                {t(k)}
+          <Image src="/assets/logo-vatan.png" alt="Vatan Residence" width={300} height={96} className="mb-8 h-[84px] w-auto" />
+          <p className="mb-4 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">{t("vatan.eyebrow")}</p>
+          <h2 className="font-display text-[clamp(36px,4.6vw,66px)] leading-[1.03] font-medium tracking-tight">{t("vatan.title")}</h2>
+          <p className="mt-6 max-w-[54ch] text-ink/70">{t("vatan.text")}</p>
+          <ul className="mt-7 mb-9 grid gap-3">
+            {project.features.map((f, i) => (
+              <li key={i} className="relative pl-7 before:absolute before:top-[.6em] before:left-0 before:h-2.5 before:w-3.5 before:bg-gold before:[clip-path:polygon(50%_0,100%_100%,0_100%)]">
+                {f[lang]}
               </li>
             ))}
           </ul>
-          <VatanCta />
+          <div className="flex flex-wrap gap-3">
+            <Button onClick={openCall} size="lg" className="h-12 rounded-full bg-ink px-7 text-[15px] font-semibold text-paper hover:bg-ink-2">{t("vatan.cta")}</Button>
+            <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-gold bg-transparent px-7 text-[15px] font-semibold text-gold-deep hover:bg-gold/10 hover:text-gold-deep">
+              <Link href="/projects/vatan">{t("vatan.more")}</Link>
+            </Button>
+          </div>
         </Reveal>
         <Reveal>
-          <div className="relative overflow-hidden rounded-[22px] shadow-2xl ring-1 ring-white/10">
-            <Image
-              src="/vatan/08.jpg"
-              alt="Vatan Residence"
-              width={1500}
-              height={1487}
-              priority={false}
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className="h-auto w-full"
-            />
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] shadow-[0_40px_80px_-35px_rgba(60,45,20,0.55)] ring-1 ring-gold/40">
+            <Image src={project.cover ?? "/vatan/08.jpg"} alt={project.name[lang]} fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
           </div>
         </Reveal>
       </div>
-      <div className="mx-auto mt-[clamp(56px,7vw,96px)] w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
-        <VatanGallery />
-        <Reveal className="mt-[clamp(48px,6vw,80px)] grid grid-cols-2 gap-3.5 md:grid-cols-4">
-          {ROOFS.map((r) => (
-            <div
-              key={r.k}
-              aria-hidden="true"
-              className="group relative flex aspect-square items-start overflow-hidden bg-[#0B1B38] p-[18px] font-serif text-[clamp(16px,1.6vw,22px)] leading-[1.15] transition-transform duration-300 hover:-translate-y-1"
-            >
-              <span className="relative z-10">{t(r.k)}</span>
-              <span className={cn("absolute inset-x-0 bottom-0 h-[62%] bg-gold", r.clip)} />
-            </div>
-          ))}
+
+      {project.facts.length > 0 && (
+        <Reveal className="mx-auto mt-[clamp(56px,7vw,96px)] w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
+          <h3 className="mb-6 font-display text-[clamp(26px,3vw,40px)] font-medium">{t("vatan.facts")}</h3>
+          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 md:grid-cols-4">
+            {project.facts.map((f) => (
+              <div key={f.label.ru} className="bg-white p-5 sm:p-7">
+                <dd className="font-display text-[clamp(28px,3vw,44px)] leading-none font-medium whitespace-nowrap text-gold-deep">{f.value}</dd>
+                <dt className="mt-2.5 text-sm text-muted-foreground">{f.label[lang]}</dt>
+              </div>
+            ))}
+          </dl>
         </Reveal>
+      )}
+
+      <div className="mx-auto mt-[clamp(56px,7vw,96px)] w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
+        <ProjectGallery photos={project.gallery} title={t("vatan.gallery")} name={project.name[lang]} limit={6} moreHref="/projects/vatan" />
       </div>
     </section>
-  );
-}
-
-function VatanCta() {
-  const { t, openCall } = useSite();
-  return (
-    <div className="flex flex-wrap gap-3">
-      <Button onClick={openCall} size="lg" className="h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-vatan hover:bg-gold-light">
-        {t("vatan.cta")}
-      </Button>
-      <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-gold/50 bg-transparent px-7 text-[15px] font-semibold text-gold-light hover:bg-gold/10 hover:text-gold-light">
-        <Link href="/projects/vatan">{t("vatan.more")}</Link>
-      </Button>
-    </div>
   );
 }

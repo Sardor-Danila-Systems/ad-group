@@ -1,9 +1,7 @@
-/* Demo content. All numbers, names (except Vatan Residence) and news are placeholders. */
-export type Lang = "ru" | "uz" | "en";
-export type L10n = Record<Lang, string>;
-export type ProjectKind = "vatan" | "tower" | "slab" | "stepped" | "blocks";
-export type Status = "build" | "done" | "plan";
-export interface Project { id: string; cat: "residential" | "commercial"; status: Status; year: number; kind: ProjectKind; photo?: string; long?: L10n; name: L10n; desc: L10n; from?: number }
+/* UI strings (RU / UZ / EN) and static copy. Demo content: replace with real texts. */
+export type { Lang, L10n, Project, Fact, GalleryPhoto, NewsItem, Lead, ProjectKind, Status } from "@/lib/types";
+import type { Lang } from "@/lib/types";
+
 export const I18N: Record<Lang, Record<string, string>> = {
   ru: {
     'nav.projects': 'Проекты', 'nav.about': 'О компании', 'nav.invest': 'Инвесторам', 'nav.news': 'Новости', 'nav.contacts': 'Контакты',
@@ -22,8 +20,8 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'mission.quote': 'Мы отвечаем за людей, за место и за время. Каждое здание — это обещание, которое нужно сдержать.',
     'mission.by': 'Имя Фамилия, сооснователь AD Group (демо)',
     'vatan.title': 'Постройте будущее на прочном фундаменте',
-    'vatan.text': 'Vatan Residence — жилой комплекс в составе AD Group. Дома, созданные с любовью, где каждый метр продуман для жизни.',
-    'vatan.l1': 'Продуманные планировки', 'vatan.l2': 'Благоустроенные дворы без машин', 'vatan.l3': 'Рассрочка от застройщика',
+    'vatan.text': 'Vatan Residence — продуманный жилой комплекс в Самарканде: современная архитектура, комфорт и собственная инфраструктура с фитнес-центром, ресторанами, бутиками и пешеходными улицами. Проект разработан совместно с архитектурным бюро UNIVER PRO STYLE.',
+    'vatan.l1': 'Smart-технологии: умный замок и климат-контроль', 'vatan.l2': 'Безопасность 24/7 и консьерж-сервис', 'vatan.l3': 'Подземный паркинг и озеленённые дворы',
     'vatan.cta': 'Узнать о Vatan Residence', 'vatan.gallery': 'Галерея', 'vatan.gallery.note': 'Визуализации проекта',
     'vatan.t1': 'Новый уровень жизни', 'vatan.t2': 'Дом, построенный с любовью', 'vatan.t3': 'Построен для вас — Vatan', 'vatan.t4': 'Строим будущее на прочном фундаменте',
     'calc.title': 'Инвестиционный калькулятор', 'calc.lead': 'Сравните покупку квартиры в рассрочку с размещением тех же средств на банковском депозите.',
@@ -36,6 +34,13 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'call.title': 'Заказать звонок', 'call.text': 'Оставьте контакты — менеджер перезвонит в рабочее время.', 'call.name': 'Ваше имя', 'call.phone': 'Телефон', 'call.q': 'Ваш вопрос', 'call.send': 'Отправить', 'call.ok': 'Спасибо! Это демо — заявка никуда не отправлена.',
     'cookie.text': 'Мы используем cookie, чтобы сайт работал лучше.', 'cookie.ok': 'Согласен',
     'proj.back': 'Все проекты', 'proj.status': 'Статус', 'proj.year': 'Срок сдачи', 'proj.type': 'Тип', 'proj.price': 'Цена', 'proj.about': 'О проекте', 'proj.features': 'Преимущества', 'proj.cta': 'Оставить заявку', 'proj.other': 'Другие проекты', 'type.residential': 'Жилой комплекс', 'type.commercial': 'Коммерческая недвижимость', 'vatan.more': 'О проекте', 'loader.text': 'Загрузка',
+    'nav.directions': 'Направления',
+    'lead.eyebrow': 'Заявка', 'lead.title': 'Подберём квартиру или помещение', 'lead.text': 'Оставьте контакты — менеджер перезвонит в рабочее время, расскажет о проектах, ценах и условиях рассрочки.', 'lead.name': 'Ваше имя', 'lead.phone': 'Телефон', 'lead.interest': 'Что интересует', 'lead.interest.any': 'Консультация', 'lead.message': 'Комментарий (необязательно)', 'lead.send': 'Отправить заявку', 'lead.ok': 'Спасибо! Заявка принята, мы скоро свяжемся с вами.', 'lead.err': 'Проверьте имя и телефон.', 'lead.privacy': 'Нажимая кнопку, вы соглашаетесь на обработку персональных данных.',
+    'dir.eyebrow': 'Основатель', 'dir.quote': 'Дом — это не просто стены. Здесь начинается чья-то жизнь. Поэтому мы относимся серьёзно к каждой детали.', 'dir.p1': 'Мы создаём проекты, которые становятся частью городской среды. В каждом решении учитываем окружение, повседневную жизнь людей и их будущие потребности.', 'dir.p2': 'Финансовый успех — естественный результат. Но наша цель — проекты, которые сохранят ценность на многие годы и будут полезны людям.', 'dir.name': 'Имя Фамилия', 'dir.role': 'Основатель AD Group',
+    'vatan.eyebrow': 'Жилой комплекс', 'vatan.facts': 'Vatan Residence в цифрах',
+    'fact.area': 'Общая площадь', 'fact.land': 'Площадь участка', 'fact.units': 'Квартир', 'fact.blocks': 'Блоков', 'fact.floors': 'Этажей', 'fact.parking': 'Парковочных мест', 'fact.green': 'Озеленение', 'fact.residents': 'Жителей',
+    'lang.label': 'Язык',
+    'gallery.photos': 'фото', 'gallery.all': 'Все фото',
     'cur.suffix': 'сум', 'price.from': 'от'
   },
   uz: {
@@ -55,8 +60,8 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'mission.quote': 'Biz odamlar, joy va vaqt oldida javobgarmiz. Har bir bino — bajarilishi shart bo‘lgan va’da.',
     'mission.by': 'Ism Familiya, AD Group hammuassisi (demo)',
     'vatan.title': 'Kelajagingizni mustahkam poydevor ustiga quring',
-    'vatan.text': 'Vatan Residence — AD Group tarkibidagi turar-joy majmuasi. Mehr bilan qurilgan maskan, har bir kvadrat metri hayot uchun o‘ylab yaratilgan.',
-    'vatan.l1': 'O‘ylangan rejalashtirishlar', 'vatan.l2': 'Mashinasiz obod hovlilar', 'vatan.l3': 'Quruvchidan bo‘lib to‘lash',
+    'vatan.text': 'Vatan Residence — Samarqanddagi puxta o‘ylangan turar-joy majmuasi: zamonaviy arxitektura, qulaylik va fitnes-markaz, restoranlar, butiklar hamda piyoda ko‘chalardan iborat o‘z infratuzilmasi. Loyiha UNIVER PRO STYLE arxitektura byurosi bilan hamkorlikda ishlab chiqilgan.',
+    'vatan.l1': 'Smart-texnologiyalar: aqlli qulf va iqlim nazorati', 'vatan.l2': '24/7 xavfsizlik va konsyerj-servis', 'vatan.l3': 'Yerosti avtoturargohi va obod hovlilar',
     'vatan.cta': 'Vatan Residence haqida bilish', 'vatan.gallery': 'Galereya', 'vatan.gallery.note': 'Loyiha vizualizatsiyalari',
     'vatan.t1': 'Yangi darajadagi yashash tarzi', 'vatan.t2': 'Mehr bilan qurilgan maskan', 'vatan.t3': 'Siz uchun qurilgan haqiqiy Vatan', 'vatan.t4': 'Kelajagingizni mustahkam poydevor ustiga quring',
     'calc.title': 'Investitsiya kalkulyatori', 'calc.lead': 'Kvartirani bo‘lib to‘lab sotib olishni xuddi shu mablag‘larni bank depozitiga qo‘yish bilan solishtiring.',
@@ -69,6 +74,13 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'call.title': 'Qo‘ng‘iroq buyurtma qilish', 'call.text': 'Kontaktlaringizni qoldiring — menejer ish vaqtida qo‘ng‘iroq qiladi.', 'call.name': 'Ismingiz', 'call.phone': 'Telefon', 'call.q': 'Savolingiz', 'call.send': 'Yuborish', 'call.ok': 'Rahmat! Bu demo — ariza hech qayerga yuborilmadi.',
     'cookie.text': 'Sayt yaxshiroq ishlashi uchun cookie ishlatamiz.', 'cookie.ok': 'Roziman',
     'proj.back': 'Barcha loyihalar', 'proj.status': 'Holati', 'proj.year': 'Topshirish muddati', 'proj.type': 'Turi', 'proj.price': 'Narxi', 'proj.about': 'Loyiha haqida', 'proj.features': 'Afzalliklar', 'proj.cta': 'Ariza qoldirish', 'proj.other': 'Boshqa loyihalar', 'type.residential': 'Turar-joy majmuasi', 'type.commercial': 'Tijorat ko‘chmas mulki', 'vatan.more': 'Loyiha haqida', 'loader.text': 'Yuklanmoqda',
+    'nav.directions': 'Yo‘nalishlar',
+    'lead.eyebrow': 'Ariza', 'lead.title': 'Kvartira yoki maydonni tanlab beramiz', 'lead.text': 'Kontaktlaringizni qoldiring — menejer ish vaqtida qo‘ng‘iroq qilib, loyihalar, narxlar va bo‘lib to‘lash shartlari haqida aytib beradi.', 'lead.name': 'Ismingiz', 'lead.phone': 'Telefon', 'lead.interest': 'Nima qiziqtiradi', 'lead.interest.any': 'Maslahat', 'lead.message': 'Izoh (ixtiyoriy)', 'lead.send': 'Ariza yuborish', 'lead.ok': 'Rahmat! Ariza qabul qilindi, tez orada siz bilan bog‘lanamiz.', 'lead.err': 'Ism va telefonni tekshiring.', 'lead.privacy': 'Tugmani bosish orqali shaxsiy ma’lumotlarni qayta ishlashga rozilik bildirasiz.',
+    'dir.eyebrow': 'Asoschi', 'dir.quote': 'Uy — bu shunchaki devorlar emas. Bu yerda kimningdir hayoti boshlanadi. Shuning uchun biz har bir detalga jiddiy qaraymiz.', 'dir.p1': 'Biz shahar muhitining bir qismiga aylanadigan loyihalar yaratamiz. Har bir qarorda atrof-muhitni, odamlarning kundalik hayotini va kelajakdagi ehtiyojlarini hisobga olamiz.', 'dir.p2': 'Moliyaviy muvaffaqiyat — tabiiy natija. Lekin bizning maqsadimiz — uzoq yillar qiymatini saqlaydigan va odamlarga foyda keltiradigan loyihalar.', 'dir.name': 'Ism Familiya', 'dir.role': 'AD Group asoschisi',
+    'vatan.eyebrow': 'Turar-joy majmuasi', 'vatan.facts': 'Vatan Residence raqamlarda',
+    'fact.area': 'Umumiy maydon', 'fact.land': 'Qurilish maydoni', 'fact.units': 'Xonadon', 'fact.blocks': 'Blok', 'fact.floors': 'Qavat', 'fact.parking': 'Avtoturargoh', 'fact.green': 'Yashil hudud', 'fact.residents': 'Yashovchilar',
+    'lang.label': 'Til',
+    'gallery.photos': 'rasm', 'gallery.all': 'Barcha rasmlar',
     'cur.suffix': 'so‘m', 'price.from': 'dan'
   },
   en: {
@@ -88,8 +100,8 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'mission.quote': 'We are responsible to people, to place and to time. Every building is a promise that has to be kept.',
     'mission.by': 'Full Name, co-founder of AD Group (demo)',
     'vatan.title': 'Build your future on a solid foundation',
-    'vatan.text': 'Vatan Residence is a residential complex within AD Group. Homes built with love, where every square metre is designed for living.',
-    'vatan.l1': 'Thoughtful floor plans', 'vatan.l2': 'Landscaped car-free courtyards', 'vatan.l3': 'Developer instalments',
+    'vatan.text': 'Vatan Residence is a carefully planned residential complex in Samarkand: modern architecture, comfort and its own infrastructure with a fitness centre, restaurants, boutiques and pedestrian streets. Designed together with the UNIVER PRO STYLE architecture studio.',
+    'vatan.l1': 'Smart technology: smart lock and climate control', 'vatan.l2': '24/7 security and concierge service', 'vatan.l3': 'Underground parking and landscaped courtyards',
     'vatan.cta': 'Learn about Vatan Residence', 'vatan.gallery': 'Gallery', 'vatan.gallery.note': 'Project renders',
     'vatan.t1': 'A new level of living', 'vatan.t2': 'A home built with love', 'vatan.t3': 'Built for you — a true Vatan', 'vatan.t4': 'Build your future on a solid foundation',
     'calc.title': 'Investment calculator', 'calc.lead': 'Compare buying an apartment in instalments with putting the same money into a bank deposit.',
@@ -102,43 +114,21 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'call.title': 'Request a call', 'call.text': 'Leave your contacts and a manager will call back during working hours.', 'call.name': 'Your name', 'call.phone': 'Phone', 'call.q': 'Your question', 'call.send': 'Send', 'call.ok': 'Thank you! This is a demo — nothing was sent.',
     'cookie.text': 'We use cookies to make the site work better.', 'cookie.ok': 'Agree',
     'proj.back': 'All projects', 'proj.status': 'Status', 'proj.year': 'Completion', 'proj.type': 'Type', 'proj.price': 'Price', 'proj.about': 'About the project', 'proj.features': 'Highlights', 'proj.cta': 'Leave a request', 'proj.other': 'Other projects', 'type.residential': 'Residential complex', 'type.commercial': 'Commercial real estate', 'vatan.more': 'About the project', 'loader.text': 'Loading',
+    'nav.directions': 'Directions',
+    'lead.eyebrow': 'Request', 'lead.title': 'We will find your apartment or space', 'lead.text': 'Leave your contacts and a manager will call back during working hours to talk about projects, prices and instalment terms.', 'lead.name': 'Your name', 'lead.phone': 'Phone', 'lead.interest': 'Interested in', 'lead.interest.any': 'Consultation', 'lead.message': 'Comment (optional)', 'lead.send': 'Send request', 'lead.ok': 'Thank you! Your request was received, we will contact you soon.', 'lead.err': 'Please check your name and phone.', 'lead.privacy': 'By clicking the button you agree to the processing of personal data.',
+    'dir.eyebrow': 'Founder', 'dir.quote': 'A home is not just walls. Someone’s life begins here. That is why we take every detail seriously.', 'dir.p1': 'We create projects that become part of the urban environment. In every decision we consider the surroundings, everyday life and future needs of people.', 'dir.p2': 'Financial success is a natural result. But our real goal is projects that keep their value for many years and stay useful to people.', 'dir.name': 'Full Name', 'dir.role': 'Founder of AD Group',
+    'vatan.eyebrow': 'Residential complex', 'vatan.facts': 'Vatan Residence in numbers',
+    'fact.area': 'Total area', 'fact.land': 'Land area', 'fact.units': 'Apartments', 'fact.blocks': 'Blocks', 'fact.floors': 'Floors', 'fact.parking': 'Parking spaces', 'fact.green': 'Green area', 'fact.residents': 'Residents',
+    'lang.label': 'Language',
+    'gallery.photos': 'photos', 'gallery.all': 'All photos',
     'cur.suffix': 'UZS', 'price.from': 'from'
   }
 };
 
-export const DATA = {
-  projects: <Project[]>[
-    { id: 'vatan', cat: 'residential', status: 'build', year: 2027, kind: 'vatan', photo: '/vatan/08.jpg',
-      long: { ru: 'Vatan Residence — жилой комплекс комфорт-класса с коммерческой галереей на первых этажах, благоустроенными дворами без машин, детскими площадками и террасой с бассейном на крыше. Фасады с национальным орнаментом вечером подсвечены, а панорамное остекление наполняет холлы светом.', uz: 'Vatan Residence — birinchi qavatlarida tijorat galereyasi, mashinasiz obod hovlilari, bolalar maydonchalari va tomida basseynli terrasasi bor qulaylik darajasidagi turar-joy majmuasi. Milliy naqshli jabhalar kechqurun yoritiladi, panoramali oynalar esa xollarni nurga to‘ldiradi.', en: 'Vatan Residence is a comfort-class residential complex with a retail gallery on the ground floors, car-free landscaped courtyards, playgrounds and a rooftop terrace with a pool. Facades with a national ornament are lit in the evening, and panoramic glazing fills the lobbies with light.' },
-      name: { ru: 'Vatan Residence', uz: 'Vatan Residence', en: 'Vatan Residence' },
-      desc: { ru: 'Жилой комплекс комфорт-класса', uz: 'Qulaylik darajasidagi turar-joy majmuasi', en: 'Comfort-class residential complex' }, from: 780 },
-    { id: 'tower', cat: 'commercial', status: 'build', year: 2027, kind: 'tower',
-      name: { ru: 'AD Tower', uz: 'AD Tower', en: 'AD Tower' },
-      desc: { ru: 'Бизнес-башня класса A', uz: 'A klassli biznes-minora', en: 'Class A business tower' } },
-    { id: 'garden', cat: 'residential', status: 'done', year: 2024, kind: 'slab',
-      name: { ru: 'AD Garden', uz: 'AD Garden', en: 'AD Garden' },
-      desc: { ru: 'Жилой квартал с парком', uz: 'Bog‘li turar-joy kvartali', en: 'Residential quarter with a park' } },
-    { id: 'park', cat: 'commercial', status: 'done', year: 2023, kind: 'blocks',
-      name: { ru: 'AD Business Park', uz: 'AD Business Park', en: 'AD Business Park' },
-      desc: { ru: 'Офисы и сервисные площади', uz: 'Ofis va xizmat maydonlari', en: 'Offices and service space' } },
-    { id: 'sky', cat: 'residential', status: 'plan', year: 2028, kind: 'stepped',
-      name: { ru: 'AD Sky', uz: 'AD Sky', en: 'AD Sky' },
-      desc: { ru: 'Высотный жилой комплекс', uz: 'Ko‘p qavatli turar-joy majmuasi', en: 'High-rise residential complex' } },
-    { id: 'plaza', cat: 'commercial', status: 'done', year: 2022, kind: 'blocks',
-      name: { ru: 'AD Plaza', uz: 'AD Plaza', en: 'AD Plaza' },
-      desc: { ru: 'Торговый центр с офисной частью', uz: 'Ofis qismli savdo markazi', en: 'Shopping centre with offices' } }
-  ],
-  history: [
+export const HISTORY = [
     { y: '2011', t: { ru: 'Основание компании', uz: 'Kompaniya tashkil etildi', en: 'Company founded' }, d: { ru: 'Первый жилой дом и команда из 20 человек.', uz: 'Birinchi turar-joy uyi va 20 kishilik jamoa.', en: 'First residential building and a team of 20.' } },
     { y: '2015', t: { ru: 'Первый квартал', uz: 'Birinchi kvartal', en: 'First district' }, d: { ru: 'Сдан первый жилой комплекс на 300 квартир.', uz: '300 xonadonli birinchi turar-joy majmuasi topshirildi.', en: 'First 300-apartment complex delivered.' } },
     { y: '2019', t: { ru: 'Коммерческое направление', uz: 'Tijorat yo‘nalishi', en: 'Commercial line' }, d: { ru: 'Запуск бизнес-парков и торговых центров.', uz: 'Biznes-parklar va savdo markazlari ishga tushirildi.', en: 'Business parks and shopping centres launched.' } },
     { y: '2023', t: { ru: 'Единая система управления', uz: 'Yagona boshqaruv tizimi', en: 'Unified management' }, d: { ru: 'Новый фирменный стиль и структура AD Group.', uz: 'AD Group yangi firma uslubi va tuzilmasi.', en: 'New AD Group identity and structure.' } },
     { y: '2026', t: { ru: 'Vatan Residence', uz: 'Vatan Residence', en: 'Vatan Residence' }, d: { ru: 'Старт продаж нового жилого комплекса.', uz: 'Yangi turar-joy majmuasi sotuvi boshlandi.', en: 'Sales start for the new residential complex.' } }
-  ],
-  news: [
-    { date: '2026-10-02', t: { ru: 'Заложен фундамент Vatan Residence', uz: 'Vatan Residence poydevori qo‘yildi', en: 'Foundation laid for Vatan Residence' }, d: { ru: 'Началось строительство первой очереди комплекса.', uz: 'Majmuaning birinchi navbati qurilishi boshlandi.', en: 'Construction of the first phase has begun.' } },
-    { date: '2026-09-18', t: { ru: 'Открыт набор на вакансии', uz: 'Vakansiyalar uchun qabul ochildi', en: 'New vacancies open' }, d: { ru: 'Ищем инженеров, прорабов и менеджеров по продажам.', uz: 'Muhandislar, prorablar va sotuv menejerlari izlanmoqda.', en: 'Hiring engineers, site managers and sales managers.' } },
-    { date: '2026-08-25', t: { ru: 'Новый фирменный стиль AD Group', uz: 'AD Group yangi firma uslubi', en: 'New AD Group identity' }, d: { ru: 'Монограмма AD и геометрический паттерн из буквы A.', uz: 'AD monogrammasi va A harfidan olingan geometrik pattern.', en: 'The AD monogram and a geometric pattern built from the letter A.' } },
-    { date: '2026-07-10', t: { ru: 'AD Business Park: 100% аренды', uz: 'AD Business Park: 100% ijara', en: 'AD Business Park: fully leased' }, d: { ru: 'Все офисные площади нашли арендаторов.', uz: 'Barcha ofis maydonlari ijarachilarini topdi.', en: 'All office space now has tenants.' } }
-  ]
-};
+];
