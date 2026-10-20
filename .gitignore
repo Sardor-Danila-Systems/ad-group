@@ -42,3 +42,6 @@ next-env.d.ts
 
 .DS_Store
 .claude/
+
+# local content storage (projects, news, leads, uploads)
+/data/
