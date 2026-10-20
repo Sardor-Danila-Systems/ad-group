@@ -8,10 +8,11 @@ import { Hero } from "@/components/site/hero";
 import { LeadSection } from "@/components/site/lead-section";
 import { Projects } from "@/components/site/projects";
 import { Vatan } from "@/components/site/vatan";
-import { getNews, getProject, getProjects } from "@/lib/content-source";
+import { getNews, getProjects } from "@/lib/content-source";
 
 export default async function Home() {
-  const [projects, news, vatan] = await Promise.all([getProjects(), getNews(), getProject("vatan")]);
+  const [projects, news] = await Promise.all([getProjects(), getNews()]);
+  const featured = projects.find((p) => p.featured);
   return (
     <>
       <Header />
@@ -21,7 +22,7 @@ export default async function Home() {
         <Projects projects={projects} />
         <About />
         <Director />
-        {vatan && <Vatan project={vatan} />}
+        {featured && <Vatan project={featured} />}
         <Calculator />
         <History />
         <News news={news} />

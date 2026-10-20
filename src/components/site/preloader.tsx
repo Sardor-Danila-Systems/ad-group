@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +13,7 @@ const OPEN_MS = 900;
  * slide apart once the page has loaded. Server-rendered so nothing flashes beneath it.
  */
 export function Preloader() {
+  const isAdmin = usePathname().startsWith("/admin");
   const [phase, setPhase] = useState<"show" | "open" | "gone">("show");
 
   useEffect(() => {
@@ -35,13 +37,13 @@ export function Preloader() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.style.overflow = phase === "gone" ? "" : "hidden";
+    document.documentElement.style.overflow = isAdmin || phase === "gone" ? "" : "hidden";
     return () => {
       document.documentElement.style.overflow = "";
     };
-  }, [phase]);
+  }, [phase, isAdmin]);
 
-  if (phase === "gone") return null;
+  if (isAdmin || phase === "gone") return null;
   const open = phase === "open";
   const curtain = "absolute inset-0 bg-marble-strong transition-transform ease-[cubic-bezier(0.77,0,0.18,1)]";
   return (

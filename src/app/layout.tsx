@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { Preloader } from "@/components/site/preloader";
@@ -35,7 +36,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${jakarta.variable} ${cormorant.variable}`}
     >
       <body className="min-h-screen bg-background font-sans text-foreground">
-        <Preloader />
+        <Suspense fallback={null}>
+          <Preloader />
+        </Suspense>
         <SiteProvider projects={projects}>
           {children}
           <Toaster />

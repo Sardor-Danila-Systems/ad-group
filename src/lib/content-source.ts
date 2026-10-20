@@ -1,9 +1,16 @@
+import { cacheTag } from "next/cache";
+import { loadContent } from "@/lib/server/store";
 import type { NewsItem, Project } from "@/lib/types";
-import { SEED_NEWS, SEED_PROJECTS } from "@/lib/seed";
 
-/** Single place the site reads projects and news from. */
+/**
+ * Public readers. Results are cached under the "content" tag and refreshed
+ * by the admin actions (updateTag), so pages stay fast and still show edits at once.
+ */
 export async function getProjects(): Promise<Project[]> {
-  return SEED_PROJECTS;
+  "use cache";
+  cacheTag("content");
+  const { projects } = await loadContent();
+  return [...projects].sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false));
 }
 
 export async function getProject(id: string): Promise<Project | undefined> {
@@ -11,5 +18,8 @@ export async function getProject(id: string): Promise<Project | undefined> {
 }
 
 export async function getNews(): Promise<NewsItem[]> {
-  return [...SEED_NEWS].sort((a, b) => b.date.localeCompare(a.date));
+  "use cache";
+  cacheTag("content");
+  const { news } = await loadContent();
+  return [...news].sort((a, b) => b.date.localeCompare(a.date));
 }
