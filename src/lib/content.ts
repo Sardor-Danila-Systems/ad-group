@@ -45,6 +45,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'dirs.c.name': 'Строительство', 'dirs.c.text': 'Жилые и коммерческие комплексы под ключ: от проектирования до передачи ключей. Мы отвечаем за качество на каждом этапе.', 'dirs.c.i1': 'Проектирование и согласование', 'dirs.c.i2': 'Генподряд и строительство', 'dirs.c.i3': 'Технический надзор и контроль качества', 'dirs.c.i4': 'Благоустройство и инфраструктура', 'dirs.c.link': 'Смотреть проекты',
     'dirs.s.name': 'Сервис и услуги', 'dirs.s.sub': 'Рестораны и отели', 'dirs.s.text': 'Рестораны, отели и сервис для жителей и гостей наших комплексов: единый стандарт гостеприимства и заботы.', 'dirs.s.i1': 'Рестораны и кафе', 'dirs.s.i2': 'Отели и апарт-отели', 'dirs.s.i3': 'Управление коммерческой недвижимостью', 'dirs.s.i4': 'Консьерж-сервис и эксплуатация',
     'dirs.l.name': 'Логистика', 'dirs.l.text': 'Доставка и хранение для строек и партнёров: надёжные сроки и прозрачные условия.', 'dirs.l.i1': 'Перевозка строительных материалов', 'dirs.l.i2': 'Складская логистика и хранение', 'dirs.l.i3': 'Таможенное оформление', 'dirs.l.i4': 'Собственный автопарк',
+    'nav.vacancies': 'Вакансии',
     'cur.suffix': 'сум', 'price.from': 'от'
   },
   uz: {
@@ -89,6 +90,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'dirs.c.name': 'Qurilish', 'dirs.c.text': 'Turar-joy va tijorat majmualari kalit topshirish asosida: loyihalashdan kalitni topshirishgacha. Har bir bosqichda sifat uchun javob beramiz.', 'dirs.c.i1': 'Loyihalash va kelishish', 'dirs.c.i2': 'Bosh pudrat va qurilish', 'dirs.c.i3': 'Texnik nazorat va sifat nazorati', 'dirs.c.i4': 'Obodonlashtirish va infratuzilma', 'dirs.c.link': 'Loyihalarni ko‘rish',
     'dirs.s.name': 'Servis va xizmatlar', 'dirs.s.sub': 'Restoranlar va mehmonxonalar', 'dirs.s.text': 'Majmualarimiz yashovchilari va mehmonlari uchun restoranlar, mehmonxonalar va servis: mehmondo‘stlik va g‘amxo‘rlikning yagona standarti.', 'dirs.s.i1': 'Restoranlar va kafelar', 'dirs.s.i2': 'Mehmonxonalar va apart-mehmonxonalar', 'dirs.s.i3': 'Tijorat ko‘chmas mulkini boshqarish', 'dirs.s.i4': 'Konsyerj-servis va ekspluatatsiya',
     'dirs.l.name': 'Logistika', 'dirs.l.text': 'Qurilishlar va hamkorlar uchun yetkazib berish va saqlash: ishonchli muddatlar va shaffof shartlar.', 'dirs.l.i1': 'Qurilish materiallarini tashish', 'dirs.l.i2': 'Ombor logistikasi va saqlash', 'dirs.l.i3': 'Bojxona rasmiylashtiruvi', 'dirs.l.i4': 'O‘z avtoparki',
+    'nav.vacancies': 'Vakansiyalar',
     'cur.suffix': 'so‘m', 'price.from': 'dan'
   },
   en: {
@@ -133,6 +135,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'dirs.c.name': 'Construction', 'dirs.c.text': 'Residential and commercial complexes turnkey, from design to handing over the keys. We own quality at every stage.', 'dirs.c.i1': 'Design and approvals', 'dirs.c.i2': 'General contracting and building', 'dirs.c.i3': 'Technical supervision and quality control', 'dirs.c.i4': 'Landscaping and infrastructure', 'dirs.c.link': 'View projects',
     'dirs.s.name': 'Service and hospitality', 'dirs.s.sub': 'Restaurants and hotels', 'dirs.s.text': 'Restaurants, hotels and services for residents and guests of our complexes: one standard of hospitality and care.', 'dirs.s.i1': 'Restaurants and cafés', 'dirs.s.i2': 'Hotels and apart-hotels', 'dirs.s.i3': 'Commercial property management', 'dirs.s.i4': 'Concierge and facility operations',
     'dirs.l.name': 'Logistics', 'dirs.l.text': 'Delivery and storage for construction sites and partners: reliable timing and transparent terms.', 'dirs.l.i1': 'Construction materials transport', 'dirs.l.i2': 'Warehouse logistics and storage', 'dirs.l.i3': 'Customs clearance', 'dirs.l.i4': 'Own vehicle fleet',
+    'nav.vacancies': 'Careers',
     'cur.suffix': 'UZS', 'price.from': 'from'
   }
 };

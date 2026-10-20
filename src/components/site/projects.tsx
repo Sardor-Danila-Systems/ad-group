@@ -22,6 +22,9 @@ const FILTERS = [
 export function Projects({ projects }: { projects: Project[] }) {
   const { t, lang } = useSite();
   const [filter, setFilter] = useState<(typeof FILTERS)[number][0]>("all");
+  // Offer only filters that actually narrow the list.
+  const counts = { residential: projects.filter((p) => p.cat === "residential").length, commercial: projects.filter((p) => p.cat === "commercial").length, done: projects.filter((p) => p.status === "done").length };
+  const options = FILTERS.filter(([v]) => v === "all" || (counts[v] > 0 && counts[v] < projects.length));
   const list = projects.filter((p) => filter === "all" || p.cat === filter || (filter === "done" && p.status === "done"));
 
   return (
@@ -29,13 +32,13 @@ export function Projects({ projects }: { projects: Project[] }) {
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
         <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-5">
           <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight">{t("projects.title")}</h2>
-          <ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} className="flex-wrap" spacing={2}>
-            {FILTERS.map(([v, k]) => (
+          {options.length > 1 && <ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} className="flex-wrap" spacing={2}>
+            {options.map(([v, k]) => (
               <ToggleGroupItem key={v} value={v} className="h-10 rounded-full border border-gold/40 px-5 text-sm font-medium text-ink/80 data-[state=on]:border-ink data-[state=on]:bg-ink data-[state=on]:text-paper">
                 {t(k)}
               </ToggleGroupItem>
             ))}
-          </ToggleGroup>
+          </ToggleGroup>}
         </Reveal>
 
         <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))]">

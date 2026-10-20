@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { HiOutlineGlobeAlt } from "react-icons/hi2";
 import { LuCheck, LuMenu } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useSite } from "@/components/site/site-provider";
 import type { Lang } from "@/lib/types";
@@ -16,8 +16,8 @@ const NAV = [
   { href: "/#projects", key: "nav.projects" },
   { href: "/directions", key: "nav.directions" },
   { href: "/#about", key: "nav.about" },
-  { href: "/projects/vatan", key: "Vatan" },
   { href: "/#calculator", key: "nav.invest", wide: true },
+  { href: "/vacancies", key: "nav.vacancies" },
   { href: "/#news", key: "nav.news" },
   { href: "/#contacts", key: "nav.contacts" },
 ];
@@ -40,7 +40,7 @@ export function Header() {
     return () => window.removeEventListener("scroll", on);
   }, []);
 
-  const label = (k: string) => (k === "Vatan" ? k : t(k));
+  const label = (k: string) => t(k);
 
   return (
     <header
@@ -68,8 +68,7 @@ export function Header() {
                 <span className="text-xs font-semibold uppercase">{lang}</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-44 rounded-2xl border-gold/20 bg-paper p-1.5">
-              <DropdownMenuLabel className="px-3 py-1.5 text-xs font-medium tracking-wider text-muted-foreground uppercase">{t("lang.label")}</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="min-w-40 rounded-2xl border-gold/20 bg-paper p-1.5">
               {LANGS.map((l) => (
                 <DropdownMenuItem key={l.code} onSelect={() => setLang(l.code)} className="cursor-pointer justify-between rounded-xl px-3 py-2.5 text-[15px] focus:bg-gold/10">
                   {l.name}
