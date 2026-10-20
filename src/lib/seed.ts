@@ -1,4 +1,4 @@
-import type { GalleryPhoto, L10n, NewsItem, Project } from "@/lib/types";
+import type { GalleryPhoto, L10n, NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
 const l = (ru: string, uz: string, en: string): L10n => ({ ru, uz, en });
 const ph = (n: number, w: number, h: number, alt: L10n): GalleryPhoto => ({ src: `/vatan/${String(n).padStart(2, "0")}.jpg`, w, h, alt });
@@ -25,9 +25,22 @@ const VATAN_GALLERY: GalleryPhoto[] = [
   ph(18, 2000, 1115, l("Зона отдыха у бассейна", "Basseyn yonidagi dam olish zonasi", "Poolside lounge")),
 ];
 
+const urgut = (n: number, w: number, h: number, alt: L10n): GalleryPhoto => ({ src: `/urgut/${String(n).padStart(2, "0")}.jpg`, w, h, alt });
+
+const URGUT_GALLERY: GalleryPhoto[] = [
+  urgut(1, 1500, 1323, l("Дом с волнообразным фасадом", "To‘lqinsimon jabhali uy", "The building with its wave-shaped facade")),
+  urgut(2, 1500, 1323, l("Фасад, вид с угла", "Jabha, burchakdan ko‘rinish", "Facade from the corner")),
+  urgut(3, 2000, 1765, l("Фасад, вид спереди", "Jabha, old tomondan ko‘rinish", "Front facade")),
+  urgut(4, 1500, 1323, l("Торговая галерея на улице", "Ko‘chadagi savdo galereyasi", "Retail gallery on the street")),
+  urgut(5, 2000, 1126, l("Витрины первого этажа", "Birinchi qavat vitrinalari", "Ground-floor shopfronts")),
+  urgut(6, 2000, 1126, l("Угол дома и въезд в паркинг", "Uy burchagi va avtoturargohga kirish", "Corner of the building and parking entrance")),
+  urgut(7, 2000, 1126, l("Вид сверху", "Yuqoridan ko‘rinish", "View from above")),
+  urgut(8, 2000, 1126, l("Вид сверху: двор и окружение", "Yuqoridan: hovli va atrof", "View from above: courtyard and surroundings")),
+];
+
 /**
- * Initial content. Vatan Residence figures come from the official catalog;
- * every other project, the dates and the news are placeholders.
+ * Initial content, written to data/content.json on first run. Vatan Residence figures come from the
+ * official catalog; Urgut Tower text is derived from its renders. Dates, vacancies and news are placeholders.
  */
 export const SEED_PROJECTS: Project[] = [
   {
@@ -36,6 +49,8 @@ export const SEED_PROJECTS: Project[] = [
     status: "build",
     kind: "vatan",
     cover: "/vatan/08.jpg",
+    logo: "/assets/logo-vatan.png",
+    tagline: l("Постройте будущее на прочном фундаменте", "Kelajagingizni mustahkam poydevor ustiga quring", "Build your future on a solid foundation"),
     featured: true,
     gallery: VATAN_GALLERY,
     name: l("Vatan Residence", "Vatan Residence", "Vatan Residence"),
@@ -46,6 +61,7 @@ export const SEED_PROJECTS: Project[] = [
       "Vatan Residence is a carefully planned residential complex in Samarkand: 8 blocks of 16 floors, modern architecture with a national ornament, a retail gallery with boutiques and restaurants on the ground floors, a fitness centre, pedestrian streets, landscaped courtyards and a rooftop terrace with a pool. Designed together with the UNIVER PRO STYLE architecture studio.",
     ),
     facts: [
+      { label: l("Застройщик", "Quruvchi", "Developer"), value: "AD Group" },
       { label: l("Общая площадь", "Umumiy maydon", "Total area"), value: "14 015 m²" },
       { label: l("Площадь участка", "Qurilish maydoni", "Land area"), value: "3 998 m²" },
       { label: l("Квартир", "Xonadon", "Apartments"), value: "641" },
@@ -53,7 +69,6 @@ export const SEED_PROJECTS: Project[] = [
       { label: l("Этажей", "Qavat", "Floors"), value: "16" },
       { label: l("Парковочных мест", "Avtoturargoh", "Parking spaces"), value: "246" },
       { label: l("Озеленение", "Yashil hudud", "Green area"), value: "4 204 m²" },
-      { label: l("Жителей", "Yashovchilar", "Residents"), value: "2 243+" },
     ],
     features: [
       l("Smart-технологии: умный замок и климат-контроль", "Smart-texnologiyalar: aqlli qulf va iqlim nazorati", "Smart technology: smart lock and climate control"),
@@ -61,21 +76,103 @@ export const SEED_PROJECTS: Project[] = [
       l("Подземный паркинг и озеленённые дворы", "Yerosti avtoturargohi va obod hovlilar", "Underground parking and landscaped courtyards"),
     ],
   },
-  { id: "tower", cat: "commercial", status: "build", year: 2027, kind: "tower", gallery: [], facts: [], features: [],
-    name: l("AD Tower", "AD Tower", "AD Tower"), desc: l("Бизнес-башня класса A", "A klassli biznes-minora", "Class A business tower") },
-  { id: "garden", cat: "residential", status: "done", year: 2024, kind: "slab", gallery: [], facts: [], features: [],
-    name: l("AD Garden", "AD Garden", "AD Garden"), desc: l("Жилой квартал с парком", "Bog‘li turar-joy kvartali", "Residential quarter with a park") },
-  { id: "park", cat: "commercial", status: "done", year: 2023, kind: "blocks", gallery: [], facts: [], features: [],
-    name: l("AD Business Park", "AD Business Park", "AD Business Park"), desc: l("Офисы и сервисные площади", "Ofis va xizmat maydonlari", "Offices and service space") },
-  { id: "sky", cat: "residential", status: "plan", year: 2028, kind: "stepped", gallery: [], facts: [], features: [],
-    name: l("AD Sky", "AD Sky", "AD Sky"), desc: l("Высотный жилой комплекс", "Ko‘p qavatli turar-joy majmuasi", "High-rise residential complex") },
-  { id: "plaza", cat: "commercial", status: "done", year: 2022, kind: "blocks", gallery: [], facts: [], features: [],
-    name: l("AD Plaza", "AD Plaza", "AD Plaza"), desc: l("Торговый центр с офисной частью", "Ofis qismli savdo markazi", "Shopping centre with offices") },
+  {
+    id: "urgut-tower",
+    cat: "residential",
+    status: "build",
+    kind: "tower",
+    cover: "/urgut/01.jpg",
+    logo: "/urgut/logo.jpg",
+    gallery: URGUT_GALLERY,
+    name: l("Urgut Tower", "Urgut Tower", "Urgut Tower"),
+    desc: l("Жилой дом с торговой галереей на первом этаже", "Birinchi qavatida savdo galereyasi bor turar-joy uyi", "Residential building with a retail gallery on the ground floor"),
+    long: l(
+      "Urgut Tower — жилой дом от AD Express (AD Group) с волнообразным фасадом, остеклёнными балконами с деревянной подшивкой и торговой галереей на первом этаже. Во дворе детская площадка, въезд в подземный паркинг организован со стороны улицы.",
+      "Urgut Tower — AD Express (AD Group) qurgan, to‘lqinsimon jabhali, yog‘och ostli oynalangan balkonlari va birinchi qavatida savdo galereyasi bor turar-joy uyi. Hovlida bolalar maydonchasi, yerosti avtoturargohiga kirish ko‘cha tomonidan.",
+      "Urgut Tower is a residential building by AD Express (AD Group) with a wave-shaped facade, glazed balconies with timber soffits and a retail gallery on the ground floor. There is a playground in the courtyard and an underground parking entrance from the street.",
+    ),
+    facts: [{ label: l("Застройщик", "Quruvchi", "Developer"), value: "AD Express" }],
+    features: [
+      l("Торговая галерея на первом этаже", "Birinchi qavatda savdo galereyasi", "Retail gallery on the ground floor"),
+      l("Подземный паркинг", "Yerosti avtoturargohi", "Underground parking"),
+      l("Остеклённые балконы с озеленением", "Oynalangan va ko‘kalamzor balkonlar", "Glazed balconies with planting"),
+      l("Детская площадка во дворе", "Hovlida bolalar maydonchasi", "Playground in the courtyard"),
+    ],
+  },
 ];
 
 export const SEED_NEWS: NewsItem[] = [
-  { id: "n1", date: "2026-10-02", title: l('Заложен фундамент Vatan Residence', 'Vatan Residence poydevori qo‘yildi', 'Foundation laid for Vatan Residence'), text: l('Началось строительство первой очереди комплекса.', 'Majmuaning birinchi navbati qurilishi boshlandi.', 'Construction of the first phase has begun.') },
-  { id: "n2", date: "2026-09-18", title: l('Открыт набор на вакансии', 'Vakansiyalar uchun qabul ochildi', 'New vacancies open'), text: l('Ищем инженеров, прорабов и менеджеров по продажам.', 'Muhandislar, prorablar va sotuv menejerlari izlanmoqda.', 'Hiring engineers, site managers and sales managers.') },
-  { id: "n3", date: "2026-08-25", title: l('Новый фирменный стиль AD Group', 'AD Group yangi firma uslubi', 'New AD Group identity'), text: l('Монограмма AD и геометрический паттерн из буквы A.', 'AD monogrammasi va A harfidan olingan geometrik pattern.', 'The AD monogram and a geometric pattern built from the letter A.') },
-  { id: "n4", date: "2026-07-10", title: l('AD Business Park: 100% аренды', 'AD Business Park: 100% ijara', 'AD Business Park: fully leased'), text: l('Все офисные площади нашли арендаторов.', 'Barcha ofis maydonlari ijarachilarini topdi.', 'All office space now has tenants.') },
+  { id: "n1", date: "2026-10-14", title: l("Готов каталог Vatan Residence", "Vatan Residence katalogi tayyor", "Vatan Residence catalog is ready"), text: l("84 страницы о концепции, планировках и инфраструктуре комплекса.", "Majmuaning kontseptsiyasi, rejalari va infratuzilmasi haqida 84 sahifa.", "84 pages on the concept, layouts and infrastructure of the complex.") },
+  { id: "n2", date: "2026-10-20", title: l("Новый проект: Urgut Tower", "Yangi loyiha: Urgut Tower", "New project: Urgut Tower"), text: l("Жилой дом с торговой галереей от AD Express.", "AD Express’dan savdo galereyali turar-joy uyi.", "A residential building with a retail gallery by AD Express.") },
+  { id: "n3", date: "2026-08-25", title: l("Новый фирменный стиль AD Group", "AD Group yangi firma uslubi", "New AD Group identity"), text: l("Монограмма AD и геометрический паттерн из буквы A.", "AD monogrammasi va A harfidan olingan geometrik pattern.", "The AD monogram and a geometric pattern built from the letter A.") },
 ];
+
+const vac = (id: string, title: L10n, summary: L10n, reqs: L10n[]): Vacancy => ({
+  id,
+  title,
+  dept: l("Строительство", "Qurilish", "Construction"),
+  city: l("Самарканд", "Samarqand", "Samarkand"),
+  type: "full",
+  summary,
+  requirements: reqs,
+  open: true,
+  createdAt: "2026-10-20T09:00:00.000Z",
+});
+
+/** Placeholders so the page has a shape; replace them in the admin panel. */
+export const SEED_VACANCIES: Vacancy[] = [
+  vac(
+    "site-engineer",
+    l("Инженер-строитель", "Qurilish muhandisi", "Site engineer"),
+    l("Ведение объекта, контроль графика и качества работ на жилом комплексе.", "Turar-joy majmuasida obyektni yuritish, jadval va ish sifatini nazorat qilish.", "Running a site, controlling schedule and quality of works on a residential complex."),
+    [l("Высшее строительное образование", "Oliy qurilish ma’lumoti", "Higher education in civil engineering"), l("Опыт на монолитных объектах от 3 лет", "Monolit obyektlarda 3 yildan ortiq tajriba", "3+ years on cast-in-place sites"), l("Умение читать чертежи и вести документацию", "Chizmalarni o‘qish va hujjat yuritish ko‘nikmasi", "Able to read drawings and keep documentation")],
+  ),
+  {
+    ...vac(
+      "sales-manager",
+      l("Менеджер по продажам", "Sotuv menejeri", "Sales manager"),
+      l("Консультации клиентов по квартирам и коммерческим помещениям, сопровождение сделки.", "Mijozlarga xonadonlar va tijorat maydonlari bo‘yicha maslahat, bitimni qo‘llab-quvvatlash.", "Advising clients on apartments and commercial space and guiding the deal."),
+      [l("Опыт продаж недвижимости приветствуется", "Ko‘chmas mulk sotuvi tajribasi afzal", "Real estate sales experience is a plus"), l("Грамотная речь на русском и узбекском", "Rus va o‘zbek tillarida ravon nutq", "Fluent Russian and Uzbek"), l("Ориентация на результат", "Natijaga yo‘nalganlik", "Result orientation")],
+    ),
+    dept: l("Продажи", "Sotuv", "Sales"),
+  },
+  {
+    ...vac(
+      "site-foreman",
+      l("Прораб", "Prorab", "Site foreman"),
+      l("Организация работ бригад на объекте, приёмка работ, соблюдение техники безопасности.", "Obyektda brigadalar ishini tashkil etish, ishlarni qabul qilish, xavfsizlik texnikasiga rioya.", "Organising crews on site, accepting works and enforcing safety rules."),
+      [l("Опыт работы прорабом от 5 лет", "Prorab sifatida 5 yildan ortiq tajriba", "5+ years as a foreman"), l("Знание технологий отделочных и монолитных работ", "Pardozlash va monolit ishlar texnologiyalarini bilish", "Knowledge of finishing and cast-in-place works"), l("Готовность к работе на объекте", "Obyektda ishlashga tayyorlik", "Ready to work on site")],
+    ),
+  },
+];
+
+export const SEED_SETTINGS: Settings = {
+  founder: {
+    name: l("Имя Фамилия", "Ism Familiya", "Full Name"),
+    role: l("Основатель AD Group", "AD Group asoschisi", "Founder of AD Group"),
+    quote: l(
+      "Дом — это не просто стены. Здесь начинается чья-то жизнь. Поэтому мы относимся серьёзно к каждой детали.",
+      "Uy — bu shunchaki devorlar emas. Bu yerda kimningdir hayoti boshlanadi. Shuning uchun biz har bir detalga jiddiy qaraymiz.",
+      "A home is not just walls. Someone’s life begins here. That is why we take every detail seriously.",
+    ),
+    p1: l(
+      "Мы создаём проекты, которые становятся частью городской среды. В каждом решении учитываем окружение, повседневную жизнь людей и их будущие потребности.",
+      "Biz shahar muhitining bir qismiga aylanadigan loyihalar yaratamiz. Har bir qarorda atrof-muhitni, odamlarning kundalik hayotini va kelajakdagi ehtiyojlarini hisobga olamiz.",
+      "We create projects that become part of the urban environment. In every decision we consider the surroundings, everyday life and future needs of people.",
+    ),
+    p2: l(
+      "Финансовый успех — естественный результат. Но наша цель — проекты, которые сохранят ценность на многие годы и будут полезны людям.",
+      "Moliyaviy muvaffaqiyat — tabiiy natija. Lekin bizning maqsadimiz — uzoq yillar qiymatini saqlaydigan va odamlarga foyda keltiradigan loyihalar.",
+      "Financial success is a natural result. But our real goal is projects that keep their value for many years and stay useful to people.",
+    ),
+    photo: "/team/founder.jpg",
+  },
+  contacts: {
+    phone: "+998 66 230 00 00",
+    email: "adgroup@gmail.com",
+    address: l("Самарканд, адрес — placeholder", "Samarqand, manzil — placeholder", "Samarkand, address — placeholder"),
+    hours: "09:00 – 18:00",
+    instagram: "vatan.residence",
+    telegram: "vatan_residence",
+  },
+};

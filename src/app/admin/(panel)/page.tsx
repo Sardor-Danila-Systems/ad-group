@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LuFileText, LuInbox, LuBuilding2 } from "react-icons/lu";
+import { LuBriefcase, LuBuilding2, LuFileText, LuInbox } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { listLeads, loadContent } from "@/lib/server/store";
 
@@ -8,12 +8,13 @@ export default async function AdminHome() {
   const cards = [
     { href: "/admin/projects", label: "ЖК и проекты", value: content.projects.length, Icon: LuBuilding2 },
     { href: "/admin/news", label: "Новости", value: content.news.length, Icon: LuFileText },
+    { href: "/admin/vacancies", label: "Вакансии", value: content.vacancies.length, Icon: LuBriefcase },
     { href: "/admin/leads", label: "Заявки", value: leads.length, Icon: LuInbox },
   ];
   return (
     <div className="grid gap-8">
       <h1 className="font-display text-4xl font-medium">Обзор</h1>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map(({ href, label, value, Icon }) => (
           <Link key={href} href={href} className="rounded-2xl border border-border bg-white p-5 transition-shadow hover:shadow-md">
             <Icon className="size-6 text-gold-deep" />

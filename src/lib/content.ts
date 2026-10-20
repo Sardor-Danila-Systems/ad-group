@@ -46,6 +46,8 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'dirs.s.name': 'Сервис и услуги', 'dirs.s.sub': 'Рестораны и отели', 'dirs.s.text': 'Рестораны, отели и сервис для жителей и гостей наших комплексов: единый стандарт гостеприимства и заботы.', 'dirs.s.i1': 'Рестораны и кафе', 'dirs.s.i2': 'Отели и апарт-отели', 'dirs.s.i3': 'Управление коммерческой недвижимостью', 'dirs.s.i4': 'Консьерж-сервис и эксплуатация',
     'dirs.l.name': 'Логистика', 'dirs.l.text': 'Доставка и хранение для строек и партнёров: надёжные сроки и прозрачные условия.', 'dirs.l.i1': 'Перевозка строительных материалов', 'dirs.l.i2': 'Складская логистика и хранение', 'dirs.l.i3': 'Таможенное оформление', 'dirs.l.i4': 'Собственный автопарк',
     'nav.vacancies': 'Вакансии',
+    'vac.eyebrow': 'Карьера', 'vac.title': 'Вакансии', 'vac.lead': 'Мы растим команду, которая строит города. Выберите вакансию и откликнитесь: ответим в течение нескольких рабочих дней.', 'vac.open': 'Открытые вакансии', 'vac.empty': 'Сейчас открытых вакансий нет. Отправьте отклик — свяжемся, когда появится подходящая роль.', 'vac.apply': 'Откликнуться', 'vac.requirements': 'Что важно', 'vac.apply.title': 'Отклик на вакансию', 'vac.apply.text': 'Оставьте контакты и расскажите о себе — рекрутер свяжется с вами.', 'vac.about': 'Расскажите о себе и опыте (необязательно)', 'vac.send': 'Отправить отклик', 'vac.general': 'Отправить резюме',
+    'vtype.full': 'Полная занятость', 'vtype.part': 'Частичная занятость', 'vtype.remote': 'Удалённо', 'vtype.contract': 'Контракт',
     'cur.suffix': 'сум', 'price.from': 'от'
   },
   uz: {
@@ -91,6 +93,8 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'dirs.s.name': 'Servis va xizmatlar', 'dirs.s.sub': 'Restoranlar va mehmonxonalar', 'dirs.s.text': 'Majmualarimiz yashovchilari va mehmonlari uchun restoranlar, mehmonxonalar va servis: mehmondo‘stlik va g‘amxo‘rlikning yagona standarti.', 'dirs.s.i1': 'Restoranlar va kafelar', 'dirs.s.i2': 'Mehmonxonalar va apart-mehmonxonalar', 'dirs.s.i3': 'Tijorat ko‘chmas mulkini boshqarish', 'dirs.s.i4': 'Konsyerj-servis va ekspluatatsiya',
     'dirs.l.name': 'Logistika', 'dirs.l.text': 'Qurilishlar va hamkorlar uchun yetkazib berish va saqlash: ishonchli muddatlar va shaffof shartlar.', 'dirs.l.i1': 'Qurilish materiallarini tashish', 'dirs.l.i2': 'Ombor logistikasi va saqlash', 'dirs.l.i3': 'Bojxona rasmiylashtiruvi', 'dirs.l.i4': 'O‘z avtoparki',
     'nav.vacancies': 'Vakansiyalar',
+    'vac.eyebrow': 'Karyera', 'vac.title': 'Vakansiyalar', 'vac.lead': 'Biz shaharlar quradigan jamoani o‘stiramiz. Vakansiyani tanlang va ariza qoldiring: bir necha ish kuni ichida javob beramiz.', 'vac.open': 'Ochiq vakansiyalar', 'vac.empty': 'Hozircha ochiq vakansiyalar yo‘q. Ariza yuboring — mos lavozim paydo bo‘lganda bog‘lanamiz.', 'vac.apply': 'Ariza qoldirish', 'vac.requirements': 'Muhim jihatlar', 'vac.apply.title': 'Vakansiyaga ariza', 'vac.apply.text': 'Kontaktlaringizni qoldiring va o‘zingiz haqingizda yozing — rekruter siz bilan bog‘lanadi.', 'vac.about': 'O‘zingiz va tajribangiz haqida (ixtiyoriy)', 'vac.send': 'Ariza yuborish', 'vac.general': 'Rezyume yuborish',
+    'vtype.full': 'To‘liq ish kuni', 'vtype.part': 'Qisman band', 'vtype.remote': 'Masofaviy', 'vtype.contract': 'Shartnoma',
     'cur.suffix': 'so‘m', 'price.from': 'dan'
   },
   en: {
@@ -136,6 +140,8 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'dirs.s.name': 'Service and hospitality', 'dirs.s.sub': 'Restaurants and hotels', 'dirs.s.text': 'Restaurants, hotels and services for residents and guests of our complexes: one standard of hospitality and care.', 'dirs.s.i1': 'Restaurants and cafés', 'dirs.s.i2': 'Hotels and apart-hotels', 'dirs.s.i3': 'Commercial property management', 'dirs.s.i4': 'Concierge and facility operations',
     'dirs.l.name': 'Logistics', 'dirs.l.text': 'Delivery and storage for construction sites and partners: reliable timing and transparent terms.', 'dirs.l.i1': 'Construction materials transport', 'dirs.l.i2': 'Warehouse logistics and storage', 'dirs.l.i3': 'Customs clearance', 'dirs.l.i4': 'Own vehicle fleet',
     'nav.vacancies': 'Careers',
+    'vac.eyebrow': 'Careers', 'vac.title': 'Careers', 'vac.lead': 'We grow a team that builds cities. Pick a role and apply: we reply within a few working days.', 'vac.open': 'Open positions', 'vac.empty': 'There are no open positions right now. Send an application and we will reach out when a suitable role appears.', 'vac.apply': 'Apply', 'vac.requirements': 'What matters', 'vac.apply.title': 'Apply for this role', 'vac.apply.text': 'Leave your contacts and tell us about yourself — a recruiter will get in touch.', 'vac.about': 'Tell us about yourself and your experience (optional)', 'vac.send': 'Send application', 'vac.general': 'Send your CV',
+    'vtype.full': 'Full-time', 'vtype.part': 'Part-time', 'vtype.remote': 'Remote', 'vtype.contract': 'Contract',
     'cur.suffix': 'UZS', 'price.from': 'from'
   }
 };

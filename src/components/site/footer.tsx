@@ -23,7 +23,7 @@ export function Cta() {
 }
 
 export function Footer() {
-  const { t } = useSite();
+  const { t, lang, contacts } = useSite();
   return (
     <footer id="contacts" className="bg-ink pt-[72px] pb-7 text-paper">
       <div className="mx-auto grid w-[min(1240px,100%-32px)] gap-12 md:w-[min(1240px,100%-48px)] md:grid-cols-[1.4fr_1fr_1fr]">
@@ -31,8 +31,8 @@ export function Footer() {
           <Image src="/assets/logo-ad-gold.png" alt="AD Group" width={160} height={26} className="h-[26px] w-auto" />
           <p className="mt-5 max-w-[32ch] text-paper/60">{t("footer.slogan")}</p>
           <div className="mt-6 flex gap-2.5">
-            <a href="https://instagram.com/vatan.residence" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid size-[42px] place-items-center rounded-full border border-gold/40 text-gold-light transition-colors hover:bg-gold hover:text-ink"><FaInstagram className="size-[18px]" /></a>
-            <a href="https://t.me/vatan_residence" target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="grid size-[42px] place-items-center rounded-full border border-gold/40 text-gold-light transition-colors hover:bg-gold hover:text-ink"><FaTelegramPlane className="size-[18px]" /></a>
+            <a href={`https://instagram.com/${contacts.instagram}`} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid size-[42px] place-items-center rounded-full border border-gold/40 text-gold-light transition-colors hover:bg-gold hover:text-ink"><FaInstagram className="size-[18px]" /></a>
+            <a href={`https://t.me/${contacts.telegram}`} target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="grid size-[42px] place-items-center rounded-full border border-gold/40 text-gold-light transition-colors hover:bg-gold hover:text-ink"><FaTelegramPlane className="size-[18px]" /></a>
           </div>
         </div>
         <Col title={t("footer.nav")}>
@@ -40,12 +40,14 @@ export function Footer() {
           <Link href="/directions">{t("nav.directions")}</Link>
           <Link href="/#about">{t("nav.about")}</Link>
           <Link href="/#calculator">{t("nav.invest")}</Link>
+          <Link href="/vacancies">{t("nav.vacancies")}</Link>
           <Link href="/#news">{t("nav.news")}</Link>
         </Col>
         <Col title={t("nav.contacts")}>
-          <a href="tel:+998662300000">+998 66 230 00 00</a>
-          <a href="mailto:adgroup@gmail.com">adgroup@gmail.com</a>
-          <span>{t("footer.addr")}</span>
+          <a href={`tel:${contacts.phone.replace(/[^\d+]/g, "")}`}>{contacts.phone}</a>
+          <a href={`mailto:${contacts.email}`}>{contacts.email}</a>
+          <span>{contacts.address[lang]}</span>
+          {contacts.hours && <span className="text-paper/55">{contacts.hours}</span>}
         </Col>
       </div>
       <div className="mx-auto mt-14 flex w-[min(1240px,100%-32px)] flex-wrap justify-between gap-3 border-t border-gold/20 pt-6 text-xs text-paper/45 md:w-[min(1240px,100%-48px)]">

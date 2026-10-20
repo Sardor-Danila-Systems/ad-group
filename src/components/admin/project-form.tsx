@@ -28,6 +28,7 @@ export function ProjectForm({ project }: { project?: Project }) {
           <p className="text-xs text-muted-foreground">Латиница, цифры и дефис. После создания изменить нельзя.</p>
         </div>
         <L10nInput label="Название" name="name" value={project?.name} required />
+        <L10nInput label="Слоган (заголовок большого блока на главной, необязательно)" name="tagline" value={project?.tagline} />
         <L10nInput label="Короткое описание (для карточки)" name="desc" value={project?.desc} />
         <L10nInput label="Подробное описание (для страницы проекта)" name="long" value={project?.long} multiline rows={5} />
       </Section>
@@ -78,6 +79,7 @@ export function ProjectForm({ project }: { project?: Project }) {
 
       <Section title="Фото" hint="Обложка используется на карточке, в первом экране страницы и на главной. Фото сжимаются и переводятся в WebP автоматически.">
         <ImageField label="Обложка" fileName="cover" currentName="coverCurrent" removeName="removeCover" current={project?.cover} />
+        <ImageField label="Логотип (необязательно)" fileName="logo" currentName="logoCurrent" removeName="removeLogo" current={project?.logo} />
         <div className="grid gap-2">
           <Label>Галерея</Label>
           <GalleryEditor name="gallery" fileName="newPhotos" initial={project?.gallery ?? []} />

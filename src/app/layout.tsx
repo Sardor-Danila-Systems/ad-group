@@ -4,7 +4,7 @@ import { Manrope, Playfair_Display } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { Preloader } from "@/components/site/preloader";
 import { SiteProvider } from "@/components/site/site-provider";
-import { getProjects } from "@/lib/content-source";
+import { getProjects, getSettings } from "@/lib/content-source";
 import "./globals.css";
 
 // Body: Manrope has full Cyrillic and Latin Extended, so Russian and Uzbek render in the same face.
@@ -30,7 +30,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { themeColor: "#F5F0E6" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const projects = (await getProjects()).map(({ id, name }) => ({ id, name }));
+  const [all, settings] = await Promise.all([getProjects(), getSettings()]);
+  const projects = all.map(({ id, name }) => ({ id, name }));
   return (
     <html
       lang="ru"
@@ -40,7 +41,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <Suspense fallback={null}>
           <Preloader />
         </Suspense>
-        <SiteProvider projects={projects}>
+        <SiteProvider projects={projects} contacts={settings.contacts}>
           {children}
           <Toaster />
         </SiteProvider>
