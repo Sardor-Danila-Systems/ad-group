@@ -41,6 +41,10 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'fact.area': 'Общая площадь', 'fact.land': 'Площадь участка', 'fact.units': 'Квартир', 'fact.blocks': 'Блоков', 'fact.floors': 'Этажей', 'fact.parking': 'Парковочных мест', 'fact.green': 'Озеленение', 'fact.residents': 'Жителей',
     'lang.label': 'Язык',
     'gallery.photos': 'фото', 'gallery.all': 'Все фото',
+    'dirs.eyebrow': 'AD Group', 'dirs.title': 'Направления', 'dirs.lead': 'AD Group — это не только строительство. Мы объединили несколько видов бизнеса в одну систему управления и один стандарт качества.', 'dirs.note': 'Тексты раздела — заглушки, реальные будут позже.', 'dirs.cta': 'Обсудить сотрудничество',
+    'dirs.c.name': 'Строительство', 'dirs.c.text': 'Жилые и коммерческие комплексы под ключ: от проектирования до передачи ключей. Мы отвечаем за качество на каждом этапе.', 'dirs.c.i1': 'Проектирование и согласование', 'dirs.c.i2': 'Генподряд и строительство', 'dirs.c.i3': 'Технический надзор и контроль качества', 'dirs.c.i4': 'Благоустройство и инфраструктура', 'dirs.c.link': 'Смотреть проекты',
+    'dirs.s.name': 'Сервис и услуги', 'dirs.s.sub': 'Рестораны и отели', 'dirs.s.text': 'Рестораны, отели и сервис для жителей и гостей наших комплексов: единый стандарт гостеприимства и заботы.', 'dirs.s.i1': 'Рестораны и кафе', 'dirs.s.i2': 'Отели и апарт-отели', 'dirs.s.i3': 'Управление коммерческой недвижимостью', 'dirs.s.i4': 'Консьерж-сервис и эксплуатация',
+    'dirs.l.name': 'Логистика', 'dirs.l.text': 'Доставка и хранение для строек и партнёров: надёжные сроки и прозрачные условия.', 'dirs.l.i1': 'Перевозка строительных материалов', 'dirs.l.i2': 'Складская логистика и хранение', 'dirs.l.i3': 'Таможенное оформление', 'dirs.l.i4': 'Собственный автопарк',
     'cur.suffix': 'сум', 'price.from': 'от'
   },
   uz: {
@@ -81,6 +85,10 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'fact.area': 'Umumiy maydon', 'fact.land': 'Qurilish maydoni', 'fact.units': 'Xonadon', 'fact.blocks': 'Blok', 'fact.floors': 'Qavat', 'fact.parking': 'Avtoturargoh', 'fact.green': 'Yashil hudud', 'fact.residents': 'Yashovchilar',
     'lang.label': 'Til',
     'gallery.photos': 'rasm', 'gallery.all': 'Barcha rasmlar',
+    'dirs.eyebrow': 'AD Group', 'dirs.title': 'Yo‘nalishlar', 'dirs.lead': 'AD Group — bu faqat qurilish emas. Biz bir nechta biznes turini yagona boshqaruv tizimi va yagona sifat standartiga birlashtirdik.', 'dirs.note': 'Bo‘lim matnlari — vaqtinchalik, haqiqiylari keyinroq.', 'dirs.cta': 'Hamkorlikni muhokama qilish',
+    'dirs.c.name': 'Qurilish', 'dirs.c.text': 'Turar-joy va tijorat majmualari kalit topshirish asosida: loyihalashdan kalitni topshirishgacha. Har bir bosqichda sifat uchun javob beramiz.', 'dirs.c.i1': 'Loyihalash va kelishish', 'dirs.c.i2': 'Bosh pudrat va qurilish', 'dirs.c.i3': 'Texnik nazorat va sifat nazorati', 'dirs.c.i4': 'Obodonlashtirish va infratuzilma', 'dirs.c.link': 'Loyihalarni ko‘rish',
+    'dirs.s.name': 'Servis va xizmatlar', 'dirs.s.sub': 'Restoranlar va mehmonxonalar', 'dirs.s.text': 'Majmualarimiz yashovchilari va mehmonlari uchun restoranlar, mehmonxonalar va servis: mehmondo‘stlik va g‘amxo‘rlikning yagona standarti.', 'dirs.s.i1': 'Restoranlar va kafelar', 'dirs.s.i2': 'Mehmonxonalar va apart-mehmonxonalar', 'dirs.s.i3': 'Tijorat ko‘chmas mulkini boshqarish', 'dirs.s.i4': 'Konsyerj-servis va ekspluatatsiya',
+    'dirs.l.name': 'Logistika', 'dirs.l.text': 'Qurilishlar va hamkorlar uchun yetkazib berish va saqlash: ishonchli muddatlar va shaffof shartlar.', 'dirs.l.i1': 'Qurilish materiallarini tashish', 'dirs.l.i2': 'Ombor logistikasi va saqlash', 'dirs.l.i3': 'Bojxona rasmiylashtiruvi', 'dirs.l.i4': 'O‘z avtoparki',
     'cur.suffix': 'so‘m', 'price.from': 'dan'
   },
   en: {
@@ -121,6 +129,10 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'fact.area': 'Total area', 'fact.land': 'Land area', 'fact.units': 'Apartments', 'fact.blocks': 'Blocks', 'fact.floors': 'Floors', 'fact.parking': 'Parking spaces', 'fact.green': 'Green area', 'fact.residents': 'Residents',
     'lang.label': 'Language',
     'gallery.photos': 'photos', 'gallery.all': 'All photos',
+    'dirs.eyebrow': 'AD Group', 'dirs.title': 'Directions', 'dirs.lead': 'AD Group is more than construction. We combined several businesses into one management system and one quality standard.', 'dirs.note': 'Section texts are placeholders, real ones will follow.', 'dirs.cta': 'Discuss cooperation',
+    'dirs.c.name': 'Construction', 'dirs.c.text': 'Residential and commercial complexes turnkey, from design to handing over the keys. We own quality at every stage.', 'dirs.c.i1': 'Design and approvals', 'dirs.c.i2': 'General contracting and building', 'dirs.c.i3': 'Technical supervision and quality control', 'dirs.c.i4': 'Landscaping and infrastructure', 'dirs.c.link': 'View projects',
+    'dirs.s.name': 'Service and hospitality', 'dirs.s.sub': 'Restaurants and hotels', 'dirs.s.text': 'Restaurants, hotels and services for residents and guests of our complexes: one standard of hospitality and care.', 'dirs.s.i1': 'Restaurants and cafés', 'dirs.s.i2': 'Hotels and apart-hotels', 'dirs.s.i3': 'Commercial property management', 'dirs.s.i4': 'Concierge and facility operations',
+    'dirs.l.name': 'Logistics', 'dirs.l.text': 'Delivery and storage for construction sites and partners: reliable timing and transparent terms.', 'dirs.l.i1': 'Construction materials transport', 'dirs.l.i2': 'Warehouse logistics and storage', 'dirs.l.i3': 'Customs clearance', 'dirs.l.i4': 'Own vehicle fleet',
     'cur.suffix': 'UZS', 'price.from': 'from'
   }
 };
