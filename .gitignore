@@ -45,3 +45,4 @@ next-env.d.ts
 
 # local content storage (projects, news, leads, uploads)
 /data/
+!.env.example
