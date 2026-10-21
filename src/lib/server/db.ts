@@ -19,8 +19,14 @@ export function __useDb(db: Db | undefined) {
 }
 
 function getPool() {
+  if (pool) return pool;
+  // Neon serves a publicly trusted certificate, so verify it. Taking sslmode out of the URL silences
+  // the pg warning about the meaning of "require" changing and keeps the behaviour explicit.
+  const url = new URL(process.env.DATABASE_URL ?? "");
+  const useSsl = url.searchParams.has("sslmode") && url.searchParams.get("sslmode") !== "disable";
+  url.searchParams.delete("sslmode");
   // One pool per server instance. Neon's pooled connection string (pgbouncer) keeps serverless fan-out cheap.
-  pool ??= new Pool({ connectionString: process.env.DATABASE_URL, max: 5, idleTimeoutMillis: 10_000, connectionTimeoutMillis: 15_000 });
+  pool = new Pool({ connectionString: url.toString(), ssl: useSsl ? { rejectUnauthorized: true } : undefined, max: 5, idleTimeoutMillis: 10_000, connectionTimeoutMillis: 15_000 });
   return pool;
 }
 
