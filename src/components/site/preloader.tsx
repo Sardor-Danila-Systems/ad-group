@@ -9,7 +9,7 @@ const MIN_MS = 1500;
 const OPEN_MS = 900;
 
 /**
- * Splash with the Vatan logo. Two marble curtains meet on a diagonal seam and
+ * Splash with the AD Group logo. Two marble curtains meet on a diagonal seam and
  * slide apart once the page has loaded. Server-rendered so nothing flashes beneath it.
  */
 export function Preloader() {
@@ -59,8 +59,8 @@ export function Preloader() {
       <div className={cn(curtain, "curtain-left duration-[900ms]", open && "-translate-x-full")} />
       <div className={cn(curtain, "curtain-right duration-[900ms]", open && "translate-x-full")} />
       <div className={cn("absolute inset-0 grid place-items-center transition-all duration-500", open && "scale-95 opacity-0")}>
-        <div className="flex w-[min(300px,72vw)] flex-col items-center gap-8">
-          <Image src="/assets/logo-vatan.png" alt="Vatan Residence" width={300} height={96} priority className="loader-logo h-auto w-full" />
+        <div className="flex w-[min(380px,78vw)] flex-col items-center gap-8">
+          <Image src="/assets/logo-ad-gold.png" alt="AD Group" width={420} height={63} priority className="loader-logo h-auto w-full" />
           <div className="h-px w-full overflow-hidden bg-gold/25">
             <div className="loader-bar h-full origin-left bg-gold" />
           </div>
