@@ -8,10 +8,10 @@ import { Director } from "@/components/site/director";
 import { Header } from "@/components/site/header";
 import { Reveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
-import type { Settings, Vacancy } from "@/lib/types";
+import type { Person, Vacancy } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export function VacanciesView({ vacancies, founder }: { vacancies: Vacancy[]; founder: Settings["founder"] }) {
+export function VacanciesView({ vacancies, ceo }: { vacancies: Vacancy[]; ceo: Person }) {
   const { t, lang, applyFor } = useSite();
   const [open, setOpen] = useState<string | null>(vacancies[0]?.id ?? null);
 
@@ -19,8 +19,8 @@ export function VacanciesView({ vacancies, founder }: { vacancies: Vacancy[]; fo
     <>
       <Header />
       <main>
-        {/* Founder first, same block as on the home page. */}
-        <Director founder={founder} className="pt-[calc(76px+clamp(48px,6vw,96px))]" />
+        {/* The CEO speaks first, in the same block style as the founder on the home page. */}
+        <Director founder={ceo} className="pt-[calc(76px+clamp(48px,6vw,96px))]" />
 
         <section id="open" className="bg-paper py-[clamp(64px,8vw,128px)]">
           <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">

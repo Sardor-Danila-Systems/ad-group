@@ -4,6 +4,7 @@ import { db } from "@/lib/server/db";
 import { isUploadName, processImage } from "@/lib/server/images";
 import type { Content, Store } from "@/lib/server/types";
 import { SEED_NEWS, SEED_PROJECTS, SEED_SETTINGS, SEED_VACANCIES } from "@/lib/seed";
+import { upgradeSettings } from "@/lib/settings-upgrade";
 import type { Lead, NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
 /**
@@ -38,9 +39,15 @@ function ensure(): Promise<void> {
     await db.tx(async (q) => {
       const claimed = await q("insert into meta (key, value) values ('seeded', '1') on conflict (key) do nothing returning key");
       if (claimed.rowCount === 0) return;
-      for (const p of SEED_PROJECTS) await q("insert into projects (id, data) values ($1, $2) on conflict (id) do nothing", [p.id, JSON.stringify(p)]);
-      for (const n of SEED_NEWS) await q("insert into news (id, data) values ($1, $2) on conflict (id) do nothing", [n.id, JSON.stringify(n)]);
-      for (const v of SEED_VACANCIES) await q("insert into vacancies (id, data) values ($1, $2) on conflict (id) do nothing", [v.id, JSON.stringify(v)]);
+      // Explicit one-millisecond steps keep the seed order stable even when the clock does not tick between inserts.
+      const seed = async (table: "projects" | "news" | "vacancies", items: { id: string }[]) => {
+        for (const [i, item] of items.entries()) {
+          await q(`insert into ${table} (id, data, created_at) values ($1, $2, clock_timestamp() + $3 * interval '1 millisecond') on conflict (id) do nothing`, [item.id, JSON.stringify(item), i]);
+        }
+      };
+      await seed("projects", SEED_PROJECTS);
+      await seed("news", SEED_NEWS);
+      await seed("vacancies", SEED_VACANCIES);
       await q("insert into settings (id, data) values (1, $1) on conflict (id) do nothing", [JSON.stringify(SEED_SETTINGS)]);
     });
   })().catch((e) => {
@@ -66,7 +73,11 @@ export async function loadContent(): Promise<Content> {
     docs<Vacancy>("vacancies"),
     db.query<{ data: Settings }>("select data from settings where id = 1"),
   ]);
-  return { version: 2, projects, news, vacancies, settings: settings.rows[0]?.data ?? structuredClone(SEED_SETTINGS) };
+  const stored = settings.rows[0]?.data;
+  if (!stored) return { version: 2, projects, news, vacancies, settings: structuredClone(SEED_SETTINGS) };
+  const { settings: upgraded, changed } = upgradeSettings(stored);
+  if (changed) await db.query("update settings set data = $1 where id = 1", [JSON.stringify(upgraded)]); // persist the migration once
+  return { version: 2, projects, news, vacancies, settings: upgraded };
 }
 
 export async function removeUploads(srcs: (string | undefined)[]) {
@@ -112,9 +123,10 @@ export const pgStore: Store = {
   },
   async saveSettings(settings) {
     await ensure();
-    const old = (await db.query<{ data: Settings }>("select data from settings where id = 1")).rows[0]?.data.founder.photo;
+    const prev = (await db.query<{ data: Settings }>("select data from settings where id = 1")).rows[0]?.data;
+    const old = [prev?.founder?.photo, prev?.ceo?.photo];
     await db.query("insert into settings (id, data) values (1, $1) on conflict (id) do update set data = excluded.data", [JSON.stringify(settings)]);
-    if (old && old !== settings.founder.photo) await removeUploads([old]);
+    await removeUploads(old.filter((o) => o && o !== settings.founder.photo && o !== settings.ceo.photo));
   },
   async listLeads() {
     await ensure();

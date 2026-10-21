@@ -4,7 +4,7 @@ import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { assertAdmin, checkPassword, endSession, startSession, adminEnabled } from "@/lib/server/auth";
 import * as store from "@/lib/server/store";
-import type { Fact, GalleryPhoto, L10n, NewsItem, Project, ProjectKind, Settings, Status, Vacancy, VacancyType } from "@/lib/types";
+import type { Fact, GalleryPhoto, L10n, NewsItem, Person, Project, ProjectKind, Settings, Status, Vacancy, VacancyType } from "@/lib/types";
 
 export interface FormState {
   error?: string;
@@ -269,26 +269,35 @@ export async function deleteVacancy(fd: FormData) {
 
 /* ---------- settings ---------- */
 
-export async function saveSettings(_prev: FormState, fd: FormData): Promise<FormState> {
-  await assertAdmin();
-  const current = (await store.loadContent()).settings;
-  const name = l10n(fd, "fname", 80);
-  if (!name.ru) return { error: "Укажите имя руководителя (русский)." };
-
-  let photo = str(fd.get("photoCurrent"), 300) || undefined;
+/** Reads one person block (founder or CEO) whose form fields start with `prefix`. */
+async function readPerson(fd: FormData, prefix: string, current: Person): Promise<Person | { error: string }> {
+  const name = l10n(fd, `${prefix}name`, 80);
+  if (!name.ru) return { error: "Укажите имя (русский)." };
+  let photo = str(fd.get(`${prefix}photoCurrent`), 300) || undefined;
   try {
-    const [file] = uploads(fd, "photo");
+    const [file] = uploads(fd, `${prefix}photo`);
     if (file) photo = (await store.saveImage(file)).src;
-    else if (str(fd.get("removePhoto"), 2) === "1") photo = undefined;
+    else if (str(fd.get(`${prefix}removePhoto`), 2) === "1") photo = undefined;
   } catch (e) {
     return { error: uploadMessage(e) };
   }
-  // Only the stored photo may be kept; never trust a path coming from the form.
-  if (photo && photo !== current.founder.photo && !photo.startsWith("/uploads/")) photo = current.founder.photo;
+  // Only the stored photo or a fresh upload may be used; never trust a path coming from the form.
+  if (photo && photo !== current.photo && !photo.startsWith("/uploads/")) photo = current.photo;
+  return { name, role: l10n(fd, `${prefix}role`, 120), quote: l10n(fd, `${prefix}quote`, 400), p1: l10n(fd, `${prefix}p1`, 800), p2: l10n(fd, `${prefix}p2`, 800), photo };
+}
+
+export async function saveSettings(_prev: FormState, fd: FormData): Promise<FormState> {
+  await assertAdmin();
+  const current = (await store.loadContent()).settings;
+  const founder = await readPerson(fd, "f", current.founder);
+  if ("error" in founder) return { error: `Руководитель: ${founder.error}` };
+  const ceo = await readPerson(fd, "c", current.ceo);
+  if ("error" in ceo) return { error: `CEO: ${ceo.error}` };
 
   const handle = (v: FormDataEntryValue | null) => str(v, 60).replace(/^@/, "").replace(/[^\w.]/g, "");
   const settings: Settings = {
-    founder: { name, role: l10n(fd, "frole", 120), quote: l10n(fd, "fquote", 400), p1: l10n(fd, "fp1", 800), p2: l10n(fd, "fp2", 800), photo },
+    founder,
+    ceo,
     contacts: {
       phone: str(fd.get("phone"), 40),
       email: str(fd.get("email"), 120),
@@ -299,6 +308,6 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
     },
   };
   await store.saveSettings(settings);
-  refresh(["/", "/vacancies", "/admin/settings"]);
+  refresh(["/", "/vacancies", "/directions", "/admin/settings"]);
   return { saved: true };
 }

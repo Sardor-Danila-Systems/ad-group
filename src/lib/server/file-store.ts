@@ -5,6 +5,7 @@ import path from "node:path";
 import { isUploadName, processImage } from "@/lib/server/images";
 import type { Content, Store } from "@/lib/server/types";
 import { SEED_NEWS, SEED_PROJECTS, SEED_SETTINGS, SEED_VACANCIES } from "@/lib/seed";
+import { upgradeSettings } from "@/lib/settings-upgrade";
 import type { Lead, NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
 /**
@@ -54,7 +55,15 @@ async function readOrInit(): Promise<Content> {
   } catch (e) {
     if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
   }
-  if (existing?.version === CONTENT_VERSION) return existing as Content;
+  if (existing?.version === CONTENT_VERSION) {
+    const { settings, changed } = upgradeSettings((existing as Content).settings);
+    if (!changed) return existing as Content;
+    const upgraded = { ...(existing as Content), settings };
+    try {
+      await writeJson("content.json", upgraded);
+    } catch {}
+    return upgraded;
+  }
 
   if (existing) {
     // Older shape: keep a copy so nothing is lost, then start from the current seed.
@@ -136,10 +145,10 @@ export function deleteVacancy(id: string) {
 export function saveSettings(settings: Settings) {
   return exclusive(async () => {
     const c = await readOrInit();
-    const old = c.settings.founder.photo;
+    const old = [c.settings.founder.photo, c.settings.ceo?.photo];
     c.settings = settings;
     await writeJson("content.json", c);
-    if (old && old !== settings.founder.photo) await removeUploads([old]);
+    await removeUploads(old.filter((o) => o && o !== settings.founder.photo && o !== settings.ceo.photo));
   });
 }
 

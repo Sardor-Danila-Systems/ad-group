@@ -6,21 +6,33 @@ import { ImageField, L10nInput, Section } from "@/components/admin/fields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { Settings } from "@/lib/types";
+import type { Person, Settings } from "@/lib/types";
+
+/** Fields for one person block. `p` is the form-field prefix the server action reads. */
+function PersonFields({ p, person }: { p: "f" | "c"; person: Person }) {
+  return (
+    <>
+      <ImageField label="Фото" fileName={`${p}photo`} currentName={`${p}photoCurrent`} removeName={`${p}removePhoto`} current={person.photo} />
+      <L10nInput label="Имя" name={`${p}name`} value={person.name} required />
+      <L10nInput label="Должность" name={`${p}role`} value={person.role} />
+      <L10nInput label="Цитата" name={`${p}quote`} value={person.quote} multiline rows={3} />
+      <L10nInput label="Текст, абзац 1" name={`${p}p1`} value={person.p1} multiline rows={3} />
+      <L10nInput label="Текст, абзац 2" name={`${p}p2`} value={person.p2} multiline rows={3} />
+    </>
+  );
+}
 
 export function SettingsForm({ settings }: { settings: Settings }) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveSettings, {});
-  const { founder, contacts } = settings;
+  const { contacts } = settings;
   const field = "h-10 bg-white";
   return (
     <form action={action} className="grid gap-6">
-      <Section title="Руководитель" hint="Показывается на главной и на странице «Вакансии».">
-        <ImageField label="Фото" fileName="photo" currentName="photoCurrent" removeName="removePhoto" current={founder.photo} />
-        <L10nInput label="Имя" name="fname" value={founder.name} required />
-        <L10nInput label="Должность" name="frole" value={founder.role} />
-        <L10nInput label="Цитата" name="fquote" value={founder.quote} multiline rows={3} />
-        <L10nInput label="Текст, абзац 1" name="fp1" value={founder.p1} multiline rows={3} />
-        <L10nInput label="Текст, абзац 2" name="fp2" value={founder.p2} multiline rows={3} />
+      <Section title="Основатель" hint="Показывается на главной странице.">
+        <PersonFields p="f" person={settings.founder} />
+      </Section>
+      <Section title="Сооснователь и CEO" hint="Показывается на страницах «Вакансии» и «Направления».">
+        <PersonFields p="c" person={settings.ceo} />
       </Section>
       <Section title="Контакты" hint="Подвал сайта и ссылки на соцсети.">
         <div className="grid gap-4 sm:grid-cols-2">

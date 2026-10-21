@@ -9,5 +9,5 @@ export const metadata: Metadata = {
 
 export default async function VacanciesPage() {
   const [vacancies, settings] = await Promise.all([getVacancies(), getSettings()]);
-  return <VacanciesView vacancies={vacancies} founder={settings.founder} />;
+  return <VacanciesView vacancies={vacancies} ceo={settings.ceo} />;
 }

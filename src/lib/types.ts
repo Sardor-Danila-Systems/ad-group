@@ -72,15 +72,20 @@ export interface Vacancy {
   createdAt: string;
 }
 
+export interface Person {
+  name: L10n;
+  role: L10n;
+  quote: L10n;
+  p1: L10n;
+  p2: L10n;
+  photo?: string;
+}
+
 export interface Settings {
-  founder: {
-    name: L10n;
-    role: L10n;
-    quote: L10n;
-    p1: L10n;
-    p2: L10n;
-    photo?: string;
-  };
+  /** Shown on the home page. */
+  founder: Person;
+  /** Co-founder and CEO: shown on the Careers and Directions pages. */
+  ceo: Person;
   contacts: {
     phone: string;
     email: string;

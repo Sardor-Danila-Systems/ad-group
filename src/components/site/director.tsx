@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Reveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
-import type { Settings } from "@/lib/types";
+import type { Person } from "@/lib/types";
 
 function Quote({ className }: { className?: string }) {
   return (
@@ -13,14 +13,14 @@ function Quote({ className }: { className?: string }) {
   );
 }
 
-export function Director({ founder, className }: { founder: Settings["founder"]; className?: string }) {
+export function Director({ founder, className, reverse }: { founder: Person; className?: string; reverse?: boolean }) {
   const { lang } = useSite();
   return (
     <section className={`relative isolate overflow-hidden bg-ink py-[clamp(64px,8vw,112px)] text-paper ${className ?? ""}`}>
       <Image src="/vatan/06.jpg" alt="" fill sizes="100vw" className="-z-10 object-cover opacity-[0.12] grayscale" />
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/85 to-ink/70" />
-      <Reveal className="mx-auto grid w-[min(1240px,100%-32px)] items-start gap-10 md:w-[min(1240px,100%-48px)] lg:grid-cols-[minmax(0,420px)_1fr] lg:gap-16">
-        <div className="relative mx-auto w-full max-w-[420px] lg:mx-0">
+      <Reveal className={`mx-auto grid w-[min(1240px,100%-32px)] items-start gap-10 md:w-[min(1240px,100%-48px)] lg:gap-16 ${reverse ? "lg:grid-cols-[1fr_minmax(0,420px)]" : "lg:grid-cols-[minmax(0,420px)_1fr]"}`}>
+        <div className={`relative mx-auto w-full max-w-[420px] lg:mx-0 ${reverse ? "lg:order-2" : ""}`}>
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl ring-1 ring-gold/40">
             {founder.photo ? <Image src={founder.photo} alt={founder.name[lang]} fill sizes="(min-width: 1024px) 420px, 90vw" className="object-cover object-top" /> : <div className="size-full bg-ink-2" />}
           </div>
