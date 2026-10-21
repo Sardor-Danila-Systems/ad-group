@@ -1,4 +1,4 @@
-import type { GalleryPhoto, L10n, NewsItem, Project, Settings, Vacancy } from "@/lib/types";
+import type { GalleryPhoto, L10n, NewsItem, Person, Project, Settings, Vacancy } from "@/lib/types";
 
 const l = (ru: string, uz: string, en: string): L10n => ({ ru, uz, en });
 const ph = (n: number, w: number, h: number, alt: L10n): GalleryPhoto => ({ src: `/vatan/${String(n).padStart(2, "0")}.jpg`, w, h, alt });
@@ -146,27 +146,52 @@ export const SEED_VACANCIES: Vacancy[] = [
   },
 ];
 
+export const SEED_FOUNDER: Person = {
+  name: l("Асадов Азамат Нуриллаевич", "Asadov Azamat Nurillayevich", "Asadov Azamat Nurillayevich"),
+  role: l("Основатель AD Group", "AD Group asoschisi", "Founder of AD Group"),
+  quote: l(
+    "Дом — это не просто стены. Здесь начинается чья-то жизнь. Поэтому мы относимся серьёзно к каждой детали.",
+    "Uy — bu shunchaki devorlar emas. Bu yerda kimningdir hayoti boshlanadi. Shuning uchun biz har bir detalga jiddiy qaraymiz.",
+    "A home is not just walls. Someone’s life begins here. That is why we take every detail seriously.",
+  ),
+  p1: l(
+    "Мы создаём проекты, которые становятся частью городской среды. В каждом решении учитываем окружение, повседневную жизнь людей и их будущие потребности.",
+    "Biz shahar muhitining bir qismiga aylanadigan loyihalar yaratamiz. Har bir qarorda atrof-muhitni, odamlarning kundalik hayotini va kelajakdagi ehtiyojlarini hisobga olamiz.",
+    "We create projects that become part of the urban environment. In every decision we consider the surroundings, everyday life and future needs of people.",
+  ),
+  p2: l(
+    "Финансовый успех — естественный результат. Но наша цель — проекты, которые сохранят ценность на многие годы и будут полезны людям.",
+    "Moliyaviy muvaffaqiyat — tabiiy natija. Lekin bizning maqsadimiz — uzoq yillar qiymatini saqlaydigan va odamlarga foyda keltiradigan loyihalar.",
+    "Financial success is a natural result. But our real goal is projects that keep their value for many years and stay useful to people.",
+  ),
+  photo: "/team/founder.jpg",
+};
+
+/** Placeholder text for the CEO block: replace it in the admin panel. */
+export const SEED_CEO: Person = {
+  name: l("Саидов Акмаль Максудович", "Saidov Akmal Maqsudovich", "Saidov Akmal Maqsudovich"),
+  role: l("Сооснователь и CEO", "Hammuassis va CEO", "Co-founder and CEO"),
+  quote: l(
+    "Мы строим не просто здания, а среду, в которой людям хочется жить и работать.",
+    "Biz shunchaki binolar emas, odamlar yashashni va ishlashni xohlaydigan muhit quramiz.",
+    "We build not just buildings but an environment where people want to live and work.",
+  ),
+  p1: l(
+    "За каждым проектом стоит команда инженеров, архитекторов и строителей. Моя задача — чтобы сроки, качество и обещания перед клиентами всегда совпадали.",
+    "Har bir loyiha ortida muhandislar, arxitektorlar va quruvchilar jamoasi turadi. Mening vazifam — muddat, sifat va mijozlar oldidagi va’dalar doim mos kelishini ta’minlash.",
+    "Behind every project is a team of engineers, architects and builders. My job is to make sure deadlines, quality and our promises to clients always match.",
+  ),
+  p2: l(
+    "Мы открыты к сотрудничеству с партнёрами и инвесторами и всегда рады талантливым людям, которые хотят расти вместе с компанией.",
+    "Biz hamkorlar va investorlar bilan hamkorlikka ochiqmiz va kompaniya bilan birga o‘sishni istagan iqtidorli insonlardan doim xursandmiz.",
+    "We are open to partners and investors and always glad to meet talented people who want to grow with the company.",
+  ),
+  photo: "/team/ceo.jpg",
+};
+
 export const SEED_SETTINGS: Settings = {
-  founder: {
-    name: l("Имя Фамилия", "Ism Familiya", "Full Name"),
-    role: l("Основатель AD Group", "AD Group asoschisi", "Founder of AD Group"),
-    quote: l(
-      "Дом — это не просто стены. Здесь начинается чья-то жизнь. Поэтому мы относимся серьёзно к каждой детали.",
-      "Uy — bu shunchaki devorlar emas. Bu yerda kimningdir hayoti boshlanadi. Shuning uchun biz har bir detalga jiddiy qaraymiz.",
-      "A home is not just walls. Someone’s life begins here. That is why we take every detail seriously.",
-    ),
-    p1: l(
-      "Мы создаём проекты, которые становятся частью городской среды. В каждом решении учитываем окружение, повседневную жизнь людей и их будущие потребности.",
-      "Biz shahar muhitining bir qismiga aylanadigan loyihalar yaratamiz. Har bir qarorda atrof-muhitni, odamlarning kundalik hayotini va kelajakdagi ehtiyojlarini hisobga olamiz.",
-      "We create projects that become part of the urban environment. In every decision we consider the surroundings, everyday life and future needs of people.",
-    ),
-    p2: l(
-      "Финансовый успех — естественный результат. Но наша цель — проекты, которые сохранят ценность на многие годы и будут полезны людям.",
-      "Moliyaviy muvaffaqiyat — tabiiy natija. Lekin bizning maqsadimiz — uzoq yillar qiymatini saqlaydigan va odamlarga foyda keltiradigan loyihalar.",
-      "Financial success is a natural result. But our real goal is projects that keep their value for many years and stay useful to people.",
-    ),
-    photo: "/team/founder.jpg",
-  },
+  founder: SEED_FOUNDER,
+  ceo: SEED_CEO,
   contacts: {
     phone: "+998 66 230 00 00",
     email: "adgroup@gmail.com",

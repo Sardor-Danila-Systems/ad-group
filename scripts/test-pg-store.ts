@@ -79,6 +79,20 @@ await step("news, vacancies, settings", async () => {
   assert.equal((await s.loadContent()).settings.contacts.phone, "+998 90 111 22 33");
 });
 
+await step("old settings (no CEO, placeholder founder) are upgraded once and persisted", async () => {
+  const c = await s.loadContent();
+  const old = { founder: { ...c.settings.founder, name: { ru: "Имя Фамилия", uz: "Ism Familiya", en: "Full Name" } }, contacts: c.settings.contacts };
+  await pg.query("update settings set data = $1 where id = 1", [JSON.stringify(old)]);
+  const up = await s.loadContent();
+  assert.equal(up.settings.ceo.name.ru, "Саидов Акмаль Максудович");
+  assert.equal(up.settings.founder.name.ru, "Асадов Азамат Нуриллаевич");
+  const raw = (await pg.query<{ data: { ceo?: unknown } }>("select data from settings where id = 1")).rows[0].data;
+  assert.ok(raw.ceo, "migration was written back");
+  // A real edit must not be overwritten
+  await s.saveSettings({ ...up.settings, founder: { ...up.settings.founder, name: { ru: "Другой", uz: "Boshqa", en: "Other" } } });
+  assert.equal((await s.loadContent()).settings.founder.name.ru, "Другой");
+});
+
 await step("leads", async () => {
   await s.addLead({ name: "Тест", phone: "+998 90 000 00 00", interest: "Vatan", message: "m", source: "popup" });
   await s.addLead({ name: "Второй", phone: "+998 91 000 00 00", interest: "", message: "", source: "home" });
