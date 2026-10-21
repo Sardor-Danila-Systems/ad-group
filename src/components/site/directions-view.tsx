@@ -4,12 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { LuArrowDownRight, LuArrowRight } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
-import { Director } from "@/components/site/director";
 import { CookieBar, Cta, Footer, ToTop } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { Reveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
-import type { Person } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const DIRECTIONS = [
@@ -53,7 +51,7 @@ function RouteArt() {
   );
 }
 
-export function DirectionsView({ ceo }: { ceo: Person }) {
+export function DirectionsView() {
   const { t, openCall } = useSite();
 
   return (
@@ -141,7 +139,6 @@ export function DirectionsView({ ceo }: { ceo: Person }) {
         })}
 
         <p className="bg-paper pb-10 text-center text-[13px] text-muted-foreground">{t("dirs.note")}</p>
-        <Director founder={ceo} reverse />
         <Cta />
       </main>
       <Footer />

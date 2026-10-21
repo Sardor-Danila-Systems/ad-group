@@ -84,7 +84,7 @@ export interface Person {
 export interface Settings {
   /** Shown on the home page. */
   founder: Person;
-  /** Co-founder and CEO: shown on the Careers and Directions pages. */
+  /** Co-founder and CEO: shown on the Careers page. */
   ceo: Person;
   contacts: {
     phone: string;

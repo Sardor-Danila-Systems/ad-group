@@ -308,6 +308,6 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
     },
   };
   await store.saveSettings(settings);
-  refresh(["/", "/vacancies", "/directions", "/admin/settings"]);
+  refresh(["/", "/vacancies", "/admin/settings"]);
   return { saved: true };
 }
