@@ -31,7 +31,7 @@ export function SettingsForm({ settings }: { settings: Settings }) {
       <Section title="Основатель" hint="Показывается на главной странице.">
         <PersonFields p="f" person={settings.founder} />
       </Section>
-      <Section title="Сооснователь и CEO" hint="Показывается на страницах «Вакансии» и «Направления».">
+      <Section title="Сооснователь и CEO" hint="Показывается на странице «Вакансии».">
         <PersonFields p="c" person={settings.ceo} />
       </Section>
       <Section title="Контакты" hint="Подвал сайта и ссылки на соцсети.">
