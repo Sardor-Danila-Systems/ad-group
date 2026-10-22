@@ -9,6 +9,8 @@ import { BuildingArt } from "@/components/site/building-art";
 import { CookieBar, Cta, Footer, ToTop } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { ProjectGallery } from "@/components/site/project-gallery";
+import { VideoTour } from "@/components/site/video-tour";
+import { parseVideo } from "@/lib/video";
 import { Reveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
 import type { Project } from "@/lib/types";
@@ -93,6 +95,12 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
                   ))}
                 </dl>
               </Reveal>
+            )}
+
+            {parseVideo(project.video) && (
+              <div className="mt-[clamp(56px,7vw,104px)]">
+                <VideoTour url={project.video!} cover={project.cover} name={project.name[lang]} id={project.id} />
+              </div>
             )}
 
             {project.gallery.length > 0 && (

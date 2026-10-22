@@ -28,6 +28,8 @@ export interface Project {
   /** Short slogan used as the featured-block headline. Falls back to the name. */
   tagline?: L10n;
   gallery: GalleryPhoto[];
+  /** Video tour link: YouTube (unlisted), Vimeo or a direct .mp4/.webm file. */
+  video?: string;
   name: L10n;
   desc: L10n;
   long?: L10n;
