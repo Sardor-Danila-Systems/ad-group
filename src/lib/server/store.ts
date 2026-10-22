@@ -25,6 +25,6 @@ export const saveSettings: Store["saveSettings"] = (s) => impl().saveSettings(s)
 export const listLeads: Store["listLeads"] = () => impl().listLeads();
 export const addLead: Store["addLead"] = (l) => impl().addLead(l);
 export const deleteLead: Store["deleteLead"] = (id) => impl().deleteLead(id);
-export const saveImage: Store["saveImage"] = (f) => impl().saveImage(f);
+export const saveImage: Store["saveImage"] = (f, k) => impl().saveImage(f, k);
 export const removeUploads: Store["removeUploads"] = (s) => impl().removeUploads(s);
 export const readUpload: Store["readUpload"] = (n) => impl().readUpload(n);

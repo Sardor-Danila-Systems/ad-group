@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { saveProject, type FormState } from "@/actions/admin";
 import { FactsEditor, FeaturesEditor, GalleryEditor, ImageField, L10nInput, Section, selectClass } from "@/components/admin/fields";
+import { ShowroomEditor } from "@/components/admin/showroom-editor";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -89,8 +90,12 @@ export function ProjectForm({ project }: { project?: Project }) {
       <Section title="Видео-тур" hint="Загрузите видео на YouTube с доступом «Доступ по ссылке» (или на Vimeo) и вставьте ссылку. Подходит и прямая ссылка на файл .mp4. Оставьте пустым, чтобы раздела не было.">
         <div className="grid gap-2">
           <Label htmlFor="video">Ссылка на видео</Label>
-          <Input id="video" name="video" type="url" defaultValue={project?.video} placeholder="https://youtu.be/..." className="h-10 bg-white" />
+          <Input id="video" name="video" type="text" inputMode="url" autoComplete="off" defaultValue={project?.video} placeholder="https://youtu.be/..." className="h-10 bg-white" />
         </div>
+      </Section>
+
+      <Section title="3D-шоурум" hint="Интерактивный тур в стиле панорам: человек ходит по комнатам стрелками. Для каждой комнаты нужна панорама 360°. Комната №1 это вход. На странице проекта появится блок «Посмотреть шоурум».">
+        <ShowroomEditor name="showroom" initial={project?.showroom ?? []} />
       </Section>
 
       <Section title="Цифры" hint="Например: «641 — Квартир». Показываются сеткой на странице проекта.">
