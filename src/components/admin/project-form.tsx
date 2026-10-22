@@ -86,6 +86,13 @@ export function ProjectForm({ project }: { project?: Project }) {
         </div>
       </Section>
 
+      <Section title="Видео-тур" hint="Загрузите видео на YouTube с доступом «Доступ по ссылке» (или на Vimeo) и вставьте ссылку. Подходит и прямая ссылка на файл .mp4. Оставьте пустым, чтобы раздела не было.">
+        <div className="grid gap-2">
+          <Label htmlFor="video">Ссылка на видео</Label>
+          <Input id="video" name="video" type="url" defaultValue={project?.video} placeholder="https://youtu.be/..." className="h-10 bg-white" />
+        </div>
+      </Section>
+
       <Section title="Цифры" hint="Например: «641 — Квартир». Показываются сеткой на странице проекта.">
         <FactsEditor name="facts" initial={project?.facts ?? []} />
       </Section>

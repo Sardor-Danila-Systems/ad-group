@@ -2,6 +2,7 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import { parseVideo } from "@/lib/video";
 import { assertAdmin, checkPassword, endSession, startSession, adminEnabled } from "@/lib/server/auth";
 import * as store from "@/lib/server/store";
 import type { Fact, GalleryPhoto, L10n, NewsItem, Person, Project, ProjectKind, Settings, Status, Vacancy, VacancyType } from "@/lib/types";
@@ -147,6 +148,9 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
     .filter((f) => f.label.ru && f.value);
   const features: L10n[] = (jsonArray(fd, "features") as unknown[]).map(asL10n).filter((f) => f.ru);
 
+  const videoRaw = str(fd.get("video"), 500);
+  if (videoRaw && !parseVideo(videoRaw)) return { error: "Не удалось распознать ссылку на видео. Нужна ссылка YouTube, Vimeo или файл .mp4/.webm." };
+
   const longText = l10n(fd, "long", 4000);
   const project: Project = {
     id,
@@ -159,6 +163,7 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
     logo,
     tagline: l10n(fd, "tagline", 160).ru ? l10n(fd, "tagline", 160) : undefined,
     gallery,
+    video: videoRaw || undefined,
     name,
     desc: l10n(fd, "desc", 200),
     long: longText.ru ? longText : undefined,

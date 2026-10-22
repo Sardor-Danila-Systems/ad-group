@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ProjectGallery } from "@/components/site/project-gallery";
 import { Reveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
+import { parseVideo } from "@/lib/video";
 import type { Project } from "@/lib/types";
 
 export function Vatan({ project }: { project: Project }) {
@@ -30,6 +31,11 @@ export function Vatan({ project }: { project: Project }) {
             <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-gold bg-transparent px-7 text-[15px] font-semibold text-gold-deep hover:bg-gold/10 hover:text-gold-deep">
               <Link href={`/projects/${project.id}`}>{t("vatan.more")}</Link>
             </Button>
+            {parseVideo(project.video) && (
+              <Button asChild size="lg" variant="ghost" className="h-12 rounded-full px-5 text-[15px] font-semibold text-gold-deep hover:bg-gold/10 hover:text-gold-deep">
+                <Link href={`/projects/${project.id}#tour`}>{t("video.btn")}</Link>
+              </Button>
+            )}
           </div>
         </Reveal>
         <Reveal>
