@@ -50,6 +50,7 @@ export const SEED_PROJECTS: Project[] = [
     kind: "vatan",
     cover: "/vatan/08.jpg",
     logo: "/assets/logo-vatan.png",
+    video: "/video/vatan-showroom.mp4",
     tagline: l("Постройте будущее на прочном фундаменте", "Kelajagingizni mustahkam poydevor ustiga quring", "Build your future on a solid foundation"),
     featured: true,
     gallery: VATAN_GALLERY,

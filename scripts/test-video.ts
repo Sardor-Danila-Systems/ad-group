@@ -14,13 +14,14 @@ const ok: [string, unknown][] = [
   ["https://vimeo.com/123456789/abcdef1234", { kind: "vimeo", id: "123456789", hash: "abcdef1234" }],
   ["https://player.vimeo.com/video/123456789?h=abcdef1234", { kind: "vimeo", id: "123456789", hash: "abcdef1234" }],
   ["https://cdn.example.com/tours/vatan.mp4", { kind: "file", src: "https://cdn.example.com/tours/vatan.mp4" }],
+  ["/video/vatan-showroom.mp4", { kind: "file", src: "/video/vatan-showroom.mp4" }],
 ];
 for (const [input, expected] of ok) assert.deepEqual(parseVideo(input), expected, input);
 
 const bad = [
   "", "   ", "javascript:alert(1)", "http://youtu.be/dQw4w9WgXcQ", "https://evil.com/youtube.com/watch?v=dQw4w9WgXcQ",
   "https://youtube.com.evil.com/watch?v=dQw4w9WgXcQ", "https://www.youtube.com/watch?v=short", "https://example.com/page", "data:text/html,<script>1</script>",
-  "https://vimeo.com/channels/staffpicks", "https://example.com/video.mp4.html",
+  "https://vimeo.com/channels/staffpicks", "https://example.com/video.mp4.html", "/video/../secret.mp4", "/other/clip.mp4", "//evil.com/video/a.mp4", "/video/a/b.mp4",
 ];
 for (const input of bad) assert.equal(parseVideo(input), null, input);
 
