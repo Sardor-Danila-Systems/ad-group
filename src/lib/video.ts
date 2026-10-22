@@ -12,6 +12,10 @@ const YT_ID = /^[\w-]{11}$/;
 export function parseVideo(input: string | undefined | null): Video | null {
   const raw = (input ?? "").trim();
   if (!raw) return null;
+  // A video file that ships with the site itself (public/video/...).
+  if (/^\/video\/[\w.-]+\.(mp4|webm|mov)$/i.test(raw) && !raw.includes("..")) return { kind: "file", src: raw };
+  // Any other path-like input is rejected; otherwise "/x.mp4" would be read as the host "x.mp4".
+  if (/^[\\/]/.test(raw)) return null;
   let u: URL;
   try {
     u = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
