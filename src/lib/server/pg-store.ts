@@ -1,7 +1,7 @@
 import "server-only";
 import { randomBytes } from "node:crypto";
 import { db } from "@/lib/server/db";
-import { isUploadName, processImage } from "@/lib/server/images";
+import { isUploadName, processImage, type ImageKind } from "@/lib/server/images";
 import type { Content, Store } from "@/lib/server/types";
 import { SEED_NEWS, SEED_PROJECTS, SEED_SETTINGS, SEED_VACANCIES } from "@/lib/seed";
 import { upgradeSettings } from "@/lib/settings-upgrade";
@@ -87,8 +87,8 @@ export async function removeUploads(srcs: (string | undefined)[]) {
   await db.query("delete from uploads where name = any($1::text[])", [names]);
 }
 
-export async function saveImage(file: File): Promise<{ src: string; w: number; h: number }> {
-  const img = await processImage(file);
+export async function saveImage(file: File, kind: ImageKind = "photo"): Promise<{ src: string; w: number; h: number }> {
+  const img = await processImage(file, kind);
   await ensure();
   await db.query("insert into uploads (name, data, size) values ($1, $2, $3)", [img.name, img.data, img.data.length]);
   return { src: `/uploads/${img.name}`, w: img.w, h: img.h };
@@ -108,7 +108,7 @@ export const pgStore: Store = {
   async deleteProject(id) {
     await ensure();
     const old = (await db.query<{ data: Project }>("delete from projects where id = $1 returning data", [id])).rows[0]?.data;
-    if (old) await removeUploads([old.cover, old.logo, ...old.gallery.map((g) => g.src)]);
+    if (old) await removeUploads([old.cover, old.logo, ...old.gallery.map((g) => g.src), ...(old.showroom ?? []).map((sc) => sc.image)]);
   },
   saveNews: (n) => upsert("news", n.id, n),
   async deleteNews(id) {

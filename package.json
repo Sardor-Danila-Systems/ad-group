@@ -13,6 +13,10 @@
     "test:video": "tsx scripts/test-video.ts"
   },
   "dependencies": {
+    "@photo-sphere-viewer/core": "^5.15.1",
+    "@photo-sphere-viewer/gyroscope-plugin": "^5.15.1",
+    "@photo-sphere-viewer/markers-plugin": "^5.15.1",
+    "@photo-sphere-viewer/virtual-tour-plugin": "^5.15.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",

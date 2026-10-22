@@ -2,7 +2,7 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { isUploadName, processImage } from "@/lib/server/images";
+import { isUploadName, processImage, type ImageKind } from "@/lib/server/images";
 import type { Content, Store } from "@/lib/server/types";
 import { SEED_NEWS, SEED_PROJECTS, SEED_SETTINGS, SEED_VACANCIES } from "@/lib/seed";
 import { upgradeSettings } from "@/lib/settings-upgrade";
@@ -100,7 +100,7 @@ export function deleteProject(id: string) {
     const removed = c.projects.find((p) => p.id === id);
     c.projects = c.projects.filter((p) => p.id !== id);
     await writeJson("content.json", c);
-    if (removed) await removeUploads([removed.cover, removed.logo, ...removed.gallery.map((g) => g.src)]);
+    if (removed) await removeUploads([removed.cover, removed.logo, ...removed.gallery.map((g) => g.src), ...(removed.showroom ?? []).map((sc) => sc.image)]);
   });
 }
 
@@ -174,8 +174,8 @@ export function deleteLead(id: string) {
 
 /* ---------- uploads ---------- */
 
-export async function saveImage(file: File): Promise<{ src: string; w: number; h: number }> {
-  const img = await processImage(file);
+export async function saveImage(file: File, kind: ImageKind = "photo"): Promise<{ src: string; w: number; h: number }> {
+  const img = await processImage(file, kind);
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
   await fs.writeFile(path.join(/*turbopackIgnore: true*/ UPLOAD_DIR, img.name), img.data);
   return { src: `/uploads/${img.name}`, w: img.w, h: img.h };

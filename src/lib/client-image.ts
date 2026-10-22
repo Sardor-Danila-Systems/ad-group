@@ -33,3 +33,35 @@ export async function shrinkInput(input: HTMLInputElement) {
   shrunk.forEach((f) => dt.items.add(f));
   input.files = dt.files;
 }
+
+/**
+ * Shrinks one image until it fits a byte budget (for example a panorama under a host's request-size limit),
+ * lowering quality first and then resolution. Returns the original file if the browser cannot decode it.
+ */
+export async function fitImage(file: File, { maxSide, maxBytes }: { maxSide: number; maxBytes: number }): Promise<File> {
+  try {
+    const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    let scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+    let best: Blob | null = null;
+    for (let round = 0; round < 5; round++) {
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(bitmap.width * scale);
+      canvas.height = Math.round(bitmap.height * scale);
+      canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      for (const quality of [0.85, 0.76, 0.66]) {
+        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", quality));
+        if (!blob) continue;
+        best = blob;
+        if (blob.size <= maxBytes) {
+          bitmap.close();
+          return new File([blob], file.name.replace(/\.\w+$/, "") + ".webp", { type: "image/webp" });
+        }
+      }
+      scale *= 0.85;
+    }
+    bitmap.close();
+    return best ? new File([best], file.name.replace(/\.\w+$/, "") + ".webp", { type: "image/webp" }) : file;
+  } catch {
+    return file;
+  }
+}

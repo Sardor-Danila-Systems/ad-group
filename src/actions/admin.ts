@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { parseVideo } from "@/lib/video";
 import { assertAdmin, checkPassword, endSession, startSession, adminEnabled } from "@/lib/server/auth";
 import * as store from "@/lib/server/store";
-import type { Fact, GalleryPhoto, L10n, NewsItem, Person, Project, ProjectKind, Settings, Status, Vacancy, VacancyType } from "@/lib/types";
+import type { Fact, GalleryPhoto, L10n, NewsItem, Person, Project, ProjectKind, Settings, ShowroomScene, Status, Vacancy, VacancyType } from "@/lib/types";
 
 export interface FormState {
   error?: string;
@@ -41,9 +41,42 @@ function uploads(fd: FormData, key: string): File[] {
 
 function uploadMessage(e: unknown): string {
   if (e instanceof store.UploadError) {
-    return { type: "Допустимы только JPG, PNG, WebP и AVIF.", size: "Файл больше 12 МБ.", decode: "Не удалось прочитать изображение." }[e.message] ?? "Ошибка загрузки.";
+    return (
+      {
+        type: "Допустимы только JPG, PNG, WebP и AVIF.",
+        size: "Файл слишком большой.",
+        decode: "Не удалось прочитать изображение.",
+        ratio: "Нужна панорама 360° с пропорциями 2:1 (например, 6000×3000).",
+      }[e.message] ?? "Ошибка загрузки."
+    );
   }
   throw e;
+}
+
+/** Cleans the showroom scenes that arrive from the form: ids, targets, angles and image paths are all checked. */
+function readShowroom(raw: unknown[], previous: ShowroomScene[] | undefined): ShowroomScene[] | { error: string } {
+  if (raw.length > 40) return { error: "В шоуруме не больше 40 комнат." };
+  const known = new Set((previous ?? []).map((sc) => sc.image));
+  const ids = new Set<string>();
+  const scenes: ShowroomScene[] = [];
+  for (const item of raw as Record<string, unknown>[]) {
+    const id = String(item?.id ?? "");
+    const image = String(item?.image ?? "");
+    if (!/^[\w-]{1,24}$/.test(id) || ids.has(id)) return { error: "Некорректный идентификатор комнаты." };
+    // Only panoramas uploaded through the admin (or already stored) may be used.
+    if (!/^\/uploads\/[\w.-]+\.webp$/.test(image) && !known.has(image)) return { error: "Некорректная панорама." };
+    ids.add(id);
+    scenes.push({ id, name: asL10n(item.name), image, links: [] });
+  }
+  for (const [i, item] of (raw as Record<string, unknown>[]).entries()) {
+    const links = Array.isArray(item.links) ? (item.links as Record<string, unknown>[]) : [];
+    scenes[i].links = links
+      .slice(0, 8)
+      .map((l) => ({ to: String(l?.to ?? ""), yaw: Number(l?.yaw), pitch: Number(l?.pitch) }))
+      .filter((l) => ids.has(l.to) && l.to !== scenes[i].id && Number.isFinite(l.yaw) && Number.isFinite(l.pitch))
+      .map((l) => ({ to: l.to, yaw: Math.atan2(Math.sin(l.yaw), Math.cos(l.yaw)), pitch: Math.max(-Math.PI / 2, Math.min(Math.PI / 2, l.pitch)) }));
+  }
+  return scenes;
 }
 
 function refresh(paths: string[]) {
@@ -151,6 +184,11 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
   const videoRaw = str(fd.get("video"), 500);
   if (videoRaw && !parseVideo(videoRaw)) return { error: "Не удалось распознать ссылку на видео. Нужна ссылка YouTube, Vimeo или файл .mp4/.webm." };
 
+  const showroomRaw = jsonArray(fd, "showroom");
+  const showroom = readShowroom(showroomRaw, existing?.showroom);
+  if ("error" in showroom) return { error: showroom.error };
+  removedAssets.push(...(existing?.showroom ?? []).filter((sc) => !showroom.some((n) => n.image === sc.image)).map((sc) => sc.image));
+
   const longText = l10n(fd, "long", 4000);
   const project: Project = {
     id,
@@ -164,6 +202,7 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
     tagline: l10n(fd, "tagline", 160).ru ? l10n(fd, "tagline", 160) : undefined,
     gallery,
     video: videoRaw || undefined,
+    showroom: showroom.length > 0 ? showroom : undefined,
     name,
     desc: l10n(fd, "desc", 200),
     long: longText.ru ? longText : undefined,
@@ -173,8 +212,21 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
   };
   await store.saveProject(project);
   await store.removeUploads(removedAssets);
-  refresh(["/", "/projects", `/projects/${id}`]);
+  refresh(["/", "/projects", `/projects/${id}`, `/projects/${id}/showroom`]);
   redirect("/admin/projects");
+}
+
+/** Uploads one panorama right away (separate request, so a project save never carries several large files). */
+export async function uploadPanorama(fd: FormData): Promise<{ src: string } | { error: string }> {
+  await assertAdmin();
+  const file = fd.get("file");
+  if (!(file instanceof File) || file.size === 0) return { error: "Файл не выбран." };
+  try {
+    const { src } = await store.saveImage(file, "panorama");
+    return { src };
+  } catch (e) {
+    return { error: uploadMessage(e) };
+  }
 }
 
 export async function deleteProject(fd: FormData) {

@@ -1,3 +1,4 @@
+import type { ImageKind } from "@/lib/server/images";
 import type { Lead, NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
 export interface Content {
@@ -21,7 +22,7 @@ export interface Store {
   listLeads(): Promise<Lead[]>;
   addLead(input: Omit<Lead, "id" | "createdAt">): Promise<void>;
   deleteLead(id: string): Promise<void>;
-  saveImage(file: File): Promise<{ src: string; w: number; h: number }>;
+  saveImage(file: File, kind?: ImageKind): Promise<{ src: string; w: number; h: number }>;
   removeUploads(srcs: (string | undefined)[]): Promise<void>;
   readUpload(name: string): Promise<Buffer | null>;
 }

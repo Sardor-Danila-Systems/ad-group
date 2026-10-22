@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LuArrowLeft, LuArrowRight } from "react-icons/lu";
+import { LuArrowLeft, LuArrowRight, LuView } from "react-icons/lu";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BuildingArt } from "@/components/site/building-art";
@@ -61,6 +61,23 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
                 </div>
               ))}
             </Reveal>
+
+            {project.showroom && project.showroom.length > 0 && (
+              <Reveal className="mt-[clamp(32px,4vw,56px)]">
+                <Link href={`/projects/${project.id}/showroom`} className="group relative isolate block overflow-hidden rounded-[28px] bg-ink text-white shadow-[0_40px_80px_-35px_rgba(60,45,20,0.55)] ring-1 ring-gold/40">
+                  <Image src={project.showroom[0].image} alt="" fill sizes="(min-width: 1240px) 1240px, 100vw" className="-z-10 object-cover opacity-80 transition-transform duration-[1200ms] group-hover:scale-105" />
+                  <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/10" />
+                  <span className="grid min-h-[300px] content-end gap-5 p-7 sm:min-h-[360px] sm:p-12">
+                    <span className="grid size-14 place-items-center rounded-full bg-gold text-ink"><LuView className="size-7" /></span>
+                    <span className="block max-w-[18ch] font-display text-[clamp(32px,4.4vw,60px)] leading-[1.03] font-medium">{t("showroom.cta.title")}</span>
+                    <span className="block max-w-[46ch] text-white/80">{t("showroom.cta.text")}</span>
+                    <span className="inline-flex w-fit items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-[15px] font-semibold text-ink transition-colors group-hover:bg-gold-light">
+                      {t("showroom.cta.btn")} <LuArrowRight className="transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </span>
+                </Link>
+              </Reveal>
+            )}
 
             <Reveal className="mt-[clamp(48px,6vw,88px)] grid gap-10 md:grid-cols-[1.3fr_1fr] md:gap-16">
               <div>

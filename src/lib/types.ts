@@ -15,6 +15,21 @@ export interface Fact {
   value: string;
 }
 
+/** An arrow in a showroom scene that leads to another scene. Angles are in radians. */
+export interface ShowroomLink {
+  to: string;
+  yaw: number;
+  pitch: number;
+}
+
+/** One viewpoint of the 3D showroom: an equirectangular (2:1) panorama and the arrows leaving it. */
+export interface ShowroomScene {
+  id: string;
+  name: L10n;
+  image: string;
+  links: ShowroomLink[];
+}
+
 export interface Project {
   id: string; // URL slug
   cat: "residential" | "commercial";
@@ -30,6 +45,8 @@ export interface Project {
   gallery: GalleryPhoto[];
   /** Video tour link: YouTube (unlisted), Vimeo or a direct .mp4/.webm file. */
   video?: string;
+  /** Interactive 360° tour made of linked panoramas. The first scene is the entrance. */
+  showroom?: ShowroomScene[];
   name: L10n;
   desc: L10n;
   long?: L10n;

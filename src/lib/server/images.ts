@@ -4,6 +4,7 @@ import sharp from "sharp";
 
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 const MAX_BYTES = 12 * 1024 * 1024;
+const MAX_PANORAMA_BYTES = 30 * 1024 * 1024;
 
 export class UploadError extends Error {}
 
@@ -14,19 +15,31 @@ export interface ProcessedImage {
   h: number;
 }
 
-/** Validates, strips metadata, caps the size and re-encodes an upload as WebP under a random name. */
-export async function processImage(file: File): Promise<ProcessedImage> {
+export type ImageKind = "photo" | "panorama";
+
+/**
+ * Validates, strips metadata, caps the size and re-encodes an upload as WebP under a random name.
+ * Panoramas keep far more resolution (they are stretched over a sphere) and must be roughly 2:1.
+ */
+export async function processImage(file: File, kind: ImageKind = "photo"): Promise<ProcessedImage> {
   if (!ALLOWED.has(file.type)) throw new UploadError("type");
-  if (file.size > MAX_BYTES) throw new UploadError("size");
+  if (file.size > (kind === "panorama" ? MAX_PANORAMA_BYTES : MAX_BYTES)) throw new UploadError("size");
   const input = Buffer.from(await file.arrayBuffer());
   try {
-    const { data, info } = await sharp(input)
-      .rotate()
-      .resize({ width: 2400, height: 2400, fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 82 })
-      .toBuffer({ resolveWithObject: true });
+    const pipeline = sharp(input, { limitInputPixels: kind === "panorama" ? 400_000_000 : 100_000_000 }).rotate();
+    if (kind === "panorama") {
+      const meta = await sharp(input, { limitInputPixels: 400_000_000 }).rotate().metadata();
+      const ratio = (meta.width ?? 0) / (meta.height ?? 1);
+      if (ratio < 1.9 || ratio > 2.1) throw new UploadError("ratio");
+    }
+    const resized =
+      kind === "panorama"
+        ? pipeline.resize({ width: 6144, withoutEnlargement: true })
+        : pipeline.resize({ width: 2400, height: 2400, fit: "inside", withoutEnlargement: true });
+    const { data, info } = await resized.webp({ quality: kind === "panorama" ? 80 : 82 }).toBuffer({ resolveWithObject: true });
     return { name: `${Date.now().toString(36)}-${randomBytes(5).toString("hex")}.webp`, data, w: info.width, h: info.height };
-  } catch {
+  } catch (e) {
+    if (e instanceof UploadError) throw e;
     throw new UploadError("decode");
   }
 }
