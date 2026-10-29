@@ -46,7 +46,10 @@ export function SiteProvider({ children, projects, contacts }: { children: React
     if (seen()) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const onScroll = () => {
-      if (window.location.pathname.startsWith("/admin") || window.scrollY < 700 || seen()) return;
+      // Do not interrupt the scroll-driven hero: wait until the visitor has scrolled past it.
+      const hero = document.querySelector<HTMLElement>("[data-scroll-hero]");
+      const threshold = hero ? hero.offsetTop + hero.offsetHeight - window.innerHeight * 0.5 : 700;
+      if (window.location.pathname.startsWith("/admin") || window.scrollY < threshold || seen()) return;
       window.removeEventListener("scroll", onScroll);
       // Wait a beat so it does not jump in the middle of a flick.
       timer = setTimeout(() => {

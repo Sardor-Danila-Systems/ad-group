@@ -50,6 +50,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'vtype.full': 'Полная занятость', 'vtype.part': 'Частичная занятость', 'vtype.remote': 'Удалённо', 'vtype.contract': 'Контракт',
     'video.title': 'Видео-тур', 'video.lead': 'Посмотрите квартиру и дом, не выходя из дома.', 'video.play': 'Смотреть видео', 'video.copy': 'Скопировать ссылку', 'video.copied': 'Ссылка скопирована', 'video.btn': 'Видео-тур',
     'showroom.cta.title': 'Посмотрите шоурум в красивом виде', 'showroom.cta.text': 'Ходите по комнатам сами: ведите мышью или пальцем, переходите по стрелкам, смотрите всё на весь экран.', 'showroom.cta.btn': 'Открыть 3D-шоурум', 'showroom.back': 'К проекту', 'showroom.rooms': 'Комнаты', 'showroom.hint': 'Перетащите, чтобы осмотреться. Стрелки ↑ ↓ — вперёд и назад, ← → — повернуть.', 'showroom.fullscreen': 'Во весь экран', 'showroom.exit': 'Выйти из полноэкранного режима', 'showroom.loading': 'Загружаем шоурум…', 'showroom.error': 'Не удалось загрузить панораму.', 'showroom.btn': 'Шоурум',
+    'hero.scroll': 'Листайте вниз',
     'cur.suffix': 'сум', 'price.from': 'от'
   },
   uz: {
@@ -99,6 +100,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'vtype.full': 'To‘liq ish kuni', 'vtype.part': 'Qisman band', 'vtype.remote': 'Masofaviy', 'vtype.contract': 'Shartnoma',
     'video.title': 'Video-tur', 'video.lead': 'Xonadon va uyni uydan chiqmasdan ko‘ring.', 'video.play': 'Videoni ko‘rish', 'video.copy': 'Havolani nusxalash', 'video.copied': 'Havola nusxalandi', 'video.btn': 'Video-tur',
     'showroom.cta.title': 'Shourumni chiroyli ko‘rinishda ko‘ring', 'showroom.cta.text': 'Xonalar bo‘ylab o‘zingiz yuring: sichqoncha yoki barmoq bilan buring, strelkalar orqali o‘ting, hammasini butun ekranda ko‘ring.', 'showroom.cta.btn': '3D-shourumni ochish', 'showroom.back': 'Loyihaga', 'showroom.rooms': 'Xonalar', 'showroom.hint': 'Atrofni ko‘rish uchun suring. ↑ ↓ — oldinga va orqaga, ← → — burilish.', 'showroom.fullscreen': 'Butun ekran', 'showroom.exit': 'Butun ekrandan chiqish', 'showroom.loading': 'Shourum yuklanmoqda…', 'showroom.error': 'Panoramani yuklab bo‘lmadi.', 'showroom.btn': 'Shourum',
+    'hero.scroll': 'Pastga suring',
     'cur.suffix': 'so‘m', 'price.from': 'dan'
   },
   en: {
@@ -148,6 +150,7 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'vtype.full': 'Full-time', 'vtype.part': 'Part-time', 'vtype.remote': 'Remote', 'vtype.contract': 'Contract',
     'video.title': 'Video tour', 'video.lead': 'See the apartment and the building without leaving home.', 'video.play': 'Watch the video', 'video.copy': 'Copy link', 'video.copied': 'Link copied', 'video.btn': 'Video tour',
     'showroom.cta.title': 'See the showroom in all its beauty', 'showroom.cta.text': 'Walk through the rooms yourself: drag with the mouse or your finger, follow the arrows and view it all full screen.', 'showroom.cta.btn': 'Open the 3D showroom', 'showroom.back': 'Back to project', 'showroom.rooms': 'Rooms', 'showroom.hint': 'Drag to look around. Arrows ↑ ↓ move forward and back, ← → turn.', 'showroom.fullscreen': 'Full screen', 'showroom.exit': 'Exit full screen', 'showroom.loading': 'Loading the showroom…', 'showroom.error': 'The panorama could not be loaded.', 'showroom.btn': 'Showroom',
+    'hero.scroll': 'Scroll down',
     'cur.suffix': 'UZS', 'price.from': 'from'
   }
 };

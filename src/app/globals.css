@@ -146,3 +146,10 @@ html[data-ready] .enter-up { animation: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 
   to { stroke-dashoffset: 0; }
 }
 .route-draw { animation: route-draw 3.2s cubic-bezier(0.65, 0, 0.35, 1) 0.4s both; }
+
+/* Scroll hint line in the hero: a short segment travelling down. */
+@keyframes hero-scroll-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+.hero-scroll-line { animation: hero-scroll-line 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite; }
