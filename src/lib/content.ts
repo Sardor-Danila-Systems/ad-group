@@ -4,7 +4,7 @@ import type { Lang } from "@/lib/types";
 
 export const I18N: Record<Lang, Record<string, string>> = {
   ru: {
-    'nav.projects': 'Проекты', 'nav.about': 'О компании', 'nav.invest': 'Инвесторам', 'nav.news': 'Новости', 'nav.contacts': 'Контакты',
+    'nav.projects': 'Проекты', 'nav.about': 'О компании', 'nav.invest': 'Рассрочка', 'nav.news': 'Новости', 'nav.contacts': 'Контакты',
     'cta.call': 'Заказать звонок',
     'hero.eyebrow': 'AD Group · строительная компания',
     'hero.title': 'Строим будущее вместе',
@@ -23,10 +23,6 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'vatan.l1': 'Smart-технологии: умный замок и климат-контроль', 'vatan.l2': 'Безопасность 24/7 и консьерж-сервис', 'vatan.l3': 'Подземный паркинг и озеленённые дворы',
     'vatan.cta': 'Узнать о Vatan Residence', 'vatan.gallery': 'Галерея', 'vatan.gallery.note': 'Визуализации проекта',
     'vatan.t1': 'Новый уровень жизни', 'vatan.t2': 'Дом, построенный с любовью', 'vatan.t3': 'Построен для вас — Vatan', 'vatan.t4': 'Строим будущее на прочном фундаменте',
-    'calc.title': 'Инвестиционный калькулятор', 'calc.lead': 'Сравните покупку квартиры в рассрочку с размещением тех же средств на банковском депозите.',
-    'calc.area': 'Площадь, м²', 'calc.price': 'Цена за м²', 'calc.down': 'Первый взнос', 'calc.term': 'Срок, мес.', 'calc.rate': 'Курс USD → UZS',
-    'calc.ad': 'Недвижимость · +15% в год', 'calc.bank': 'Депозит · 13% в год', 'calc.total': 'Стоимость квартиры', 'calc.monthly': 'Платёж в месяц', 'calc.diff': 'Выгода',
-    'calc.note': 'Расчёт ориентировочный и не является публичной офертой. Рост цены 15% и ставка 13% — допущения демо.',
     'history.title': 'История компании', 'news.title': 'Новости', 'cta2.title': 'Подберём квартиру или коммерческое помещение',
     'footer.slogan': 'Управляем бизнесом в единой системе', 'footer.nav': 'Навигация', 'footer.addr': 'Ташкент, адрес — placeholder',
     'footer.disc': 'Материалы сайта носят информационный характер и не являются публичной офертой.',
@@ -50,10 +46,15 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'video.title': 'Видео-тур', 'video.lead': 'Посмотрите квартиру и дом, не выходя из дома.', 'video.play': 'Смотреть видео', 'video.copy': 'Скопировать ссылку', 'video.copied': 'Ссылка скопирована', 'video.btn': 'Видео-тур',
     'showroom.cta.title': 'Посмотрите шоурум в красивом виде', 'showroom.cta.text': 'Ходите по комнатам сами: ведите мышью или пальцем, переходите по стрелкам, смотрите всё на весь экран.', 'showroom.cta.btn': 'Открыть 3D-шоурум', 'showroom.back': 'К проекту', 'showroom.rooms': 'Комнаты', 'showroom.hint': 'Перетащите, чтобы осмотреться. Стрелки ↑ ↓ — вперёд и назад, ← → — повернуть.', 'showroom.fullscreen': 'Во весь экран', 'showroom.exit': 'Выйти из полноэкранного режима', 'showroom.loading': 'Загружаем шоурум…', 'showroom.error': 'Не удалось загрузить панораму.', 'showroom.btn': 'Шоурум',
     'hero.scroll': 'Листайте вниз',
+    'calc.eyebrow': 'Рассрочка от застройщика', 'calc.title': 'Калькулятор рассрочки', 'calc.lead': 'Посчитайте первоначальный взнос и ежемесячный платёж. Рассрочка без процентов: остаток делится на равные части.',
+    'calc.price': 'Стоимость квартиры', 'calc.down': 'Первоначальный взнос', 'calc.downSum': 'Сумма взноса', 'calc.term': 'Срок рассрочки', 'calc.months': 'мес.', 'calc.monthsLong': 'месяцев',
+    'calc.monthly': 'Ежемесячный платёж', 'calc.rest': 'Остаток в рассрочку', 'calc.total': 'Итого к оплате', 'calc.noInterest': 'без процентов', 'calc.last': 'последний платёж', 'calc.cta': 'Получить точный расчёт',
+    'calc.err.price': 'Укажите стоимость от {min} до {max}.', 'calc.err.term': 'Срок от {min} до {max} месяцев.',
+    'calc.note': 'Расчёт ориентировочный и не является публичной офертой. Точные условия рассрочки уточняйте у менеджера.',
     'cur.suffix': 'сум', 'price.from': 'от'
   },
   uz: {
-    'nav.projects': 'Loyihalar', 'nav.about': 'Kompaniya haqida', 'nav.invest': 'Investorlarga', 'nav.news': 'Yangiliklar', 'nav.contacts': 'Aloqa',
+    'nav.projects': 'Loyihalar', 'nav.about': 'Kompaniya haqida', 'nav.invest': 'Bo‘lib to‘lash', 'nav.news': 'Yangiliklar', 'nav.contacts': 'Aloqa',
     'cta.call': 'Qo‘ng‘iroq so‘rash',
     'hero.eyebrow': 'AD Group · qurilish kompaniyasi',
     'hero.title': 'Kelajakni birga quramiz',
@@ -72,10 +73,6 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'vatan.l1': 'Smart-texnologiyalar: aqlli qulf va iqlim nazorati', 'vatan.l2': '24/7 xavfsizlik va konsyerj-servis', 'vatan.l3': 'Yerosti avtoturargohi va obod hovlilar',
     'vatan.cta': 'Vatan Residence haqida bilish', 'vatan.gallery': 'Galereya', 'vatan.gallery.note': 'Loyiha vizualizatsiyalari',
     'vatan.t1': 'Yangi darajadagi yashash tarzi', 'vatan.t2': 'Mehr bilan qurilgan maskan', 'vatan.t3': 'Siz uchun qurilgan haqiqiy Vatan', 'vatan.t4': 'Kelajagingizni mustahkam poydevor ustiga quring',
-    'calc.title': 'Investitsiya kalkulyatori', 'calc.lead': 'Kvartirani bo‘lib to‘lab sotib olishni xuddi shu mablag‘larni bank depozitiga qo‘yish bilan solishtiring.',
-    'calc.area': 'Maydon, m²', 'calc.price': '1 m² narxi', 'calc.down': 'Birinchi badal', 'calc.term': 'Muddat, oy', 'calc.rate': 'USD → UZS kursi',
-    'calc.ad': 'Ko‘chmas mulk · yiliga +15%', 'calc.bank': 'Depozit · yiliga 13%', 'calc.total': 'Kvartira narxi', 'calc.monthly': 'Oylik to‘lov', 'calc.diff': 'Foyda',
-    'calc.note': 'Hisob-kitob taxminiy va ommaviy oferta emas. 15% narx o‘sishi va 13% stavka — demo taxminlari.',
     'history.title': 'Kompaniya tarixi', 'news.title': 'Yangiliklar', 'cta2.title': 'Kvartira yoki tijorat maydonini tanlab beramiz',
     'footer.slogan': 'Biznesni yagona tizimda boshqaramiz', 'footer.nav': 'Navigatsiya', 'footer.addr': 'Toshkent, manzil — placeholder',
     'footer.disc': 'Sayt materiallari axborot xarakteriga ega va ommaviy oferta hisoblanmaydi.',
@@ -99,10 +96,15 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'video.title': 'Video-tur', 'video.lead': 'Xonadon va uyni uydan chiqmasdan ko‘ring.', 'video.play': 'Videoni ko‘rish', 'video.copy': 'Havolani nusxalash', 'video.copied': 'Havola nusxalandi', 'video.btn': 'Video-tur',
     'showroom.cta.title': 'Shourumni chiroyli ko‘rinishda ko‘ring', 'showroom.cta.text': 'Xonalar bo‘ylab o‘zingiz yuring: sichqoncha yoki barmoq bilan buring, strelkalar orqali o‘ting, hammasini butun ekranda ko‘ring.', 'showroom.cta.btn': '3D-shourumni ochish', 'showroom.back': 'Loyihaga', 'showroom.rooms': 'Xonalar', 'showroom.hint': 'Atrofni ko‘rish uchun suring. ↑ ↓ — oldinga va orqaga, ← → — burilish.', 'showroom.fullscreen': 'Butun ekran', 'showroom.exit': 'Butun ekrandan chiqish', 'showroom.loading': 'Shourum yuklanmoqda…', 'showroom.error': 'Panoramani yuklab bo‘lmadi.', 'showroom.btn': 'Shourum',
     'hero.scroll': 'Pastga suring',
+    'calc.eyebrow': 'Quruvchidan bo‘lib to‘lash', 'calc.title': 'Bo‘lib to‘lash kalkulyatori', 'calc.lead': 'Boshlang‘ich badal va oylik to‘lovni hisoblang. Foizsiz bo‘lib to‘lash: qoldiq teng qismlarga bo‘linadi.',
+    'calc.price': 'Kvartira narxi', 'calc.down': 'Boshlang‘ich badal', 'calc.downSum': 'Badal summasi', 'calc.term': 'Bo‘lib to‘lash muddati', 'calc.months': 'oy', 'calc.monthsLong': 'oy',
+    'calc.monthly': 'Oylik to‘lov', 'calc.rest': 'Bo‘lib to‘lanadigan qoldiq', 'calc.total': 'Jami to‘lov', 'calc.noInterest': 'foizsiz', 'calc.last': 'oxirgi to‘lov', 'calc.cta': 'Aniq hisob-kitob olish',
+    'calc.err.price': 'Narxni {min} dan {max} gacha kiriting.', 'calc.err.term': 'Muddat {min} dan {max} oygacha.',
+    'calc.note': 'Hisob-kitob taxminiy va ommaviy oferta emas. Aniq shartlarni menejerdan so‘rang.',
     'cur.suffix': 'so‘m', 'price.from': 'dan'
   },
   en: {
-    'nav.projects': 'Projects', 'nav.about': 'About', 'nav.invest': 'Investors', 'nav.news': 'News', 'nav.contacts': 'Contacts',
+    'nav.projects': 'Projects', 'nav.about': 'About', 'nav.invest': 'Instalments', 'nav.news': 'News', 'nav.contacts': 'Contacts',
     'cta.call': 'Request a call',
     'hero.eyebrow': 'AD Group · construction company',
     'hero.title': 'Building the future together',
@@ -121,10 +123,6 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'vatan.l1': 'Smart technology: smart lock and climate control', 'vatan.l2': '24/7 security and concierge service', 'vatan.l3': 'Underground parking and landscaped courtyards',
     'vatan.cta': 'Learn about Vatan Residence', 'vatan.gallery': 'Gallery', 'vatan.gallery.note': 'Project renders',
     'vatan.t1': 'A new level of living', 'vatan.t2': 'A home built with love', 'vatan.t3': 'Built for you — a true Vatan', 'vatan.t4': 'Build your future on a solid foundation',
-    'calc.title': 'Investment calculator', 'calc.lead': 'Compare buying an apartment in instalments with putting the same money into a bank deposit.',
-    'calc.area': 'Area, m²', 'calc.price': 'Price per m²', 'calc.down': 'Down payment', 'calc.term': 'Term, months', 'calc.rate': 'USD → UZS rate',
-    'calc.ad': 'Real estate · +15% / year', 'calc.bank': 'Deposit · 13% / year', 'calc.total': 'Apartment price', 'calc.monthly': 'Monthly payment', 'calc.diff': 'Advantage',
-    'calc.note': 'Estimate only, not a public offer. 15% price growth and 13% deposit rate are demo assumptions.',
     'history.title': 'Company history', 'news.title': 'News', 'cta2.title': 'We will find you an apartment or commercial space',
     'footer.slogan': 'We run business as a single system', 'footer.nav': 'Navigation', 'footer.addr': 'Tashkent, address — placeholder',
     'footer.disc': 'Website materials are for information only and are not a public offer.',
@@ -148,6 +146,11 @@ export const I18N: Record<Lang, Record<string, string>> = {
     'video.title': 'Video tour', 'video.lead': 'See the apartment and the building without leaving home.', 'video.play': 'Watch the video', 'video.copy': 'Copy link', 'video.copied': 'Link copied', 'video.btn': 'Video tour',
     'showroom.cta.title': 'See the showroom in all its beauty', 'showroom.cta.text': 'Walk through the rooms yourself: drag with the mouse or your finger, follow the arrows and view it all full screen.', 'showroom.cta.btn': 'Open the 3D showroom', 'showroom.back': 'Back to project', 'showroom.rooms': 'Rooms', 'showroom.hint': 'Drag to look around. Arrows ↑ ↓ move forward and back, ← → turn.', 'showroom.fullscreen': 'Full screen', 'showroom.exit': 'Exit full screen', 'showroom.loading': 'Loading the showroom…', 'showroom.error': 'The panorama could not be loaded.', 'showroom.btn': 'Showroom',
     'hero.scroll': 'Scroll down',
+    'calc.eyebrow': 'Developer instalments', 'calc.title': 'Instalment calculator', 'calc.lead': 'Work out the down payment and the monthly payment. Interest-free instalments: the balance is split into equal parts.',
+    'calc.price': 'Apartment price', 'calc.down': 'Down payment', 'calc.downSum': 'Down payment amount', 'calc.term': 'Instalment term', 'calc.months': 'mo.', 'calc.monthsLong': 'months',
+    'calc.monthly': 'Monthly payment', 'calc.rest': 'Balance in instalments', 'calc.total': 'Total to pay', 'calc.noInterest': 'interest-free', 'calc.last': 'last payment', 'calc.cta': 'Get an exact quote',
+    'calc.err.price': 'Enter a price from {min} to {max}.', 'calc.err.term': 'Term from {min} to {max} months.',
+    'calc.note': 'Estimate only, not a public offer. Ask a manager for the exact instalment terms.',
     'cur.suffix': 'UZS', 'price.from': 'from'
   }
 };
