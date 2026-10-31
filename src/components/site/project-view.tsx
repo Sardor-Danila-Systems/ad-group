@@ -53,7 +53,7 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
 
         <section className="bg-paper py-[clamp(56px,7vw,104px)]">
           <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
-            <Reveal className="grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 lg:grid-cols-4">
+            <Reveal className={`grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 ${["", "", "lg:grid-cols-2", "lg:grid-cols-3", "lg:grid-cols-4"][facts.length] ?? "lg:grid-cols-4"}`}>
               {facts.map(([k, v]) => (
                 <div key={k} className="bg-white p-6 sm:p-8">
                   <small className="block text-[13px] text-muted-foreground">{k}</small>
@@ -125,7 +125,6 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
                 <ProjectGallery photos={project.gallery} title={t("vatan.gallery")} name={project.name[lang]} />
               </div>
             )}
-            <p className="mt-10 text-[13px] text-muted-foreground">{t("demo.note")}</p>
           </div>
         </section>
 

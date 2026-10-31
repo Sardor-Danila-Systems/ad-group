@@ -25,7 +25,7 @@ const step = async (name: string, fn: () => Promise<void>) => {
 
 await step("seeds on first load", async () => {
   const c = await s.loadContent();
-  assert.deepEqual(c.projects.map((p) => p.id), ["vatan", "urgut-tower"]);
+  assert.deepEqual(c.projects.map((p) => p.id), ["vatan", "sogdiana-diamond-house", "urgut-tower", "yangi-urgut-tower"]);
   assert.equal(c.vacancies.length, 3);
   assert.equal(c.news.length, 3);
   assert.ok(c.settings.founder.name.ru);
@@ -33,21 +33,21 @@ await step("seeds on first load", async () => {
 
 await step("concurrent first loads seed once", async () => {
   const again = await s.loadContent();
-  assert.equal(again.projects.length, 2);
+  assert.equal(again.projects.length, 4);
 });
 
 await step("project upsert and delete (no reseed after delete)", async () => {
   const c = await s.loadContent();
   const p = { ...c.projects[1], id: "test-project", name: { ru: "Тест", uz: "Test", en: "Test" } };
   await s.saveProject(p);
-  assert.equal((await s.loadContent()).projects.length, 3);
+  assert.equal((await s.loadContent()).projects.length, 5);
   await s.saveProject({ ...p, desc: { ru: "Новое", uz: "Yangi", en: "New" } });
   const after = (await s.loadContent()).projects;
-  assert.equal(after.length, 3);
-  assert.equal(after[2].desc.ru, "Новое");
+  assert.equal(after.length, 5);
+  assert.equal(after[4].desc.ru, "Новое");
   await s.deleteProject("test-project");
   await s.deleteProject("vatan");
-  assert.deepEqual((await s.loadContent()).projects.map((x) => x.id), ["urgut-tower"]);
+  assert.deepEqual((await s.loadContent()).projects.map((x) => x.id), ["sogdiana-diamond-house", "urgut-tower", "yangi-urgut-tower"]);
 });
 
 await step("images: save, read, remove with the project", async () => {

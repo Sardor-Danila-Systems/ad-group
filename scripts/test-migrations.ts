@@ -17,8 +17,15 @@ const step = async (name: string, fn: () => Promise<void>) => {
 };
 
 async function main() {
-  const oldProjects = SEED_PROJECTS.map((p) => (p.id === "urgut-tower" ? { ...JSON.parse(OLD(JSON.stringify(p))), logo: "/urgut/logo.jpg" } : p));
-  const oldNews = JSON.parse(OLD(JSON.stringify(SEED_NEWS)));
+  // The state of a database created before DEV-39/DEV-41: two projects, the second called Urgut Tower with /urgut/ renders.
+  const sog = SEED_PROJECTS.find((p) => p.id === "sogdiana-diamond-house")!;
+  const oldUrgut = {
+    ...JSON.parse(OLD(JSON.stringify(sog)).replace(/Sogdiana Diamond House/g, "Urgut Tower").replace(/\/sogdiana\//g, "/urgut/")),
+    id: "urgut-tower",
+    logo: "/urgut/logo.jpg",
+  };
+  const oldProjects = [SEED_PROJECTS.find((p) => p.id === "vatan")!, oldUrgut];
+  const oldNews = JSON.parse(OLD(JSON.stringify(SEED_NEWS)).replace(/New project: Sogdiana Diamond House/, "New project: Urgut Tower"));
 
   await step("postgres: an old database is migrated once, edits made later survive", async () => {
     const pg = new PGlite();
@@ -47,8 +54,15 @@ async function main() {
     const all = JSON.stringify(c);
     assert.ok(!all.includes("AD Express"), "no AD Express left");
     assert.ok(!all.includes("AD Group (AD Group)"));
-    assert.deepEqual(c.projects.map((p) => p.id), oldProjects.map((p) => p.id), "order kept");
-    assert.equal(c.projects.find((p) => p.id === "urgut-tower")?.logo, undefined, "old logo dropped");
+    assert.deepEqual(c.projects.map((p) => p.id), ["vatan", "sogdiana-diamond-house", "urgut-tower", "yangi-urgut-tower"], "renamed and new projects in order");
+    const sd = c.projects.find((p) => p.id === "sogdiana-diamond-house")!;
+    assert.equal(sd.name.ru, "Sogdiana Diamond House");
+    assert.ok(sd.gallery.length === 8 && sd.gallery.every((g) => g.src.startsWith("/sogdiana/")) && sd.cover === "/sogdiana/01.jpg", "renders moved");
+    assert.equal(sd.logo, undefined, "old logo dropped");
+    assert.ok(!JSON.stringify(sd).includes("Urgut"), "no Urgut left in the renamed card");
+    const ut = c.projects.find((p) => p.id === "urgut-tower")!;
+    assert.equal(ut.gallery.length, 0, "new Urgut Tower is a separate, empty card");
+    assert.equal(c.news.find((n) => n.id === "n2")?.title.en, "New project: Sogdiana Diamond House");
     assert.equal(c.news.length, oldNews.length);
 
     // A later edit that mentions the old name is not touched again.
