@@ -46,3 +46,6 @@ next-env.d.ts
 # local content storage (projects, news, leads, uploads)
 /data/
 !.env.example
+
+# headless browser session logs
+.playwright-cli/
