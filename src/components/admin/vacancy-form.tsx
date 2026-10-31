@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { keepFormSubmit } from "@/components/admin/use-keep-form";
 import { saveVacancy, type FormState } from "@/actions/admin";
 import { FeaturesEditor, L10nInput, Section, selectClass } from "@/components/admin/fields";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ export function VacancyForm({ vacancy }: { vacancy?: Vacancy }) {
   const isNew = !vacancy;
   const [state, action, pending] = useActionState<FormState, FormData>(saveVacancy, {});
   return (
-    <form action={action} className="grid gap-6">
+    <form onSubmit={keepFormSubmit(action)} className="grid gap-6">
       <input type="hidden" name="isNew" value={isNew ? "1" : "0"} />
       <input type="hidden" name="id" value={vacancy?.id ?? ""} />
       <Section title="Вакансия">

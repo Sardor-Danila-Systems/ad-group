@@ -12,7 +12,8 @@
     "db:smoke": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/db-smoke.ts",
     "test:video": "tsx scripts/test-video.ts",
     "test:migrations": "NODE_OPTIONS=--conditions=react-server tsx scripts/test-migrations.ts",
-    "test:installment": "tsx scripts/test-installment.ts"
+    "test:installment": "tsx scripts/test-installment.ts",
+    "test:instagram": "tsx scripts/test-instagram.ts"
   },
   "dependencies": {
     "@photo-sphere-viewer/core": "^5.15.1",

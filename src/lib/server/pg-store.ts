@@ -161,9 +161,10 @@ export const pgStore: Store = {
   async saveSettings(settings) {
     await ensure();
     const prev = (await db.query<{ data: Settings }>("select data from settings where id = 1")).rows[0]?.data;
-    const old = [prev?.founder?.photo, prev?.ceo?.photo];
+    const old = [prev?.founder?.photo, prev?.ceo?.photo, ...Object.values(prev?.directions ?? {}).map((d) => d?.photo)];
     await db.query("insert into settings (id, data) values (1, $1) on conflict (id) do update set data = excluded.data", [JSON.stringify(settings)]);
-    await removeUploads(old.filter((o) => o && o !== settings.founder.photo && o !== settings.ceo.photo));
+    const kept = new Set([settings.founder.photo, settings.ceo.photo, ...Object.values(settings.directions).map((d) => d?.photo)]);
+    await removeUploads(old.filter((o) => o && !kept.has(o)));
   },
   async listLeads() {
     await ensure();

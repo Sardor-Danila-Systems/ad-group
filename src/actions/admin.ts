@@ -2,10 +2,11 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import { instagramUrl } from "@/lib/instagram";
 import { parseVideo } from "@/lib/video";
 import { assertAdmin, checkPassword, endSession, startSession, adminEnabled } from "@/lib/server/auth";
 import * as store from "@/lib/server/store";
-import type { Fact, GalleryPhoto, L10n, NewsItem, Person, Project, ProjectKind, Settings, ShowroomScene, Status, Vacancy, VacancyType } from "@/lib/types";
+import type { DirectionId, DirectionMedia, Fact, GalleryPhoto, L10n, NewsItem, Person, Project, ProjectKind, Settings, ShowroomScene, Status, Vacancy, VacancyType } from "@/lib/types";
 
 export interface FormState {
   error?: string;
@@ -343,6 +344,27 @@ async function readPerson(fd: FormData, prefix: string, current: Person): Promis
   return { name, role: l10n(fd, `${prefix}role`, 120), quote: l10n(fd, `${prefix}quote`, 400), p1: l10n(fd, `${prefix}p1`, 800), p2: l10n(fd, `${prefix}p2`, 800), photo };
 }
 
+const DIRECTION_IDS: DirectionId[] = ["construction", "service", "logistics"];
+const DIRECTION_NAMES: Record<DirectionId, string> = { construction: "Строительство", service: "Сервис и услуги", logistics: "Логистика" };
+
+/** Photo and Instagram link of one direction; form fields are prefixed with `d_<id>_`. */
+async function readDirection(fd: FormData, id: DirectionId, current: DirectionMedia | undefined): Promise<DirectionMedia | { error: string }> {
+  const p = `d_${id}_`;
+  let photo = str(fd.get(`${p}photoCurrent`), 300) || undefined;
+  try {
+    const [file] = uploads(fd, `${p}photo`);
+    if (file) photo = (await store.saveImage(file)).src;
+    else if (str(fd.get(`${p}removePhoto`), 2) === "1") photo = undefined;
+  } catch (e) {
+    return { error: uploadMessage(e) };
+  }
+  if (photo && photo !== current?.photo && !photo.startsWith("/uploads/")) photo = current?.photo;
+  const rawInstagram = str(fd.get(`${p}instagram`), 300);
+  const instagram = instagramUrl(rawInstagram);
+  if (rawInstagram && !instagram) return { error: "Не похоже на ссылку на Instagram-аккаунт (например, https://www.instagram.com/adgroup/ или @adgroup)." };
+  return { ...(photo ? { photo } : {}), ...(instagram ? { instagram } : {}) };
+}
+
 export async function saveSettings(_prev: FormState, fd: FormData): Promise<FormState> {
   await assertAdmin();
   const current = (await store.loadContent()).settings;
@@ -351,10 +373,18 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
   const ceo = await readPerson(fd, "c", current.ceo);
   if ("error" in ceo) return { error: `CEO: ${ceo.error}` };
 
+  const directions: Settings["directions"] = {};
+  for (const id of DIRECTION_IDS) {
+    const d = await readDirection(fd, id, current.directions?.[id]);
+    if ("error" in d) return { error: `${DIRECTION_NAMES[id]}: ${d.error}` };
+    if (d.photo || d.instagram) directions[id] = d;
+  }
+
   const handle = (v: FormDataEntryValue | null) => str(v, 60).replace(/^@/, "").replace(/[^\w.]/g, "");
   const settings: Settings = {
     founder,
     ceo,
+    directions,
     contacts: {
       phone: str(fd.get("phone"), 40),
       email: str(fd.get("email"), 120),
@@ -365,6 +395,6 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
     },
   };
   await store.saveSettings(settings);
-  refresh(["/", "/vacancies", "/admin/settings"]);
+  refresh(["/", "/vacancies", "/directions", "/admin/settings"]);
   return { saved: true };
 }

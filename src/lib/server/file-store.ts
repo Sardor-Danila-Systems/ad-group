@@ -149,10 +149,11 @@ export function deleteVacancy(id: string) {
 export function saveSettings(settings: Settings) {
   return exclusive(async () => {
     const c = await readOrInit();
-    const old = [c.settings.founder.photo, c.settings.ceo?.photo];
+    const old = [c.settings.founder.photo, c.settings.ceo?.photo, ...Object.values(c.settings.directions ?? {}).map((d) => d?.photo)];
     c.settings = settings;
     await writeJson("content.json", c);
-    await removeUploads(old.filter((o) => o && o !== settings.founder.photo && o !== settings.ceo.photo));
+    const kept = new Set([settings.founder.photo, settings.ceo.photo, ...Object.values(settings.directions).map((d) => d?.photo)]);
+    await removeUploads(old.filter((o) => o && !kept.has(o)));
   });
 }
 

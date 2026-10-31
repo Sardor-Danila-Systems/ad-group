@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { keepFormSubmit } from "@/components/admin/use-keep-form";
 import { saveNews, type FormState } from "@/actions/admin";
 import { ImageField, L10nInput, Section } from "@/components/admin/fields";
 import { Button } from "@/components/ui/button";
@@ -15,7 +16,7 @@ export function NewsForm({ item }: { item?: NewsItem }) {
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <form action={action} className="grid gap-6">
+    <form onSubmit={keepFormSubmit(action)} className="grid gap-6">
       <input type="hidden" name="isNew" value={isNew ? "1" : "0"} />
       <input type="hidden" name="id" value={item?.id ?? ""} />
       <Section title="Новость">

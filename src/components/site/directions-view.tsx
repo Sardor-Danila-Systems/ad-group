@@ -2,12 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { FaInstagram } from "react-icons/fa";
 import { LuArrowDownRight, LuArrowRight } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { CookieBar, Cta, Footer, ToTop } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { Reveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
+import { instagramHandle } from "@/lib/instagram";
+import type { Settings } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const DIRECTIONS = [
@@ -51,7 +54,7 @@ function RouteArt() {
   );
 }
 
-export function DirectionsView() {
+export function DirectionsView({ media }: { media: Settings["directions"] }) {
   const { t, openCall } = useSite();
 
   return (
@@ -84,6 +87,9 @@ export function DirectionsView() {
 
         {DIRECTIONS.map((d, i) => {
           const flip = i % 2 === 1;
+          // A photo set in the admin panel wins over the built-in one.
+          const photo = media[d.id]?.photo ?? ("photo" in d ? d.photo : undefined);
+          const instagram = media[d.id]?.instagram;
           return (
             <section key={d.id} id={d.id} className={cn("overflow-hidden py-[clamp(64px,8vw,128px)]", flip ? "bg-cream" : "bg-paper")}>
               <div className="mx-auto grid w-[min(1240px,100%-32px)] items-center gap-12 md:w-[min(1240px,100%-48px)] lg:grid-cols-[1fr_1.05fr] lg:gap-24">
@@ -105,7 +111,7 @@ export function DirectionsView() {
                     ))}
                   </ol>
 
-                  <div className="mt-9">
+                  <div className="mt-9 flex flex-wrap gap-3">
                     {d.id === "construction" ? (
                       <Button asChild size="lg" className="group h-12 rounded-full bg-ink px-7 text-[15px] font-semibold text-paper hover:bg-ink-2">
                         <Link href="/#projects">{t("dirs.c.link")} <LuArrowRight className="ml-1 transition-transform group-hover:translate-x-1" /></Link>
@@ -115,16 +121,23 @@ export function DirectionsView() {
                         {t("dirs.cta")} <LuArrowRight className="ml-1 transition-transform group-hover:translate-x-1" />
                       </Button>
                     )}
+                    {instagram && (
+                      <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-gold bg-transparent px-6 text-[15px] font-semibold text-gold-deep hover:bg-gold/10 hover:text-gold-deep">
+                        <a href={instagram} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${instagramHandle(instagram)}`}>
+                          <FaInstagram className="size-[18px]" /> {instagramHandle(instagram)}
+                        </a>
+                      </Button>
+                    )}
                   </div>
                 </Reveal>
 
                 <Reveal className={cn("relative", flip && "lg:order-1")}>
-                  {"photo" in d ? (
+                  {photo ? (
                     <div className="relative">
                       {/* Offset outline frame behind the photo. */}
                       <div aria-hidden="true" className={cn("absolute inset-0 rounded-[28px] border border-gold/60", flip ? "-translate-x-4 translate-y-4" : "translate-x-4 translate-y-4")} />
                       <div className={cn("relative aspect-[4/5] overflow-hidden shadow-[0_40px_80px_-35px_rgba(60,45,20,0.55)] sm:aspect-[5/4]", flip ? "rounded-[28px] rounded-tl-[120px]" : "rounded-[28px] rounded-tr-[120px]")}>
-                        <Image src={d.photo} alt={t(`dirs.${d.prefix}.name`)} fill sizes="(min-width: 1024px) 600px, 100vw" className="object-cover" />
+                        <Image src={photo} alt={t(`dirs.${d.prefix}.name`)} fill sizes="(min-width: 1024px) 600px, 100vw" className="object-cover" />
                       </div>
                     </div>
                   ) : (

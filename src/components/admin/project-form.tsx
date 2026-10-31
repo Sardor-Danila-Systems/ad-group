@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { keepFormSubmit } from "@/components/admin/use-keep-form";
 import { saveProject, type FormState } from "@/actions/admin";
 import { FactsEditor, FeaturesEditor, GalleryEditor, ImageField, L10nInput, Section, selectClass } from "@/components/admin/fields";
 import { ShowroomEditor } from "@/components/admin/showroom-editor";
@@ -16,7 +17,7 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [state, action, pending] = useActionState<FormState, FormData>(saveProject, {});
 
   return (
-    <form action={action} className="grid gap-6">
+    <form onSubmit={keepFormSubmit(action)} className="grid gap-6">
       <input type="hidden" name="isNew" value={isNew ? "1" : "0"} />
 
       <Section title="Основное">
