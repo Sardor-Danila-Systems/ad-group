@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ProjectGallery } from "@/components/site/project-gallery";
+import { FactsGrid } from "@/components/site/facts-grid";
 import { Reveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
 import { parseVideo } from "@/lib/video";
@@ -53,14 +54,7 @@ export function Vatan({ project }: { project: Project }) {
       {project.facts.length > 0 && (
         <Reveal className="mx-auto mt-[clamp(56px,7vw,96px)] w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
           <h3 className="mb-6 font-display text-[clamp(26px,3vw,40px)] font-medium">{project.name[lang]}</h3>
-          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 md:grid-cols-4">
-            {project.facts.map((f) => (
-              <div key={f.label.ru} className="bg-white p-5 sm:p-7">
-                <dd className="font-display text-[clamp(28px,3vw,44px)] leading-none font-medium whitespace-nowrap text-gold-deep">{f.value}</dd>
-                <dt className="mt-2.5 text-sm text-muted-foreground">{f.label[lang]}</dt>
-              </div>
-            ))}
-          </dl>
+          <FactsGrid facts={project.facts} />
         </Reveal>
       )}
 

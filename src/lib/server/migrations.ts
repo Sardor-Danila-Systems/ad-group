@@ -64,6 +64,34 @@ export const MIGRATIONS: Migration[] = [
       }
     },
   },
+  {
+    // Materials from the client (31.10): photos and texts for Urgut Tower and Yangi Urgut Tower,
+    // figures from the Sogdiana Diamond House brochure. Only cards still holding the placeholders are filled.
+    id: "2026-10-31-project-materials",
+    run(c) {
+      const seed = (id: string) => structuredClone(SEED_PROJECTS.find((p) => p.id === id)!);
+      for (const id of ["urgut-tower", "yangi-urgut-tower"]) {
+        const i = c.projects.findIndex((p) => p.id === id);
+        if (i === -1 || c.projects[i].gallery.length > 0 || c.projects[i].cover) continue;
+        const { showroom, video, featured } = c.projects[i];
+        c.projects[i] = { ...seed(id), ...(showroom ? { showroom } : {}), ...(video ? { video } : {}), ...(featured ? { featured } : {}) };
+      }
+      const sog = c.projects.find((p) => p.id === "sogdiana-diamond-house");
+      if (sog && sog.long?.ru.startsWith("Sogdiana Diamond House — жилой дом от AD Group")) {
+        const fresh = seed("sogdiana-diamond-house");
+        Object.assign(sog, { year: fresh.year, tagline: fresh.tagline, desc: fresh.desc, long: fresh.long, facts: fresh.facts, features: fresh.features });
+      }
+    },
+  },
+  {
+    // Location facts were not translatable (one value for all languages); the location is in the description.
+    id: "2026-10-31-drop-location-facts",
+    run(c) {
+      for (const p of c.projects) {
+        if (["sogdiana-diamond-house", "urgut-tower", "yangi-urgut-tower"].includes(p.id)) p.facts = p.facts.filter((f) => f.label.en !== "Location");
+      }
+    },
+  },
 ];
 
 export const ALL_MIGRATION_IDS = MIGRATIONS.map((m) => m.id);
