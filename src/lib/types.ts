@@ -100,11 +100,21 @@ export interface Person {
   photo?: string;
 }
 
+export type DirectionId = "construction" | "service" | "logistics";
+
+/** Admin-managed extras for a business direction on /directions. */
+export interface DirectionMedia {
+  photo?: string;
+  /** Full https://www.instagram.com/<account>/ link. */
+  instagram?: string;
+}
+
 export interface Settings {
   /** Shown on the home page («О компании», together with the CEO). */
   founder: Person;
   /** Co-founder and CEO: shown on the home page («О компании») and the Careers page. */
   ceo: Person;
+  directions: Partial<Record<DirectionId, DirectionMedia>>;
   contacts: {
     phone: string;
     email: string;

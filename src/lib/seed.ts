@@ -225,6 +225,8 @@ export const SEED_CEO: Person = {
 export const SEED_SETTINGS: Settings = {
   founder: SEED_FOUNDER,
   ceo: SEED_CEO,
+  // Photos and Instagram links for the directions come from the client and are set in the admin panel.
+  directions: {},
   contacts: {
     phone: "+998 66 230 00 00",
     email: "adgroup@gmail.com",
