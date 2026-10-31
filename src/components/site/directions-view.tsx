@@ -9,14 +9,14 @@ import { CookieBar, Cta, Footer, ToTop } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { Reveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
-import { instagramHandle } from "@/lib/instagram";
+import { instagramHandle, instagramList } from "@/lib/instagram";
 import type { Settings } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const DIRECTIONS = [
-  { id: "construction", prefix: "c", photo: "/vatan/14.jpg" },
-  { id: "service", prefix: "s", photo: "/vatan/07.jpg" },
-  { id: "logistics", prefix: "l" },
+  { id: "construction", prefix: "c", photo: "/directions/construction.jpg" },
+  { id: "service", prefix: "s", photo: "/directions/service.jpg" },
+  { id: "logistics", prefix: "l", photo: "/directions/logistics.jpg" },
 ] as const;
 
 /** Abstract route: a dashed line with stops, drawn on load. Decorative only. */
@@ -88,8 +88,8 @@ export function DirectionsView({ media }: { media: Settings["directions"] }) {
         {DIRECTIONS.map((d, i) => {
           const flip = i % 2 === 1;
           // A photo set in the admin panel wins over the built-in one.
-          const photo = media[d.id]?.photo ?? ("photo" in d ? d.photo : undefined);
-          const instagram = media[d.id]?.instagram;
+          const photo = media[d.id]?.photo ?? d.photo;
+          const instagram = instagramList(media[d.id]?.instagram);
           return (
             <section key={d.id} id={d.id} className={cn("overflow-hidden py-[clamp(64px,8vw,128px)]", flip ? "bg-cream" : "bg-paper")}>
               <div className="mx-auto grid w-[min(1240px,100%-32px)] items-center gap-12 md:w-[min(1240px,100%-48px)] lg:grid-cols-[1fr_1.05fr] lg:gap-24">
@@ -121,13 +121,13 @@ export function DirectionsView({ media }: { media: Settings["directions"] }) {
                         {t("dirs.cta")} <LuArrowRight className="ml-1 transition-transform group-hover:translate-x-1" />
                       </Button>
                     )}
-                    {instagram && (
-                      <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-gold bg-transparent px-6 text-[15px] font-semibold text-gold-deep hover:bg-gold/10 hover:text-gold-deep">
-                        <a href={instagram} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${instagramHandle(instagram)}`}>
-                          <FaInstagram className="size-[18px]" /> {instagramHandle(instagram)}
+                    {instagram.map((url) => (
+                      <Button key={url} asChild size="lg" variant="outline" className="h-12 rounded-full border-gold bg-transparent px-6 text-[15px] font-semibold text-gold-deep hover:bg-gold/10 hover:text-gold-deep">
+                        <a href={url} target="_blank" rel="noopener noreferrer" aria-label={`Instagram ${instagramHandle(url)}`}>
+                          <FaInstagram className="size-[18px]" /> {instagramHandle(url)}
                         </a>
                       </Button>
-                    )}
+                    ))}
                   </div>
                 </Reveal>
 

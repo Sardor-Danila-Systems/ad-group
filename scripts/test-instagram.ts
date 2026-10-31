@@ -1,6 +1,6 @@
 /** Checks the Instagram link normaliser. Run: npm run test:instagram */
 import { strict as assert } from "node:assert";
-import { instagramHandle, instagramUrl } from "../src/lib/instagram";
+import { instagramHandle, instagramList, instagramUrl } from "../src/lib/instagram";
 
 const ok: [string, string][] = [
   ["@ad.group", "https://www.instagram.com/ad.group/"],
@@ -15,4 +15,12 @@ for (const bad of ["", "https://evil.com/ad.group", "https://instagram.com.evil.
   assert.equal(instagramUrl(bad), null, bad);
 }
 assert.equal(instagramHandle("https://www.instagram.com/ad.group/"), "@ad.group");
+assert.deepEqual(instagramList("https://www.instagram.com/adbellagio?srtk=bmk5MzM1dHk1MGJx\n@asador.rest, https://www.instagram.com/adbellagio/"), [
+  "https://www.instagram.com/adbellagio/",
+  "https://www.instagram.com/asador.rest/",
+]);
+assert.deepEqual(instagramList("https://www.instagram.com/adexpress_trucking_llc_?exln=MTNhN2docDkxNTEwZQ=="), ["https://www.instagram.com/adexpress_trucking_llc_/"]);
+assert.deepEqual(instagramList("https://www.instagram.com/old/"), ["https://www.instagram.com/old/"], "older single-link value");
+assert.deepEqual(instagramList(["@a.b", "https://evil.com/x"]), ["https://www.instagram.com/a.b/"]);
+assert.deepEqual(instagramList(undefined), []);
 console.log("instagram: all passed");

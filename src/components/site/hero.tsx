@@ -21,6 +21,16 @@ const frameSrc = (i: number, light: boolean) => `/hero/${light ? "frames-m" : "f
 const VIDEO_END = 0.78;
 const TEXT_FROM = 0.8;
 const TEXT_TO = 0.94;
+/** Phones: the text sits on the dark area under the video, so it comes in piece by piece while the video plays. */
+const TEXT_FROM_PHONE = 0.08;
+const TEXT_TO_PHONE = 0.76;
+/** Pieces of the final screen (eyebrow, title, lead, buttons, numbers), revealed one after another. */
+const PIECES = 5;
+/** Opacity and lift of piece `i` from the overall reveal (0…1), so each fades in after the one before. */
+const piece = (i: number): React.CSSProperties => {
+  const o = `clamp(0, calc(var(--reveal) * ${PIECES + 1} - ${i}), 1)`;
+  return { opacity: o, transform: `translateY(calc((1 - ${o}) * 24px))` };
+};
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const ease = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -51,7 +61,8 @@ export function Hero() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
     // Phones and data-saver: every second frame is plenty and halves the download.
-    const light = window.matchMedia("(max-width: 767px)").matches || Boolean(conn?.saveData);
+    const phone = window.matchMedia("(max-width: 767px)");
+    const light = phone.matches || Boolean(conn?.saveData);
     const step = light ? 2 : 1;
     const frames: (HTMLImageElement | undefined)[] = new Array(FRAME_COUNT);
 
@@ -108,10 +119,12 @@ export function Hero() {
       const idx = Math.round(current);
       if (idx !== drawn || dirty) draw(idx);
 
-      const reveal = reduced ? 1 : ease(clamp((p - TEXT_FROM) / (TEXT_TO - TEXT_FROM)));
+      const [from, to] = phone.matches ? [TEXT_FROM_PHONE, TEXT_TO_PHONE] : [TEXT_FROM, TEXT_TO];
+      const reveal = reduced ? 1 : phone.matches ? clamp((p - from) / (to - from)) : ease(clamp((p - from) / (to - from)));
       el.style.setProperty("--reveal", reveal.toFixed(3));
       el.style.setProperty("--hint", (1 - clamp(p / 0.05)).toFixed(3));
-      const now = reveal > 0.55;
+      // Buttons clickable and numbers counting once their pieces are in.
+      const now = reveal > 0.7;
       if (now !== wasRevealed) {
         wasRevealed = now;
         setRevealed(now);
@@ -196,24 +209,24 @@ export function Hero() {
         {/* Darkening for legible text, faded in together with it. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(18,14,10,0.9)_0%,rgba(18,14,10,0.62)_55%,rgba(18,14,10,0.3)_100%)] md:bg-[linear-gradient(90deg,rgba(18,14,10,0.86)_0%,rgba(18,14,10,0.55)_42%,rgba(18,14,10,0.1)_75%)]"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(18,14,10,0.92)_0%,rgba(18,14,10,0.8)_50%,rgba(18,14,10,0)_80%)] md:bg-[linear-gradient(90deg,rgba(18,14,10,0.86)_0%,rgba(18,14,10,0.55)_42%,rgba(18,14,10,0.1)_75%)]"
           style={{ opacity: "var(--reveal)" }}
         />
 
         {/* Final screen */}
         <div
           className="absolute inset-0 flex items-end pb-[max(2.5rem,env(safe-area-inset-bottom))] md:items-center md:pb-0"
-          style={{ opacity: "var(--reveal)", transform: "translateY(calc((1 - var(--reveal)) * 28px))", pointerEvents: revealed ? "auto" : "none" }}
+          style={{ pointerEvents: revealed ? "auto" : "none" }}
         >
           <div className="mx-auto w-[min(1240px,100%-32px)] pt-[76px] md:w-[min(1240px,100%-48px)]">
             <div className="max-w-[620px] text-white">
-              <p className="mb-5 flex items-center gap-3 text-[12px] font-semibold tracking-[.2em] text-gold-light uppercase sm:text-[13px]">
+              <p style={piece(0)} className="mb-5 flex items-center gap-3 text-[12px] font-semibold tracking-[.2em] text-gold-light uppercase sm:text-[13px]">
                 <span aria-hidden="true" className="h-px w-10 bg-gold-light" />
                 {t("hero.eyebrow")}
               </p>
-              <h1 className="font-display text-[clamp(40px,6vw,88px)] leading-[0.98] font-medium tracking-tight">{t("hero.title")}</h1>
-              <p className="mt-6 max-w-[44ch] text-[clamp(15px,1.3vw,18px)] leading-relaxed text-white/80">{t("hero.lead")}</p>
-              <div className="mt-8 flex flex-wrap gap-3">
+              <h1 style={piece(1)} className="font-display text-[clamp(40px,6vw,88px)] leading-[0.98] font-medium tracking-tight">{t("hero.title")}</h1>
+              <p style={piece(2)} className="mt-6 max-w-[44ch] text-[clamp(15px,1.3vw,18px)] leading-relaxed text-white/80">{t("hero.lead")}</p>
+              <div style={piece(3)} className="mt-8 flex flex-wrap gap-3">
                 <Button onClick={openCall} size="lg" className="h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-ink hover:bg-gold-light">
                   {t("lead.send")}
                 </Button>
@@ -221,7 +234,7 @@ export function Hero() {
                   <a href="#projects">{t("hero.cta1")}</a>
                 </Button>
               </div>
-              <dl className="mt-8 grid grid-cols-3 gap-x-4 border-t border-white/20 pt-5 sm:mt-12 sm:flex sm:flex-wrap sm:gap-x-10 sm:gap-y-4 sm:pt-6">
+              <dl style={piece(4)} className="mt-8 grid grid-cols-3 gap-x-4 border-t border-white/20 pt-5 sm:mt-12 sm:flex sm:flex-wrap sm:gap-x-10 sm:gap-y-4 sm:pt-6">
                 {([
                   [2011, "", "hero.s1"],
                   [25, "+", "hero.s2"],

@@ -7,6 +7,8 @@ import { ImageField, L10nInput, Section } from "@/components/admin/fields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { instagramList } from "@/lib/instagram";
 import type { DirectionId, Person, Settings } from "@/lib/types";
 
 /** Fields for one person block. `p` is the form-field prefix the server action reads. */
@@ -41,14 +43,14 @@ export function SettingsForm({ settings }: { settings: Settings }) {
       <Section title="Сооснователь и CEO" hint="Показывается на главной в разделе «О компании» и на странице «Вакансии».">
         <PersonFields p="c" person={settings.ceo} />
       </Section>
-      <Section title="Направления" hint="Страница «Направления»: фото раздела и ссылка на его Instagram. Пока фото нет, показывается стандартное; пока нет ссылки, кнопки Instagram нет.">
+      <Section title="Направления" hint="Страница «Направления»: фото раздела и ссылки на его Instagram. Пока фото нет, показывается стандартное; без ссылок кнопок Instagram нет.">
         {DIRECTIONS.map(({ id, title }) => (
           <div key={id} className="grid gap-4 rounded-xl border border-border bg-muted/30 p-4">
             <p className="font-semibold">{title}</p>
             <ImageField label="Фото" fileName={`d_${id}_photo`} currentName={`d_${id}_photoCurrent`} removeName={`d_${id}_removePhoto`} current={settings.directions?.[id]?.photo} />
             <div className="grid gap-2">
-              <Label htmlFor={`d_${id}_instagram`}>Instagram</Label>
-              <Input id={`d_${id}_instagram`} name={`d_${id}_instagram`} defaultValue={settings.directions?.[id]?.instagram ?? ""} placeholder="https://www.instagram.com/account/ или @account" className={field} />
+              <Label htmlFor={`d_${id}_instagram`}>Instagram — по одной ссылке в строке</Label>
+              <Textarea id={`d_${id}_instagram`} name={`d_${id}_instagram`} rows={2} defaultValue={instagramList(settings.directions?.[id]?.instagram).join("\n")} placeholder={"https://www.instagram.com/account/\n@another.account"} className="bg-white" />
             </div>
           </div>
         ))}

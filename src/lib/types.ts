@@ -105,8 +105,8 @@ export type DirectionId = "construction" | "service" | "logistics";
 /** Admin-managed extras for a business direction on /directions. */
 export interface DirectionMedia {
   photo?: string;
-  /** Full https://www.instagram.com/<account>/ link. */
-  instagram?: string;
+  /** Full https://www.instagram.com/<account>/ links; a direction may run several brands. */
+  instagram?: string[];
 }
 
 export interface Settings {
