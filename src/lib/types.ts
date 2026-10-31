@@ -101,9 +101,9 @@ export interface Person {
 }
 
 export interface Settings {
-  /** Shown on the home page. */
+  /** Shown on the home page («О компании», together with the CEO). */
   founder: Person;
-  /** Co-founder and CEO: shown on the Careers page. */
+  /** Co-founder and CEO: shown on the home page («О компании») and the Careers page. */
   ceo: Person;
   contacts: {
     phone: string;
