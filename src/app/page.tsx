@@ -1,7 +1,6 @@
 import { About } from "@/components/site/about";
 import { History, News } from "@/components/site/carousels";
 import { Calculator } from "@/components/site/calculator";
-import { Director } from "@/components/site/director";
 import { CookieBar, Cta, Footer, ToTop } from "@/components/site/footer";
 import { Header } from "@/components/site/header";
 import { Hero } from "@/components/site/hero";
@@ -18,8 +17,7 @@ export default async function Home() {
       <main id="top">
         <Hero />
         <Projects projects={projects} />
-        <About />
-        <Director founder={settings.founder} />
+        <About founder={settings.founder} ceo={settings.ceo} />
         {featured && <Vatan project={featured} />}
         <Calculator />
         <History />

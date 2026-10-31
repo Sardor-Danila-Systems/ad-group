@@ -28,10 +28,10 @@ export function SettingsForm({ settings }: { settings: Settings }) {
   const field = "h-10 bg-white";
   return (
     <form action={action} className="grid gap-6">
-      <Section title="Основатель" hint="Показывается на главной странице.">
+      <Section title="Основатель" hint="Показывается на главной в разделе «О компании», вместе с CEO.">
         <PersonFields p="f" person={settings.founder} />
       </Section>
-      <Section title="Сооснователь и CEO" hint="Показывается на странице «Вакансии».">
+      <Section title="Сооснователь и CEO" hint="Показывается на главной в разделе «О компании» и на странице «Вакансии».">
         <PersonFields p="c" person={settings.ceo} />
       </Section>
       <Section title="Контакты" hint="Подвал сайта и ссылки на соцсети.">
