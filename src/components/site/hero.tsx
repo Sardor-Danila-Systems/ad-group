@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
  * on a canvas. Seeking an MP4 on every scroll tick stutters, especially in Safari and on phones;
  * a frame sequence is what premium product pages use for this.
  */
-const FRAME_COUNT = 145;
+const FRAME_COUNT = 193;
 const frameSrc = (i: number) => `/hero/frames/${String(i).padStart(4, "0")}.webp`;
 
 /** Share of the pinned scroll that plays the video; the rest reveals the final screen. */
@@ -87,9 +87,8 @@ export function Hero() {
       const s = Math.max(cw / iw, ch / ih);
       const dw = iw * s;
       const dh = ih * s;
-      // On tall screens keep the building (slightly right of centre) in view.
-      const focusX = cw / ch < 1 ? 0.6 : 0.5;
-      ctx.drawImage(img, (cw - dw) * focusX, (ch - dh) * 0.5, dw, dh);
+      // The building stands in the centre; on wide screens crop more sky than street.
+      ctx.drawImage(img, (cw - dw) * 0.5, (ch - dh) * 0.4, dw, dh);
       drawn = i;
       dirty = false;
     };
@@ -177,7 +176,7 @@ export function Hero() {
       ref={section}
       data-scroll-hero
       aria-label={t("hero.title")}
-      className="relative h-[320svh] bg-ink md:h-[380svh] motion-reduce:h-svh"
+      className="relative h-[360svh] bg-ink md:h-[420svh] motion-reduce:h-svh"
       style={{ "--reveal": 0, "--hint": 1 } as React.CSSProperties}
     >
       <noscript>
@@ -187,13 +186,13 @@ export function Hero() {
       <div className="sticky top-0 h-svh overflow-hidden">
         {/* First frame from the server: visible during the preloader and before frames arrive. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/hero/first.jpg" alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 size-full object-cover [object-position:60%_50%] md:object-center" />
+        <img src="/hero/first.jpg" alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 size-full object-cover [object-position:50%_40%]" />
         <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 size-full" />
 
         {/* Darkening for legible text, faded in together with it. */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(18,14,10,0.9)_0%,rgba(18,14,10,0.62)_55%,rgba(18,14,10,0.3)_100%)] md:bg-[linear-gradient(90deg,rgba(18,14,10,0.78)_0%,rgba(18,14,10,0.42)_38%,transparent_66%)]"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,rgba(18,14,10,0.9)_0%,rgba(18,14,10,0.62)_55%,rgba(18,14,10,0.3)_100%)] md:bg-[linear-gradient(90deg,rgba(18,14,10,0.86)_0%,rgba(18,14,10,0.55)_42%,rgba(18,14,10,0.1)_75%)]"
           style={{ opacity: "var(--reveal)" }}
         />
 
