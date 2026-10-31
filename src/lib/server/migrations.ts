@@ -1,3 +1,4 @@
+import { SEED_PROJECTS } from "@/lib/seed";
 import type { NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
 /** The documents a data migration may change. */
@@ -41,6 +42,26 @@ export const MIGRATIONS: Migration[] = [
       c.settings = replaceStrings(c.settings, fix);
       // The old Urgut Tower logo says "by AD Express" inside the image itself, so it is taken off the site.
       for (const p of c.projects) if (p.logo === "/urgut/logo.jpg") delete p.logo;
+    },
+  },
+  {
+    // DEV-41: the card with the wave-facade renders is Sogdiana Diamond House; Urgut Tower and Yangi Urgut Tower are new projects.
+    id: "2026-10-31-sogdiana-and-urgut-projects",
+    run(c) {
+      const old = c.projects.find((p) => p.id === "urgut-tower" && p.name.en === "Urgut Tower" && p.gallery.some((g) => g.src.startsWith("/urgut/")));
+      if (old && !c.projects.some((p) => p.id === "sogdiana-diamond-house")) {
+        const renamed = replaceStrings(old, (s) => s.replace(/Urgut Tower/g, "Sogdiana Diamond House").replace(/^\/urgut\//, "/sogdiana/"));
+        renamed.id = "sogdiana-diamond-house";
+        if (renamed.logo?.startsWith("/sogdiana/logo")) delete renamed.logo;
+        c.projects[c.projects.indexOf(old)] = renamed;
+      }
+      // Add the two new projects right after it (or at the end), unless someone already created them.
+      const at = c.projects.findIndex((p) => p.id === "sogdiana-diamond-house");
+      const fresh = SEED_PROJECTS.filter((p) => (p.id === "urgut-tower" || p.id === "yangi-urgut-tower") && !c.projects.some((x) => x.id === p.id));
+      c.projects.splice(at === -1 ? c.projects.length : at + 1, 0, ...structuredClone(fresh));
+      for (const n of c.news) {
+        if (n.title.en === "New project: Urgut Tower") n.title = replaceStrings(n.title, (s) => s.replace("Urgut Tower", "Sogdiana Diamond House"));
+      }
     },
   },
 ];

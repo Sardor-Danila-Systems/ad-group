@@ -25,22 +25,22 @@ const VATAN_GALLERY: GalleryPhoto[] = [
   ph(18, 2000, 1115, l("Зона отдыха у бассейна", "Basseyn yonidagi dam olish zonasi", "Poolside lounge")),
 ];
 
-const urgut = (n: number, w: number, h: number, alt: L10n): GalleryPhoto => ({ src: `/urgut/${String(n).padStart(2, "0")}.jpg`, w, h, alt });
+const sogdiana = (n: number, w: number, h: number, alt: L10n): GalleryPhoto => ({ src: `/sogdiana/${String(n).padStart(2, "0")}.jpg`, w, h, alt });
 
-const URGUT_GALLERY: GalleryPhoto[] = [
-  urgut(1, 1500, 1323, l("Дом с волнообразным фасадом", "To‘lqinsimon jabhali uy", "The building with its wave-shaped facade")),
-  urgut(2, 1500, 1323, l("Фасад, вид с угла", "Jabha, burchakdan ko‘rinish", "Facade from the corner")),
-  urgut(3, 2000, 1765, l("Фасад, вид спереди", "Jabha, old tomondan ko‘rinish", "Front facade")),
-  urgut(4, 1500, 1323, l("Торговая галерея на улице", "Ko‘chadagi savdo galereyasi", "Retail gallery on the street")),
-  urgut(5, 2000, 1126, l("Витрины первого этажа", "Birinchi qavat vitrinalari", "Ground-floor shopfronts")),
-  urgut(6, 2000, 1126, l("Угол дома и въезд в паркинг", "Uy burchagi va avtoturargohga kirish", "Corner of the building and parking entrance")),
-  urgut(7, 2000, 1126, l("Вид сверху", "Yuqoridan ko‘rinish", "View from above")),
-  urgut(8, 2000, 1126, l("Вид сверху: двор и окружение", "Yuqoridan: hovli va atrof", "View from above: courtyard and surroundings")),
+const SOGDIANA_GALLERY: GalleryPhoto[] = [
+  sogdiana(1, 1500, 1323, l("Дом с волнообразным фасадом", "To‘lqinsimon jabhali uy", "The building with its wave-shaped facade")),
+  sogdiana(2, 1500, 1323, l("Фасад, вид с угла", "Jabha, burchakdan ko‘rinish", "Facade from the corner")),
+  sogdiana(3, 2000, 1765, l("Фасад, вид спереди", "Jabha, old tomondan ko‘rinish", "Front facade")),
+  sogdiana(4, 1500, 1323, l("Торговая галерея на улице", "Ko‘chadagi savdo galereyasi", "Retail gallery on the street")),
+  sogdiana(5, 2000, 1126, l("Витрины первого этажа", "Birinchi qavat vitrinalari", "Ground-floor shopfronts")),
+  sogdiana(6, 2000, 1126, l("Угол дома и въезд в паркинг", "Uy burchagi va avtoturargohga kirish", "Corner of the building and parking entrance")),
+  sogdiana(7, 2000, 1126, l("Вид сверху", "Yuqoridan ko‘rinish", "View from above")),
+  sogdiana(8, 2000, 1126, l("Вид сверху: двор и окружение", "Yuqoridan: hovli va atrof", "View from above: courtyard and surroundings")),
 ];
 
 /**
  * Initial content, written to data/content.json on first run. Vatan Residence figures come from the
- * official catalog; Urgut Tower text is derived from its renders. Dates, vacancies and news are placeholders.
+ * official catalog; Sogdiana Diamond House text is derived from its renders. Dates, vacancies and news are placeholders.
  */
 export const SEED_PROJECTS: Project[] = [
   {
@@ -78,18 +78,18 @@ export const SEED_PROJECTS: Project[] = [
     ],
   },
   {
-    id: "urgut-tower",
+    id: "sogdiana-diamond-house",
     cat: "residential",
     status: "build",
     kind: "tower",
-    cover: "/urgut/01.jpg",
-    gallery: URGUT_GALLERY,
-    name: l("Urgut Tower", "Urgut Tower", "Urgut Tower"),
+    cover: "/sogdiana/01.jpg",
+    gallery: SOGDIANA_GALLERY,
+    name: l("Sogdiana Diamond House", "Sogdiana Diamond House", "Sogdiana Diamond House"),
     desc: l("Жилой дом с торговой галереей на первом этаже", "Birinchi qavatida savdo galereyasi bor turar-joy uyi", "Residential building with a retail gallery on the ground floor"),
     long: l(
-      "Urgut Tower — жилой дом от AD Group с волнообразным фасадом, остеклёнными балконами с деревянной подшивкой и торговой галереей на первом этаже. Во дворе детская площадка, въезд в подземный паркинг организован со стороны улицы.",
-      "Urgut Tower — AD Group qurgan, to‘lqinsimon jabhali, yog‘och ostli oynalangan balkonlari va birinchi qavatida savdo galereyasi bor turar-joy uyi. Hovlida bolalar maydonchasi, yerosti avtoturargohiga kirish ko‘cha tomonidan.",
-      "Urgut Tower is a residential building by AD Group with a wave-shaped facade, glazed balconies with timber soffits and a retail gallery on the ground floor. There is a playground in the courtyard and an underground parking entrance from the street.",
+      "Sogdiana Diamond House — жилой дом от AD Group с волнообразным фасадом, остеклёнными балконами с деревянной подшивкой и торговой галереей на первом этаже. Во дворе детская площадка, въезд в подземный паркинг организован со стороны улицы.",
+      "Sogdiana Diamond House — AD Group qurgan, to‘lqinsimon jabhali, yog‘och ostli oynalangan balkonlari va birinchi qavatida savdo galereyasi bor turar-joy uyi. Hovlida bolalar maydonchasi, yerosti avtoturargohiga kirish ko‘cha tomonidan.",
+      "Sogdiana Diamond House is a residential building by AD Group with a wave-shaped facade, glazed balconies with timber soffits and a retail gallery on the ground floor. There is a playground in the courtyard and an underground parking entrance from the street.",
     ),
     facts: [{ label: l("Застройщик", "Quruvchi", "Developer"), value: "AD Group" }],
     features: [
@@ -99,11 +99,44 @@ export const SEED_PROJECTS: Project[] = [
       l("Детская площадка во дворе", "Hovlida bolalar maydonchasi", "Playground in the courtyard"),
     ],
   },
+  // Materials (photos, texts, figures) for these two are still to come; the cards hold neutral placeholders.
+  {
+    id: "urgut-tower",
+    cat: "residential",
+    status: "plan",
+    kind: "tower",
+    gallery: [],
+    facts: [{ label: l("Застройщик", "Quruvchi", "Developer"), value: "AD Group" }],
+    features: [],
+    name: l("Urgut Tower", "Urgut Tower", "Urgut Tower"),
+    desc: l("Новый жилой проект AD Group", "AD Group’ning yangi turar-joy loyihasi", "A new residential project by AD Group"),
+    long: l(
+      "Urgut Tower — новый жилой проект AD Group. Фотографии, планировки и характеристики появятся здесь в ближайшее время. Оставьте заявку, чтобы первыми узнать о старте продаж.",
+      "Urgut Tower — AD Group’ning yangi turar-joy loyihasi. Rasmlar, rejalar va xususiyatlar tez orada shu yerda paydo bo‘ladi. Sotuv boshlanishi haqida birinchilardan bo‘lib bilish uchun ariza qoldiring.",
+      "Urgut Tower is a new residential project by AD Group. Photos, layouts and specifications will appear here soon. Leave a request to be the first to hear when sales open.",
+    ),
+  },
+  {
+    id: "yangi-urgut-tower",
+    cat: "residential",
+    status: "plan",
+    kind: "stepped",
+    gallery: [],
+    facts: [{ label: l("Застройщик", "Quruvchi", "Developer"), value: "AD Group" }],
+    features: [],
+    name: l("Yangi Urgut Tower", "Yangi Urgut Tower", "Yangi Urgut Tower"),
+    desc: l("Новый жилой проект AD Group", "AD Group’ning yangi turar-joy loyihasi", "A new residential project by AD Group"),
+    long: l(
+      "Yangi Urgut Tower — новый жилой проект AD Group. Фотографии, планировки и характеристики появятся здесь в ближайшее время. Оставьте заявку, чтобы первыми узнать о старте продаж.",
+      "Yangi Urgut Tower — AD Group’ning yangi turar-joy loyihasi. Rasmlar, rejalar va xususiyatlar tez orada shu yerda paydo bo‘ladi. Sotuv boshlanishi haqida birinchilardan bo‘lib bilish uchun ariza qoldiring.",
+      "Yangi Urgut Tower is a new residential project by AD Group. Photos, layouts and specifications will appear here soon. Leave a request to be the first to hear when sales open.",
+    ),
+  },
 ];
 
 export const SEED_NEWS: NewsItem[] = [
   { id: "n1", date: "2026-10-14", title: l("Готов каталог Vatan Residence", "Vatan Residence katalogi tayyor", "Vatan Residence catalog is ready"), text: l("84 страницы о концепции, планировках и инфраструктуре комплекса.", "Majmuaning kontseptsiyasi, rejalari va infratuzilmasi haqida 84 sahifa.", "84 pages on the concept, layouts and infrastructure of the complex.") },
-  { id: "n2", date: "2026-10-20", title: l("Новый проект: Urgut Tower", "Yangi loyiha: Urgut Tower", "New project: Urgut Tower"), text: l("Жилой дом с торговой галереей от AD Group.", "AD Group’dan savdo galereyali turar-joy uyi.", "A residential building with a retail gallery by AD Group.") },
+  { id: "n2", date: "2026-10-20", title: l("Новый проект: Sogdiana Diamond House", "Yangi loyiha: Sogdiana Diamond House", "New project: Sogdiana Diamond House"), text: l("Жилой дом с торговой галереей от AD Group.", "AD Group’dan savdo galereyali turar-joy uyi.", "A residential building with a retail gallery by AD Group.") },
   { id: "n3", date: "2026-08-25", title: l("Новый фирменный стиль AD Group", "AD Group yangi firma uslubi", "New AD Group identity"), text: l("Монограмма AD и геометрический паттерн из буквы A.", "AD monogrammasi va A harfidan olingan geometrik pattern.", "The AD monogram and a geometric pattern built from the letter A.") },
 ];
 

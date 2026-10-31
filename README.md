@@ -53,4 +53,4 @@ npm run lint
 - `public/assets`, `public/textures`, `public/vatan`, `public/team` — логотипы, мраморная текстура, фото ЖК, фото основателя
 
 ## Демо-ограничения
-Данные Vatan Residence взяты из официального каталога, текст Urgut Tower составлен по его визуализациям; цифры на первом экране, история, новости, вакансии, адрес и e-mail — заглушки (меняются в админке или в `src/lib/content.ts`). Имя основателя — «Имя Фамилия». Шрифты: Manrope (текст, полная кириллица) и Playfair Display (заголовки); фирменные Cairo Now Extended и Delmon Delicate недоступны, заменены.
+Данные Vatan Residence взяты из официального каталога, текст Sogdiana Diamond House составлен по его визуализациям; Urgut Tower и Yangi Urgut Tower пока с заглушками; цифры на первом экране, история, новости, вакансии, адрес и e-mail — заглушки (меняются в админке или в `src/lib/content.ts`). Имя основателя — «Имя Фамилия». Шрифты: Manrope (текст, полная кириллица) и Playfair Display (заголовки); фирменные Cairo Now Extended и Delmon Delicate недоступны, заменены.

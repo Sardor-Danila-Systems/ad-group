@@ -68,7 +68,6 @@ export function Projects({ projects }: { projects: Project[] }) {
             </article>
           ))}
         </div>
-        <p className="mt-7 text-[13px] text-muted-foreground">{t("demo.note")}</p>
       </div>
     </section>
   );
