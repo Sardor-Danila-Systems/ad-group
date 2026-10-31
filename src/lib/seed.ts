@@ -83,16 +83,15 @@ export const SEED_PROJECTS: Project[] = [
     status: "build",
     kind: "tower",
     cover: "/urgut/01.jpg",
-    logo: "/urgut/logo.jpg",
     gallery: URGUT_GALLERY,
     name: l("Urgut Tower", "Urgut Tower", "Urgut Tower"),
     desc: l("Жилой дом с торговой галереей на первом этаже", "Birinchi qavatida savdo galereyasi bor turar-joy uyi", "Residential building with a retail gallery on the ground floor"),
     long: l(
-      "Urgut Tower — жилой дом от AD Express (AD Group) с волнообразным фасадом, остеклёнными балконами с деревянной подшивкой и торговой галереей на первом этаже. Во дворе детская площадка, въезд в подземный паркинг организован со стороны улицы.",
-      "Urgut Tower — AD Express (AD Group) qurgan, to‘lqinsimon jabhali, yog‘och ostli oynalangan balkonlari va birinchi qavatida savdo galereyasi bor turar-joy uyi. Hovlida bolalar maydonchasi, yerosti avtoturargohiga kirish ko‘cha tomonidan.",
-      "Urgut Tower is a residential building by AD Express (AD Group) with a wave-shaped facade, glazed balconies with timber soffits and a retail gallery on the ground floor. There is a playground in the courtyard and an underground parking entrance from the street.",
+      "Urgut Tower — жилой дом от AD Group с волнообразным фасадом, остеклёнными балконами с деревянной подшивкой и торговой галереей на первом этаже. Во дворе детская площадка, въезд в подземный паркинг организован со стороны улицы.",
+      "Urgut Tower — AD Group qurgan, to‘lqinsimon jabhali, yog‘och ostli oynalangan balkonlari va birinchi qavatida savdo galereyasi bor turar-joy uyi. Hovlida bolalar maydonchasi, yerosti avtoturargohiga kirish ko‘cha tomonidan.",
+      "Urgut Tower is a residential building by AD Group with a wave-shaped facade, glazed balconies with timber soffits and a retail gallery on the ground floor. There is a playground in the courtyard and an underground parking entrance from the street.",
     ),
-    facts: [{ label: l("Застройщик", "Quruvchi", "Developer"), value: "AD Express" }],
+    facts: [{ label: l("Застройщик", "Quruvchi", "Developer"), value: "AD Group" }],
     features: [
       l("Торговая галерея на первом этаже", "Birinchi qavatda savdo galereyasi", "Retail gallery on the ground floor"),
       l("Подземный паркинг", "Yerosti avtoturargohi", "Underground parking"),
@@ -104,7 +103,7 @@ export const SEED_PROJECTS: Project[] = [
 
 export const SEED_NEWS: NewsItem[] = [
   { id: "n1", date: "2026-10-14", title: l("Готов каталог Vatan Residence", "Vatan Residence katalogi tayyor", "Vatan Residence catalog is ready"), text: l("84 страницы о концепции, планировках и инфраструктуре комплекса.", "Majmuaning kontseptsiyasi, rejalari va infratuzilmasi haqida 84 sahifa.", "84 pages on the concept, layouts and infrastructure of the complex.") },
-  { id: "n2", date: "2026-10-20", title: l("Новый проект: Urgut Tower", "Yangi loyiha: Urgut Tower", "New project: Urgut Tower"), text: l("Жилой дом с торговой галереей от AD Express.", "AD Express’dan savdo galereyali turar-joy uyi.", "A residential building with a retail gallery by AD Express.") },
+  { id: "n2", date: "2026-10-20", title: l("Новый проект: Urgut Tower", "Yangi loyiha: Urgut Tower", "New project: Urgut Tower"), text: l("Жилой дом с торговой галереей от AD Group.", "AD Group’dan savdo galereyali turar-joy uyi.", "A residential building with a retail gallery by AD Group.") },
   { id: "n3", date: "2026-08-25", title: l("Новый фирменный стиль AD Group", "AD Group yangi firma uslubi", "New AD Group identity"), text: l("Монограмма AD и геометрический паттерн из буквы A.", "AD monogrammasi va A harfidan olingan geometrik pattern.", "The AD monogram and a geometric pattern built from the letter A.") },
 ];
 

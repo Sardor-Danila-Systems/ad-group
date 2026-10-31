@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { isUploadName, processImage, type ImageKind } from "@/lib/server/images";
+import { ALL_MIGRATION_IDS, applyMigrations } from "@/lib/server/migrations";
 import type { Content, Store } from "@/lib/server/types";
 import { SEED_NEWS, SEED_PROJECTS, SEED_SETTINGS, SEED_VACANCIES } from "@/lib/seed";
 import { upgradeSettings } from "@/lib/settings-upgrade";
@@ -19,7 +20,7 @@ const UPLOAD_DIR = path.join(/*turbopackIgnore: true*/ DATA_DIR, "uploads");
 const CONTENT_VERSION = 2;
 
 function seedContent(): Content {
-  return structuredClone({ version: CONTENT_VERSION, projects: SEED_PROJECTS, news: SEED_NEWS, vacancies: SEED_VACANCIES, settings: SEED_SETTINGS });
+  return structuredClone({ version: CONTENT_VERSION, migrations: ALL_MIGRATION_IDS, projects: SEED_PROJECTS, news: SEED_NEWS, vacancies: SEED_VACANCIES, settings: SEED_SETTINGS });
 }
 
 // Serialises writes so concurrent admin actions cannot clobber each other.
@@ -56,13 +57,16 @@ async function readOrInit(): Promise<Content> {
     if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
   }
   if (existing?.version === CONTENT_VERSION) {
-    const { settings, changed } = upgradeSettings((existing as Content).settings);
-    if (!changed) return existing as Content;
-    const upgraded = { ...(existing as Content), settings };
+    const c = existing as Content;
+    const { settings, changed } = upgradeSettings(c.settings);
+    c.settings = settings;
+    const { ran, applied } = applyMigrations(c, c.migrations ?? []);
+    c.migrations = applied;
+    if (!changed && ran.length === 0) return c;
     try {
-      await writeJson("content.json", upgraded);
+      await writeJson("content.json", c);
     } catch {}
-    return upgraded;
+    return c;
   }
 
   if (existing) {

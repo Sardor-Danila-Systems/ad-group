@@ -3,6 +3,8 @@ import type { Lead, NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
 export interface Content {
   version: number;
+  /** Data migrations already applied (file store only; Postgres keeps them in the meta table). */
+  migrations?: string[];
   projects: Project[];
   news: NewsItem[];
   vacancies: Vacancy[];

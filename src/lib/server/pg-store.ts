@@ -2,6 +2,7 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { db } from "@/lib/server/db";
 import { isUploadName, processImage, type ImageKind } from "@/lib/server/images";
+import { ALL_MIGRATION_IDS, applyMigrations, type MigratableContent } from "@/lib/server/migrations";
 import type { Content, Store } from "@/lib/server/types";
 import { SEED_NEWS, SEED_PROJECTS, SEED_SETTINGS, SEED_VACANCIES } from "@/lib/seed";
 import { upgradeSettings } from "@/lib/settings-upgrade";
@@ -30,6 +31,39 @@ create index if not exists leads_created_idx on leads (created_at desc);
 create table if not exists uploads (name text primary key, data bytea not null, size int not null, created_at timestamptz not null default now());
 `;
 
+type Q = (text: string, params?: unknown[]) => Promise<{ rows: Record<string, unknown>[]; rowCount: number }>;
+
+/** Rewrites a document table in the given order (order is kept through created_at). */
+async function rewrite(q: Q, table: "projects" | "news" | "vacancies", items: { id: string }[]) {
+  await q(`delete from ${table}`);
+  for (const [i, item] of items.entries()) {
+    await q(`insert into ${table} (id, data, created_at) values ($1, $2, timestamptz '2026-01-01' + $3 * interval '1 millisecond')`, [item.id, JSON.stringify(item), i]);
+  }
+}
+
+/** Runs pending data migrations once, under a row lock so parallel server instances cannot run them twice. */
+async function migrate() {
+  await db.tx(async (q) => {
+    await q("insert into meta (key, value) values ('migrations', '[]') on conflict (key) do nothing");
+    const row = (await q("select value from meta where key = 'migrations' for update")).rows[0] as { value: string };
+    const applied = JSON.parse(row.value) as string[];
+    if (ALL_MIGRATION_IDS.every((id) => applied.includes(id))) return;
+    const read = async <T>(table: string) => ((await q(`select data from ${table} order by created_at, id`)).rows as { data: T }[]).map((r) => r.data);
+    const c: MigratableContent = {
+      projects: await read<Project>("projects"),
+      news: await read<NewsItem>("news"),
+      vacancies: await read<Vacancy>("vacancies"),
+      settings: ((await q("select data from settings where id = 1")).rows[0] as { data: Settings } | undefined)?.data ?? structuredClone(SEED_SETTINGS),
+    };
+    const result = applyMigrations(c, applied);
+    await rewrite(q, "projects", c.projects);
+    await rewrite(q, "news", c.news);
+    await rewrite(q, "vacancies", c.vacancies);
+    await q("insert into settings (id, data) values (1, $1) on conflict (id) do update set data = excluded.data", [JSON.stringify(c.settings)]);
+    await q("update meta set value = $1 where key = 'migrations'", [JSON.stringify(result.applied)]);
+  });
+}
+
 let ready: Promise<void> | undefined;
 
 /** Creates tables and seeds them exactly once (the first caller to claim the `seeded` flag does it, in a transaction). */
@@ -39,6 +73,8 @@ function ensure(): Promise<void> {
     await db.tx(async (q) => {
       const claimed = await q("insert into meta (key, value) values ('seeded', '1') on conflict (key) do nothing returning key");
       if (claimed.rowCount === 0) return;
+      // Seed data is current, so every data migration counts as applied.
+      await q("insert into meta (key, value) values ('migrations', $1) on conflict (key) do nothing", [JSON.stringify(ALL_MIGRATION_IDS)]);
       // Explicit one-millisecond steps keep the seed order stable even when the clock does not tick between inserts.
       const seed = async (table: "projects" | "news" | "vacancies", items: { id: string }[]) => {
         for (const [i, item] of items.entries()) {
@@ -50,6 +86,7 @@ function ensure(): Promise<void> {
       await seed("vacancies", SEED_VACANCIES);
       await q("insert into settings (id, data) values (1, $1) on conflict (id) do nothing", [JSON.stringify(SEED_SETTINGS)]);
     });
+    await migrate();
   })().catch((e) => {
     ready = undefined; // retry on the next request instead of caching a failure
     throw e;
