@@ -11,6 +11,7 @@ import { Header } from "@/components/site/header";
 import { ProjectGallery } from "@/components/site/project-gallery";
 import { VideoTour } from "@/components/site/video-tour";
 import { parseVideo } from "@/lib/video";
+import { FactsGrid } from "@/components/site/facts-grid";
 import { Reveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
 import type { Project } from "@/lib/types";
@@ -103,14 +104,7 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
 
             {project.facts.length > 0 && (
               <Reveal className="mt-[clamp(48px,6vw,88px)]">
-                <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 md:grid-cols-4">
-                  {project.facts.map((f) => (
-                    <div key={f.label.ru} className="bg-white p-5 sm:p-7">
-                      <dd className="font-display text-[clamp(28px,3vw,44px)] leading-none font-medium whitespace-nowrap text-gold-deep">{f.value}</dd>
-                      <dt className="mt-2.5 text-sm text-muted-foreground">{f.label[lang]}</dt>
-                    </div>
-                  ))}
-                </dl>
+                <FactsGrid facts={project.facts} />
               </Reveal>
             )}
 

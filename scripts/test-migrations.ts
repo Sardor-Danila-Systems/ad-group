@@ -60,8 +60,12 @@ async function main() {
     assert.ok(sd.gallery.length === 8 && sd.gallery.every((g) => g.src.startsWith("/sogdiana/")) && sd.cover === "/sogdiana/01.jpg", "renders moved");
     assert.equal(sd.logo, undefined, "old logo dropped");
     assert.ok(!JSON.stringify(sd).includes("Urgut"), "no Urgut left in the renamed card");
+    assert.ok(sd.gallery.every((g) => g.src.startsWith("/sogdiana/")), "Sogdiana keeps its own renders");
     const ut = c.projects.find((p) => p.id === "urgut-tower")!;
-    assert.equal(ut.gallery.length, 0, "new Urgut Tower is a separate, empty card");
+    assert.equal(ut.gallery.length, 24, "new Urgut Tower got its own photos");
+    assert.ok(ut.gallery.every((g) => g.src.startsWith("/urgut/")) && ut.facts.some((f) => f.value === "512"));
+    assert.equal(c.projects.find((p) => p.id === "yangi-urgut-tower")!.gallery.length, 10);
+    assert.ok(sd.facts.some((f) => f.value === "12 000 m²"), "brochure figures");
     assert.equal(c.news.find((n) => n.id === "n2")?.title.en, "New project: Sogdiana Diamond House");
     assert.equal(c.news.length, oldNews.length);
 
