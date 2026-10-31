@@ -25,5 +25,15 @@ export function instagramUrl(input: string | null | undefined): string | null {
   return `https://www.instagram.com/${account}/`;
 }
 
+/**
+ * Canonical links from a stored value or admin input: a list, a single link (older data) or text with
+ * links separated by spaces, commas or new lines. Invalid entries are dropped, duplicates removed.
+ */
+export function instagramList(value: unknown): string[] {
+  const parts = Array.isArray(value) ? value : typeof value === "string" ? value.split(/[\s,]+/) : [];
+  const links = parts.map((v) => instagramUrl(typeof v === "string" ? v : null)).filter((v): v is string => Boolean(v));
+  return [...new Set(links)];
+}
+
 /** "@account" label for a canonical link. */
 export const instagramHandle = (url: string) => `@${url.replace(/^https:\/\/www\.instagram\.com\//, "").replace(/\/$/, "")}`;

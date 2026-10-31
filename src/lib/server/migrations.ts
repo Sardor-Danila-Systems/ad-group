@@ -1,4 +1,5 @@
-import { SEED_PROJECTS } from "@/lib/seed";
+import { SEED_DIRECTIONS, SEED_PROJECTS } from "@/lib/seed";
+import { instagramList } from "@/lib/instagram";
 import type { NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
 /** The documents a data migration may change. */
@@ -89,6 +90,19 @@ export const MIGRATIONS: Migration[] = [
     run(c) {
       for (const p of c.projects) {
         if (["sogdiana-diamond-house", "urgut-tower", "yangi-urgut-tower"].includes(p.id)) p.facts = p.facts.filter((f) => f.label.en !== "Location");
+      }
+    },
+  },
+  {
+    // Directions may link several Instagram accounts (a list instead of one link); the client's accounts
+    // are filled in where a direction has none yet.
+    id: "2026-10-31-direction-instagram",
+    run(c) {
+      const dirs = (c.settings.directions ??= {});
+      for (const [id, seed] of Object.entries(SEED_DIRECTIONS) as [keyof typeof SEED_DIRECTIONS, (typeof SEED_DIRECTIONS)[keyof typeof SEED_DIRECTIONS]][]) {
+        const d = (dirs[id] ??= {});
+        const links = instagramList(d.instagram);
+        d.instagram = links.length ? links : [...(seed?.instagram ?? [])];
       }
     },
   },

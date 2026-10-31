@@ -2,7 +2,7 @@
 
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
-import { instagramUrl } from "@/lib/instagram";
+import { instagramList, instagramUrl } from "@/lib/instagram";
 import { parseVideo } from "@/lib/video";
 import { assertAdmin, checkPassword, endSession, startSession, adminEnabled } from "@/lib/server/auth";
 import * as store from "@/lib/server/store";
@@ -359,10 +359,12 @@ async function readDirection(fd: FormData, id: DirectionId, current: DirectionMe
     return { error: uploadMessage(e) };
   }
   if (photo && photo !== current?.photo && !photo.startsWith("/uploads/")) photo = current?.photo;
-  const rawInstagram = str(fd.get(`${p}instagram`), 300);
-  const instagram = instagramUrl(rawInstagram);
-  if (rawInstagram && !instagram) return { error: "Не похоже на ссылку на Instagram-аккаунт (например, https://www.instagram.com/adgroup/ или @adgroup)." };
-  return { ...(photo ? { photo } : {}), ...(instagram ? { instagram } : {}) };
+  // One link per line (commas and spaces work too); every entry must be an Instagram account.
+  const raw = str(fd.get(`${p}instagram`), 2000).split(/[\s,]+/).filter(Boolean);
+  const bad = raw.find((v) => !instagramUrl(v));
+  if (bad) return { error: `«${bad.slice(0, 80)}» — не похоже на ссылку на Instagram-аккаунт (например, https://www.instagram.com/adgroup/ или @adgroup).` };
+  const instagram = instagramList(raw).slice(0, 6);
+  return { ...(photo ? { photo } : {}), ...(instagram.length ? { instagram } : {}) };
 }
 
 export async function saveSettings(_prev: FormState, fd: FormData): Promise<FormState> {
@@ -377,7 +379,7 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
   for (const id of DIRECTION_IDS) {
     const d = await readDirection(fd, id, current.directions?.[id]);
     if ("error" in d) return { error: `${DIRECTION_NAMES[id]}: ${d.error}` };
-    if (d.photo || d.instagram) directions[id] = d;
+    if (d.photo || d.instagram?.length) directions[id] = d;
   }
 
   const handle = (v: FormDataEntryValue | null) => str(v, 60).replace(/^@/, "").replace(/[^\w.]/g, "");

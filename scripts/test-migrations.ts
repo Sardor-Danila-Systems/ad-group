@@ -46,7 +46,9 @@ async function main() {
     for (const [i, p] of oldProjects.entries()) await pg.query("insert into projects values ($1, $2, now() + $3 * interval '1 second')", [p.id, JSON.stringify(p), i]);
     for (const [i, n] of oldNews.entries()) await pg.query("insert into news values ($1, $2, now() + $3 * interval '1 second')", [n.id, JSON.stringify(n), i]);
     for (const [i, v] of SEED_VACANCIES.entries()) await pg.query("insert into vacancies values ($1, $2, now() + $3 * interval '1 second')", [v.id, JSON.stringify(v), i]);
-    await pg.query("insert into settings values (1, $1)", [JSON.stringify(SEED_SETTINGS)]);
+    // Older settings: one Instagram link as a string, set for construction only.
+    const oldSettings = { ...SEED_SETTINGS, directions: { construction: { photo: "/uploads/c.jpg", instagram: "https://www.instagram.com/old.account/" } } };
+    await pg.query("insert into settings values (1, $1)", [JSON.stringify(oldSettings)]);
     __useDb(adapter);
     const { pgStore: s } = await import("../src/lib/server/pg-store");
 
@@ -68,6 +70,10 @@ async function main() {
     assert.ok(sd.facts.some((f) => f.value === "12 000 m²"), "brochure figures");
     assert.equal(c.news.find((n) => n.id === "n2")?.title.en, "New project: Sogdiana Diamond House");
     assert.equal(c.news.length, oldNews.length);
+    const dirs = (await s.loadContent()).settings.directions;
+    assert.deepEqual(dirs.construction, { photo: "/uploads/c.jpg", instagram: ["https://www.instagram.com/old.account/"] }, "admin link kept, now a list");
+    assert.deepEqual(dirs.service?.instagram, ["https://www.instagram.com/adbellagio/", "https://www.instagram.com/asador.rest/"], "client accounts filled in");
+    assert.deepEqual(dirs.logistics?.instagram, ["https://www.instagram.com/adexpress_trucking_llc_/"]);
 
     // A later edit that mentions the old name is not touched again.
     await s.saveNews({ ...c.news[0], text: { ru: "AD Express", uz: "AD Express", en: "AD Express" } });

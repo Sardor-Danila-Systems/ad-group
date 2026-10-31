@@ -304,11 +304,18 @@ export const SEED_CEO: Person = {
   photo: "/team/ceo.jpg",
 };
 
+/** Instagram accounts per direction (from the client, 31.10). */
+export const SEED_DIRECTIONS: Settings["directions"] = {
+  construction: { instagram: ["https://www.instagram.com/ad_group.uz/"] },
+  service: { instagram: ["https://www.instagram.com/adbellagio/", "https://www.instagram.com/asador.rest/"] },
+  logistics: { instagram: ["https://www.instagram.com/adexpress_trucking_llc_/"] },
+};
+
 export const SEED_SETTINGS: Settings = {
   founder: SEED_FOUNDER,
   ceo: SEED_CEO,
-  // Photos and Instagram links for the directions come from the client and are set in the admin panel.
-  directions: {},
+  // Instagram accounts of the directions (editable in the admin panel). Photos: built-in until set there.
+  directions: SEED_DIRECTIONS,
   contacts: {
     phone: "+998 66 230 00 00",
     email: "adgroup@gmail.com",
