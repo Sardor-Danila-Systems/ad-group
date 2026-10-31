@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
  * a frame sequence is what premium product pages use for this.
  */
 const FRAME_COUNT = 193;
-const frameSrc = (i: number) => `/hero/frames/${String(i).padStart(4, "0")}.webp`;
+/** Full-size frames (1664×1248) for larger screens, a lighter set with every second frame for phones. */
+const frameSrc = (i: number, light: boolean) => `/hero/${light ? "frames-m" : "frames"}/${String(i).padStart(4, "0")}.webp`;
 
 /** Share of the pinned scroll that plays the video; the rest reveals the final screen. */
 const VIDEO_END = 0.78;
@@ -44,13 +45,14 @@ export function Hero() {
     const el = section.current;
     const cv = canvas.current;
     if (!el || !cv) return;
-    const ctx = cv.getContext("2d");
+    const ctx = cv.getContext("2d", { alpha: false });
     if (!ctx) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
     // Phones and data-saver: every second frame is plenty and halves the download.
-    const step = window.matchMedia("(max-width: 767px)").matches || conn?.saveData ? 2 : 1;
+    const light = window.matchMedia("(max-width: 767px)").matches || Boolean(conn?.saveData);
+    const step = light ? 2 : 1;
     const frames: (HTMLImageElement | undefined)[] = new Array(FRAME_COUNT);
 
     let current = 0; // smoothed frame position
@@ -75,6 +77,9 @@ export function Hero() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       cv.width = Math.round(cv.clientWidth * dpr);
       cv.height = Math.round(cv.clientHeight * dpr);
+      // Resizing the canvas resets its state; ask for the best scaling filter again.
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       dirty = true;
     };
 
@@ -130,7 +135,7 @@ export function Hero() {
         const i = queue.shift()!;
         const img = new Image();
         img.decoding = "async";
-        img.src = frameSrc(i);
+        img.src = frameSrc(i, light);
         try {
           await img.decode();
         } catch {
