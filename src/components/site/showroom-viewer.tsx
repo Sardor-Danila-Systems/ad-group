@@ -10,8 +10,9 @@ import { VirtualTourPlugin, type VirtualTourNode } from "@photo-sphere-viewer/vi
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { LuArrowLeft, LuMaximize, LuMinimize } from "react-icons/lu";
+import { LuArrowLeft, LuChevronUp, LuLayoutGrid, LuMaximize, LuMinimize } from "react-icons/lu";
 import { useSite } from "@/components/site/site-provider";
+import { useLocalValue } from "@/lib/local-store";
 import type { ShowroomScene } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +37,10 @@ export default function ShowroomViewer({ scenes, projectName, backHref }: { scen
   const [failed, setFailed] = useState(false);
   const [hint, setHint] = useState(true);
   const [full, setFull] = useState(false);
+  // The room strip can be hidden; the choice is remembered on this device.
+  const [roomsSaved, setRoomsSaved] = useLocalValue("showroom-rooms", "1");
+  const rooms = roomsSaved !== "0";
+  const toggleRooms = (open: boolean) => setRoomsSaved(open ? "1" : "0");
   const langRef = useRef(lang);
   const labels = useRef({ loading: t("showroom.loading") });
 
@@ -190,10 +195,19 @@ export default function ShowroomViewer({ scenes, projectName, backHref }: { scen
         <p className="max-w-md rounded-full bg-black/55 px-5 py-2.5 text-center text-sm backdrop-blur-md">{t("showroom.hint")}</p>
       </div>
 
-      {/* Rooms: at the top, so the walking arrows on the floor stay free */}
+      {/* Rooms: at the top, so the walking arrows on the floor stay free. A tab under the strip hides it and
+          brings it back (remembered on this device). */}
       {scenes.length > 1 && (
-        <nav aria-label={t("showroom.rooms")} className="pointer-events-none absolute inset-x-0 top-[72px] flex justify-center px-3 sm:top-[84px] sm:px-6 [&_ul]:pointer-events-auto">
-          <ul className="flex max-w-full gap-2 overflow-x-auto rounded-3xl bg-black/50 p-2 backdrop-blur-md">
+        <nav aria-label={t("showroom.rooms")} className="pointer-events-none absolute inset-x-0 top-[72px] flex flex-col items-center px-3 sm:top-[104px] sm:px-6">
+          <ul
+            id="showroom-rooms"
+            aria-hidden={!rooms}
+            inert={!rooms}
+            className={cn(
+              "flex max-w-full gap-2 overflow-x-auto rounded-3xl bg-black/50 p-2 backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              rooms ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none -translate-y-6 opacity-0",
+            )}
+          >
             {scenes.map((sc) => (
               <li key={sc.id} className="shrink-0">
                 <button
@@ -208,6 +222,19 @@ export default function ShowroomViewer({ scenes, projectName, backHref }: { scen
               </li>
             ))}
           </ul>
+          <button
+            type="button"
+            onClick={() => toggleRooms(!rooms)}
+            aria-expanded={rooms}
+            aria-controls="showroom-rooms"
+            className={cn(
+              "pointer-events-auto inline-flex items-center gap-1.5 rounded-b-2xl bg-black/50 px-4 py-1.5 text-xs font-semibold backdrop-blur-md transition-all duration-500 hover:bg-black/70",
+              rooms ? "-mt-px" : "-mt-[calc(4rem+10px)] rounded-2xl py-2 sm:-mt-[calc(5rem+2px)]",
+            )}
+          >
+            {rooms ? <LuChevronUp className="size-4" /> : <LuLayoutGrid className="size-4" />}
+            {rooms ? t("showroom.hideRooms") : `${t("showroom.rooms")} · ${name}`}
+          </button>
         </nav>
       )}
 

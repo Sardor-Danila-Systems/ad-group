@@ -11,8 +11,10 @@ import { getNews, getProjects, getSettings } from "@/lib/content-source";
 export default async function Home() {
   const [projects, news, settings] = await Promise.all([getProjects(), getNews(), getSettings()]);
   const featured = projects.find((p) => p.featured);
+  // One root element, not a fragment: on navigation Next.js scrolls to a page's first element, and with a
+  // fragment (fixed header, main, footer) it could land on the footer.
   return (
-    <>
+    <div>
       <Header />
       <main id="top">
         <Hero />
@@ -27,6 +29,6 @@ export default async function Home() {
       <Footer />
       <ToTop />
       <CookieBar />
-    </>
+    </div>
   );
 }

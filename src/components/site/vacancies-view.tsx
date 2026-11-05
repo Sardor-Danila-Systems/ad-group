@@ -16,8 +16,10 @@ export function VacanciesView({ vacancies, ceo }: { vacancies: Vacancy[]; ceo: P
   const { t, lang, applyFor } = useSite();
   const [open, setOpen] = useState<string | null>(vacancies[0]?.id ?? null);
 
+  // One root element, not a fragment: on navigation Next.js scrolls to a page's first element, and with a
+  // fragment (fixed header, main, footer) it could land on the footer.
   return (
-    <>
+    <div>
       <Header />
       <main>
         {/* The CEO speaks first, in the same block style as the founder on the home page. */}
@@ -105,6 +107,6 @@ export function VacanciesView({ vacancies, ceo }: { vacancies: Vacancy[]; ceo: P
       <Footer />
       <ToTop />
       <CookieBar />
-    </>
+    </div>
   );
 }

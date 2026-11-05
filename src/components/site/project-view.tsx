@@ -31,8 +31,10 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
   if (project.year) facts.push([t("proj.year"), String(project.year)]);
   if (project.price) facts.push([t("proj.price"), `${t("price.from")} $${project.price}/m²`]);
 
+  // One root element, not a fragment: on navigation Next.js scrolls to a page's first element, and with a
+  // fragment (fixed header, main, footer) it could land on the footer.
   return (
-    <>
+    <div>
       <Header />
       <main>
         <section data-curtain="exit" className="relative isolate flex min-h-[78svh] items-end overflow-hidden bg-ink text-white">
@@ -172,6 +174,6 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
       <Footer />
       <ToTop />
       <CookieBar />
-    </>
+    </div>
   );
 }

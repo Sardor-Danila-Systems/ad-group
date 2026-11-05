@@ -26,6 +26,7 @@ const OWN_INPUT = "input,textarea,select,[contenteditable],[role=slider],[role=l
 export function Motion() {
   const admin = usePathname().startsWith("/admin");
 
+
   // Before paint, so reveals are hidden in the first frame the user could see (the preloader covers the page at load).
   useLayoutEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
