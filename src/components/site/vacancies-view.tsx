@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CookieBar, Cta, Footer, ToTop } from "@/components/site/footer";
 import { Director } from "@/components/site/director";
 import { Header } from "@/components/site/header";
-import { Line, Reveal, Words } from "@/components/site/reveal";
+import { Line, Reveal, SLIDE, Words } from "@/components/site/reveal";
 import { fx } from "@/components/site/fx";
 import { useSite } from "@/components/site/site-provider";
 import type { Person, Vacancy } from "@/lib/types";
@@ -23,17 +23,17 @@ export function VacanciesView({ vacancies, ceo }: { vacancies: Vacancy[]; ceo: P
         {/* The CEO speaks first, in the same block style as the founder on the home page. */}
         <Director founder={ceo} className="pt-[calc(76px+clamp(48px,6vw,96px))]" />
 
-        <section id="open" data-curtain className="bg-paper py-[clamp(64px,8vw,128px)]">
+        <section id="open" data-curtain className={cn("bg-paper py-[clamp(64px,8vw,128px)]", SLIDE)}>
           <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
             <div className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end lg:gap-20">
               <div>
-                <Reveal kind="fade" className="mb-6 flex items-center gap-3 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">
+                <Reveal kind="left" className="mb-6 flex items-center gap-3 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">
                   <Line />
                   {t("vac.eyebrow")}
                 </Reveal>
-                <h1 className="font-display text-[clamp(40px,6vw,88px)] leading-[1] font-medium tracking-tight"><Words text={t("vac.open")} delay={100} /></h1>
+                <h1 className="font-display text-[clamp(40px,6vw,88px)] leading-[1] font-medium tracking-tight"><Words text={t("vac.open")} delay={100} v="flip" /></h1>
               </div>
-              <Reveal delay={300} className="max-w-[52ch] text-[clamp(16px,1.4vw,18px)] leading-relaxed text-ink/70">{t("vac.lead")}</Reveal>
+              <Reveal kind="right" delay={400} className="max-w-[52ch] text-[clamp(16px,1.4vw,18px)] leading-relaxed text-ink/70">{t("vac.lead")}</Reveal>
             </div>
 
             {vacancies.length === 0 ? (
@@ -44,7 +44,7 @@ export function VacanciesView({ vacancies, ceo }: { vacancies: Vacancy[]; ceo: P
                 </Button>
               </Reveal>
             ) : (
-              <Reveal as="ul" kind="stagger" delay={200} className="mt-14 border-t border-gold/40">
+              <Reveal as="ul" kind="stagger" from="left" delay={300} className="mt-14 border-t border-gold/40 lg:mt-10">
                 {vacancies.map((v, i) => {
                   const isOpen = open === v.id;
                   return (

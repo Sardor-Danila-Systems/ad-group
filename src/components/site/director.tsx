@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Line, Reveal } from "@/components/site/reveal";
+import { Line, Reveal, SLIDE, imgReveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
 import type { Person } from "@/lib/types";
 
@@ -16,22 +16,22 @@ function Quote({ className }: { className?: string }) {
 export function Director({ founder, className, reverse }: { founder: Person; className?: string; reverse?: boolean }) {
   const { lang } = useSite();
   return (
-    <section data-curtain className={`relative isolate overflow-hidden bg-ink py-[clamp(64px,8vw,112px)] text-paper ${className ?? ""}`}>
+    <section data-curtain className={`relative isolate overflow-hidden bg-ink py-[clamp(64px,8vw,112px)] text-paper ${className ?? ""} ${SLIDE}`}>
       <div data-parallax aria-hidden="true" className="absolute inset-x-0 -inset-y-[8%] -z-10">
         <Image src="/vatan/06.jpg" alt="" fill sizes="100vw" className="object-cover opacity-[0.12] grayscale" />
       </div>
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-ink via-ink/85 to-ink/70" />
       <div className={`mx-auto grid w-[min(1240px,100%-32px)] items-start gap-10 md:w-[min(1240px,100%-48px)] lg:gap-16 ${reverse ? "lg:grid-cols-[1fr_minmax(0,420px)]" : "lg:grid-cols-[minmax(0,420px)_1fr]"}`}>
         <div className={`relative mx-auto w-full max-w-[420px] lg:mx-0 ${reverse ? "lg:order-2" : ""}`}>
-          <div data-reveal="img" className="relative aspect-[4/5] overflow-hidden rounded-2xl ring-1 ring-gold/40">
+          <div {...imgReveal(reverse ? "right" : "left")} className="relative aspect-[4/5] overflow-hidden rounded-2xl ring-1 ring-gold/40 lg:max-h-[min(70svh,525px)]">
             {founder.photo ? <Image src={founder.photo} alt={founder.name[lang]} fill sizes="(min-width: 1024px) 420px, 90vw" className="object-cover object-top" /> : <div className="size-full bg-ink-2" />}
           </div>
           <Reveal kind="fade" delay={600} className="absolute -right-3 -bottom-3 -z-10 size-full rounded-2xl border border-gold/50" />
         </div>
         <div className="relative lg:pt-4">
           <Reveal kind="fade"><Quote className="mb-6 h-8 w-10 text-gold" /></Reveal>
-          <Reveal delay={150} className="font-display text-[clamp(26px,3.2vw,46px)] leading-[1.18] font-medium">{founder.quote[lang]}</Reveal>
-          <Reveal kind="stagger" delay={300} className="mt-9 grid max-w-[70ch] gap-5 text-[clamp(15px,1.25vw,17px)] leading-relaxed text-paper/70">
+          <Reveal kind={reverse ? "left" : "right"} delay={250} className="font-display text-[clamp(26px,3.2vw,46px)] leading-[1.18] font-medium">{founder.quote[lang]}</Reveal>
+          <Reveal kind="stagger" from={reverse ? "left" : "right"} delay={500} className="mt-9 grid max-w-[70ch] gap-5 text-[clamp(15px,1.25vw,17px)] leading-relaxed text-paper/70">
             <p>{founder.p1[lang]}</p>
             <p>{founder.p2[lang]}</p>
           </Reveal>

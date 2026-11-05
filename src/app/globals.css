@@ -171,20 +171,40 @@ html.paged::-webkit-scrollbar { display: none; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 
 @keyframes rv-up { from { opacity: 0; translate: 0 90px; } }
+@keyframes rv-left { from { opacity: 0; translate: -140px 0; } }
+@keyframes rv-right { from { opacity: 0; translate: 140px 0; } }
+@keyframes rv-blur { from { opacity: 0; filter: blur(16px); translate: 0 24px; } }
+@keyframes rv-pop { from { opacity: 0; scale: 0.82; } }
+@keyframes rv-zoom-in { from { opacity: 0; scale: 0.9; clip-path: inset(8% 8% 8% 8% round 40px); } to { opacity: 1; scale: 1; clip-path: inset(0 0 0 0 round 32px); } }
+@keyframes rv-card { from { opacity: 0; translate: 220px 60px; rotate: 7deg; } }
 @keyframes rv-fade { from { opacity: 0; } }
 @keyframes rv-word { from { translate: 0 112%; } }
+@keyframes rv-word-flip { from { opacity: 0; transform: perspective(700px) rotateX(-95deg); } }
+@keyframes rv-word-slide { from { opacity: 0; translate: 0.9em 0; filter: blur(8px); } }
 @keyframes rv-line { from { scale: 0 1; } }
 @keyframes rv-wipe { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes rv-wipe-l { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes rv-wipe-r { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes rv-wipe-diag { from { clip-path: polygon(0 0, 0 0, -45% 100%, -45% 100%); } to { clip-path: polygon(0 0, 145% 0, 100% 100%, -45% 100%); } }
 @keyframes rv-zoom { from { scale: 1.3; } to { scale: 1; } }
 
-/* Rise and fade. */
-html.motion :is([data-reveal="up"], [data-reveal="fade"]):not(.in) { opacity: 0; }
-/* Every entrance starts a beat after its block arrives (--base), like a slide settling first. */
-:root { --base: 350ms; }
-html.motion [data-reveal="up"].in { animation: rv-up 1.7s var(--ease-out) calc(var(--base) + var(--d, 0ms)) backwards; }
-html.motion [data-reveal="fade"].in { animation: rv-fade 1.8s ease calc(var(--base) + var(--d, 0ms)) backwards; }
+/*
+ * Entrances. Every one starts a beat after its block arrives (--base), like a slide settling first.
+ * up · left · right · blur (focus pull) · pop (scale) · zoom (a dark card opening from its centre) · fade
+ */
+:root { --base: 350ms; --dur: 1.7s; }
+html.motion :is([data-reveal="up"], [data-reveal="left"], [data-reveal="right"], [data-reveal="blur"], [data-reveal="pop"], [data-reveal="zoom"], [data-reveal="fade"]):not(.in) { opacity: 0; }
+html.motion :is([data-reveal="up"], [data-reveal="left"], [data-reveal="right"], [data-reveal="blur"], [data-reveal="pop"], [data-reveal="zoom"], [data-reveal="fade"]).in {
+  animation: rv-up var(--dur) var(--ease-out) calc(var(--base) + var(--d, 0ms)) backwards;
+}
+html.motion [data-reveal="left"].in { animation-name: rv-left; }
+html.motion [data-reveal="right"].in { animation-name: rv-right; }
+html.motion [data-reveal="blur"].in { animation-name: rv-blur; animation-duration: 2s; }
+html.motion [data-reveal="pop"].in { animation-name: rv-pop; }
+html.motion [data-reveal="zoom"].in { animation-name: rv-zoom-in; animation-timing-function: var(--ease-io); animation-duration: 1.6s; }
+html.motion [data-reveal="fade"].in { animation-name: rv-fade; animation-timing-function: ease; }
 
-/* Children one after another. */
+/* Children one after another; data-from picks the way they come: up (default), left, right, pop, cards (a fan from the right). */
 [data-reveal="stagger"] > :nth-child(2) { --i: 1; }
 [data-reveal="stagger"] > :nth-child(3) { --i: 2; }
 [data-reveal="stagger"] > :nth-child(4) { --i: 3; }
@@ -196,23 +216,38 @@ html.motion [data-reveal="fade"].in { animation: rv-fade 1.8s ease calc(var(--ba
 [data-reveal="stagger"] > :nth-child(n + 10) { --i: 9; }
 html.motion [data-reveal="stagger"]:not(.in) > * { opacity: 0; }
 html.motion [data-reveal="stagger"].in > * { animation: rv-up 1.6s var(--ease-out) calc(var(--base) + var(--d, 0ms) + var(--i, 0) * 140ms) backwards; }
+html.motion [data-reveal="stagger"][data-from="left"].in > * { animation-name: rv-left; }
+html.motion [data-reveal="stagger"][data-from="right"].in > * { animation-name: rv-right; }
+html.motion [data-reveal="stagger"][data-from="pop"].in > * { animation-name: rv-pop; animation-duration: 1.3s; animation-delay: calc(var(--base) + var(--d, 0ms) + var(--i, 0) * 90ms); }
+html.motion [data-reveal="stagger"][data-from="cards"].in > * { animation-name: rv-card; animation-duration: 1.9s; animation-delay: calc(var(--base) + var(--d, 0ms) + var(--i, 0) * 160ms); }
 
-/* Title words rising from under a mask. */
+/* Title words from under a mask: rise (default), flip (3D, hinged at the baseline) or slide (in from the right, out of focus). */
 .sw { display: inline-block; overflow: clip; vertical-align: top; padding: 0 0.05em 0.16em; margin: 0 -0.05em -0.16em; }
-.sw > span { display: inline-block; }
+.sw > span { display: inline-block; transform-origin: 50% 100%; }
+[data-reveal="words"]:is([data-v="flip"], [data-v="slide"]) .sw { overflow: visible; }
 html.motion [data-reveal="words"]:not(.in) .sw > span { translate: 0 112%; }
+html.motion [data-reveal="words"]:is([data-v="flip"], [data-v="slide"]):not(.in) .sw > span { translate: none; opacity: 0; }
 html.motion [data-reveal="words"].in .sw > span { animation: rv-word 1.6s var(--ease-out) calc(var(--base) + var(--d, 0ms) + var(--w, 0) * 80ms) backwards; }
+html.motion [data-reveal="words"][data-v="flip"].in .sw > span { animation-name: rv-word-flip; animation-duration: 1.4s; animation-delay: calc(var(--base) + var(--d, 0ms) + var(--w, 0) * 110ms); }
+html.motion [data-reveal="words"][data-v="slide"].in .sw > span { animation-name: rv-word-slide; animation-duration: 1.5s; animation-delay: calc(var(--base) + var(--d, 0ms) + var(--w, 0) * 90ms); }
 
 /* Gold hairlines growing from the left. */
 [data-reveal="line"] { transform-origin: left center; }
 html.motion [data-reveal="line"]:not(.in) { scale: 0 1; }
 html.motion [data-reveal="line"].in { animation: rv-line 1.6s var(--ease-io) calc(var(--base) + var(--d, 0ms) + 200ms) backwards; }
 
-/* Image frames: the picture opens from the bottom and settles from a zoom (the frame itself stays). */
-html.motion [data-reveal="img"]:not(.in) :is(:scope > img, :scope > svg, :scope > video, :scope > [data-parallax] > img) { clip-path: inset(100% 0 0 0); }
-html.motion [data-reveal="img"].in :is(:scope > img, :scope > svg, :scope > video, :scope > [data-parallax] > img) {
+/* Image frames: the picture opens (from the bottom, left, right or along a diagonal) and settles from a zoom. */
+/* The frame's shadow and outline wait for the picture, so no empty card shows first. */
+@keyframes rv-shadow { from { box-shadow: 0 0 0 0 transparent; } }
+html.motion [data-reveal="img"]:not(.in) { box-shadow: none; }
+html.motion [data-reveal="img"].in { animation: rv-shadow 1.2s ease calc(var(--base) + var(--d, 0ms) + 1100ms) backwards; }
+html.motion [data-reveal="img"]:not(.in) > :is(img, svg, video), html.motion [data-reveal="img"]:not(.in) > [data-parallax] > img { clip-path: inset(100% 0 0 0); }
+html.motion [data-reveal="img"].in > :is(img, svg, video), html.motion [data-reveal="img"].in > [data-parallax] > img {
   animation: rv-wipe 1.8s var(--ease-io) calc(var(--base) + var(--d, 0ms)) backwards, rv-zoom 2.8s var(--ease-out) calc(var(--base) + var(--d, 0ms)) backwards;
 }
+html.motion [data-reveal="img"][data-from="left"].in > :is(img, svg, video), html.motion [data-reveal="img"][data-from="left"].in > [data-parallax] > img { animation-name: rv-wipe-l, rv-zoom; }
+html.motion [data-reveal="img"][data-from="right"].in > :is(img, svg, video), html.motion [data-reveal="img"][data-from="right"].in > [data-parallax] > img { animation-name: rv-wipe-r, rv-zoom; }
+html.motion [data-reveal="img"][data-from="diag"].in > :is(img, svg, video), html.motion [data-reveal="img"][data-from="diag"].in > [data-parallax] > img { animation-name: rv-wipe-diag, rv-zoom; animation-duration: 2s, 2.8s; }
 
 /* First screen of the home page: the picture settles from a zoom as the preloader opens. */
 @keyframes hero-intro { from { scale: 1.14; } }

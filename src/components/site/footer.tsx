@@ -16,8 +16,8 @@ export function Cta() {
   return (
     <section data-curtain className="bg-marble-strong py-[clamp(64px,8vw,112px)]">
       <div className="mx-auto flex w-[min(1240px,100%-32px)] flex-wrap items-center justify-between gap-8 md:w-[min(1240px,100%-48px)]">
-        <h2 className="font-display max-w-[20ch] text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight"><Words text={t("cta2.title")} /></h2>
-        <Reveal delay={350}>
+        <h2 className="font-display max-w-[20ch] text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight"><Words text={t("cta2.title")} v="slide" /></h2>
+        <Reveal kind="pop" delay={500}>
           <Button onClick={openCall} size="lg" className={`h-13 rounded-full bg-ink px-8 text-[15px] font-semibold text-paper hover:bg-ink ${fx.ink}`}>{t("cta.call")}</Button>
         </Reveal>
       </div>

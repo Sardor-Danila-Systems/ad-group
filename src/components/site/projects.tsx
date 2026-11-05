@@ -7,7 +7,7 @@ import { LuArrowRight } from "react-icons/lu";
 import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { BuildingArt } from "@/components/site/building-art";
-import { Reveal, Words } from "@/components/site/reveal";
+import { Reveal, SLIDE, Words, imgReveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
 import type { Project } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -28,11 +28,11 @@ export function Projects({ projects }: { projects: Project[] }) {
   const list = projects.filter((p) => filter === "all" || p.cat === filter || (filter === "done" && p.status === "done"));
 
   return (
-    <section id="projects" data-curtain className="bg-cream py-[clamp(72px,9vw,128px)]">
+    <section id="projects" data-curtain className={cn("bg-cream py-[clamp(72px,9vw,128px)]", SLIDE)}>
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
         <div className="mb-12 flex flex-wrap items-end justify-between gap-5">
-          <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight"><Words text={t("projects.title")} /></h2>
-          {options.length > 1 && <Reveal kind="fade" delay={300}><ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} className="flex-wrap" spacing={2}>
+          <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight"><Words text={t("projects.title")} v="flip" /></h2>
+          {options.length > 1 && <Reveal kind="right" delay={300}><ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} className="flex-wrap" spacing={2}>
             {options.map(([v, k]) => (
               <ToggleGroupItem key={v} value={v} className="h-10 rounded-full border border-gold/40 px-5 text-sm font-medium text-ink/80 data-[state=on]:border-ink data-[state=on]:bg-ink data-[state=on]:text-paper">
                 {t(k)}
@@ -41,10 +41,10 @@ export function Projects({ projects }: { projects: Project[] }) {
           </ToggleGroup></Reveal>}
         </div>
 
-        <Reveal kind="stagger" className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))]">
+        <Reveal kind="stagger" from="cards" delay={200} className={cn("grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))]", list.length <= 4 && "lg:grid-cols-4 lg:gap-5")}>
           {list.map((p) => (
             <article key={p.id} className="group relative overflow-hidden rounded-[22px] bg-white ring-1 ring-gold/20 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-30px_rgba(60,45,20,0.45)]">
-              <div data-reveal="img" style={{ "--d": "250ms" } as React.CSSProperties} className="relative aspect-[3/2] overflow-hidden bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
+              <div {...imgReveal("diag", 500)} className="relative aspect-[3/2] overflow-hidden bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
                 {p.cover ? (
                   <Image src={p.cover} alt={p.name[lang]} fill sizes="(min-width: 1024px) 400px, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                 ) : (
@@ -54,8 +54,8 @@ export function Projects({ projects }: { projects: Project[] }) {
                   {t(`status.${p.status}`)}
                 </Badge>
               </div>
-              <div className="p-6">
-                <h3 className="font-display text-2xl font-medium">{p.name[lang]}</h3>
+              <div className="p-6 lg:p-5 xl:p-6">
+                <h3 className="font-display text-2xl font-medium lg:text-[22px] xl:text-2xl">{p.name[lang]}</h3>
                 <p className="mt-1.5 text-[15px] text-muted-foreground">{p.desc[lang]}</p>
                 <div className="mt-5 flex items-center gap-3.5 text-sm text-muted-foreground">
                   {p.year && <span>{p.year}</span>}
