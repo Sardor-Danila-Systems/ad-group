@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { CookieBar, Cta, Footer, ToTop } from "@/components/site/footer";
 import { Director } from "@/components/site/director";
 import { Header } from "@/components/site/header";
-import { Reveal } from "@/components/site/reveal";
+import { Line, Reveal, SLIDE, Words } from "@/components/site/reveal";
+import { fx } from "@/components/site/fx";
 import { useSite } from "@/components/site/site-provider";
 import type { Person, Vacancy } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -22,28 +23,28 @@ export function VacanciesView({ vacancies, ceo }: { vacancies: Vacancy[]; ceo: P
         {/* The CEO speaks first, in the same block style as the founder on the home page. */}
         <Director founder={ceo} className="pt-[calc(76px+clamp(48px,6vw,96px))]" />
 
-        <section id="open" className="bg-paper py-[clamp(64px,8vw,128px)]">
+        <section id="open" data-curtain className={cn("bg-paper py-[clamp(64px,8vw,128px)]", SLIDE)}>
           <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
-            <Reveal className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end lg:gap-20">
+            <div className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end lg:gap-20">
               <div>
-                <p className="mb-6 flex items-center gap-3 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">
-                  <span aria-hidden="true" className="h-px w-10 bg-gold" />
+                <Reveal kind="left" className="mb-6 flex items-center gap-3 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">
+                  <Line />
                   {t("vac.eyebrow")}
-                </p>
-                <h1 className="font-display text-[clamp(40px,6vw,88px)] leading-[1] font-medium tracking-tight">{t("vac.open")}</h1>
+                </Reveal>
+                <h1 className="font-display text-[clamp(40px,6vw,88px)] leading-[1] font-medium tracking-tight"><Words text={t("vac.open")} delay={100} v="flip" /></h1>
               </div>
-              <p className="max-w-[52ch] text-[clamp(16px,1.4vw,18px)] leading-relaxed text-ink/70">{t("vac.lead")}</p>
-            </Reveal>
+              <Reveal kind="right" delay={400} className="max-w-[52ch] text-[clamp(16px,1.4vw,18px)] leading-relaxed text-ink/70">{t("vac.lead")}</Reveal>
+            </div>
 
             {vacancies.length === 0 ? (
               <Reveal className="mt-14 rounded-[28px] bg-white p-8 ring-1 ring-gold/25 sm:p-12">
                 <p className="max-w-[48ch] font-display text-2xl leading-snug">{t("vac.empty")}</p>
-                <Button onClick={() => applyFor(t("vac.general"))} size="lg" className="mt-8 h-12 rounded-full bg-ink px-7 text-[15px] font-semibold text-paper hover:bg-ink-2">
+                <Button onClick={() => applyFor(t("vac.general"))} size="lg" className={`mt-8 h-12 rounded-full bg-ink px-7 text-[15px] font-semibold text-paper hover:bg-ink ${fx.ink}`}>
                   {t("vac.general")}
                 </Button>
               </Reveal>
             ) : (
-              <ul className="mt-14 border-t border-gold/40">
+              <Reveal as="ul" kind="stagger" from="left" delay={300} className="mt-14 border-t border-gold/40 lg:mt-10">
                 {vacancies.map((v, i) => {
                   const isOpen = open === v.id;
                   return (
@@ -73,7 +74,7 @@ export function VacanciesView({ vacancies, ceo }: { vacancies: Vacancy[]; ceo: P
                           <div className="grid gap-8 pb-10 pl-12 sm:pl-20 lg:grid-cols-[1.2fr_1fr]">
                             <div>
                               <p className="max-w-[54ch] text-[17px] leading-relaxed text-ink/75">{v.summary[lang]}</p>
-                              <Button onClick={() => applyFor(v.title[lang])} size="lg" className="group/btn mt-7 h-12 rounded-full bg-ink px-7 text-[15px] font-semibold text-paper hover:bg-ink-2">
+                              <Button onClick={() => applyFor(v.title[lang])} size="lg" className={`group/btn mt-7 h-12 rounded-full bg-ink px-7 text-[15px] font-semibold text-paper hover:bg-ink ${fx.ink}`}>
                                 {t("vac.apply")} <LuArrowRight className="ml-1 transition-transform group-hover/btn:translate-x-1" />
                               </Button>
                             </div>
@@ -95,7 +96,7 @@ export function VacanciesView({ vacancies, ceo }: { vacancies: Vacancy[]; ceo: P
                     </li>
                   );
                 })}
-              </ul>
+              </Reveal>
             )}
           </div>
         </section>

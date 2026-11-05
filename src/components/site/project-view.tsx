@@ -12,9 +12,13 @@ import { ProjectGallery } from "@/components/site/project-gallery";
 import { VideoTour } from "@/components/site/video-tour";
 import { parseVideo } from "@/lib/video";
 import { FactsGrid } from "@/components/site/facts-grid";
-import { Reveal } from "@/components/site/reveal";
+import { Reveal, SLIDE, Words, imgReveal } from "@/components/site/reveal";
+import { cn } from "@/lib/utils";
+import { fx } from "@/components/site/fx";
 import { useSite } from "@/components/site/site-provider";
 import type { Project } from "@/lib/types";
+
+const WRAP = "mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]";
 
 export function ProjectView({ project, others }: { project: Project; others: Project[] }) {
   const { t, lang, openCall } = useSite();
@@ -30,9 +34,9 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
     <>
       <Header />
       <main>
-        <section className="relative isolate flex min-h-[78svh] items-end overflow-hidden bg-ink text-white">
+        <section data-curtain="exit" className="relative isolate flex min-h-[78svh] items-end overflow-hidden bg-ink text-white">
           {project.cover ? (
-            <Image src={project.cover} alt={project.name[lang]} fill priority sizes="100vw" className="-z-10 object-cover" />
+            <Image src={project.cover} alt={project.name[lang]} fill priority sizes="100vw" className="hero-intro -z-10 object-cover" />
           ) : (
             <div aria-hidden="true" className="absolute inset-0 -z-10 text-white [--b:#2a251d] [--b2:var(--gold)]">
               <BuildingArt kind={project.kind} w={1200} h={600} className="absolute right-0 bottom-0 h-[85%] w-full opacity-50 md:w-[70%]" />
@@ -40,96 +44,108 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
           )}
           <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-black/80 via-black/20 to-black/40" />
           <div className="mx-auto w-[min(1240px,100%-32px)] pt-40 pb-12 md:w-[min(1240px,100%-48px)] md:pb-16">
-            <Link href="/#projects" className="mb-8 inline-flex items-center gap-2 text-sm text-white/80 transition-colors hover:text-white">
+            <Link href="/#projects" className="enter enter-up mb-8 inline-flex items-center gap-2 text-sm text-white/80 transition-colors hover:text-white">
               <LuArrowLeft className="size-4" /> {t("proj.back")}
             </Link>
             {project.logo && <Image src={project.logo} alt="" width={240} height={80} className="mb-6 h-16 w-auto rounded-lg" />}
-            <div className="mb-4">
+            <div className="enter enter-up mb-4" style={{ animationDelay: "0.15s" }}>
               <Badge className="rounded-full border-0 bg-gold px-3 py-1 text-xs font-semibold text-ink">{t(`status.${project.status}`)}</Badge>
             </div>
-            <h1 className="max-w-[16ch] font-display text-[clamp(48px,8vw,112px)] leading-[0.98] font-medium tracking-tight">{project.name[lang]}</h1>
-            <p className="mt-5 max-w-[52ch] text-[clamp(16px,1.5vw,20px)] text-white/85">{project.desc[lang]}</p>
+            <h1 className="max-w-[16ch] font-display text-[clamp(48px,8vw,112px)] leading-[0.98] font-medium tracking-tight"><Words text={project.name[lang]} delay={200} /></h1>
+            <p style={{ animationDelay: "0.5s" }} className="enter enter-up mt-5 max-w-[52ch] text-[clamp(16px,1.5vw,20px)] text-white/85">{project.desc[lang]}</p>
           </div>
         </section>
 
-        <section className="bg-paper py-[clamp(56px,7vw,104px)]">
-          <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
-            <Reveal className={`grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 ${["", "", "lg:grid-cols-2", "lg:grid-cols-3", "lg:grid-cols-4"][facts.length] ?? "lg:grid-cols-4"}`}>
+        {/* One block per screen: the paged scroll stops once on each. */}
+        <section data-curtain className={cn("bg-paper py-[clamp(56px,7vw,104px)]", SLIDE)}>
+          <div className={WRAP}>
+            <Reveal kind="stagger" from="pop" className={`grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 ${["", "", "lg:grid-cols-2", "lg:grid-cols-3", "lg:grid-cols-4"][facts.length] ?? "lg:grid-cols-4"}`}>
               {facts.map(([k, v]) => (
-                <div key={k} className="bg-white p-6 sm:p-8">
+                <div key={k} className="bg-white p-6 sm:p-8 lg:p-6">
                   <small className="block text-[13px] text-muted-foreground">{k}</small>
                   <b className="mt-1.5 block font-display text-2xl font-medium text-gold-deep sm:text-3xl">{v}</b>
                 </div>
               ))}
             </Reveal>
 
-            {project.showroom && project.showroom.length > 0 && (
-              <Reveal className="mt-[clamp(32px,4vw,56px)]">
-                <Link href={`/projects/${project.id}/showroom`} className="group relative isolate block overflow-hidden rounded-[28px] bg-ink text-white shadow-[0_40px_80px_-35px_rgba(60,45,20,0.55)] ring-1 ring-gold/40">
-                  <Image src={project.showroom[0].image} alt="" fill sizes="(min-width: 1240px) 1240px, 100vw" className="-z-10 object-cover opacity-80 transition-transform duration-[1200ms] group-hover:scale-105" />
-                  <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/10" />
-                  <span className="grid min-h-[300px] content-end gap-5 p-7 sm:min-h-[360px] sm:p-12">
-                    <span className="grid size-14 place-items-center rounded-full bg-gold text-ink"><LuView className="size-7" /></span>
-                    <span className="block max-w-[18ch] font-display text-[clamp(32px,4.4vw,60px)] leading-[1.03] font-medium">{t("showroom.cta.title")}</span>
-                    <span className="block max-w-[46ch] text-white/80">{t("showroom.cta.text")}</span>
-                    <span className="inline-flex w-fit items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-[15px] font-semibold text-ink transition-colors group-hover:bg-gold-light">
-                      {t("showroom.cta.btn")} <LuArrowRight className="transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </span>
-                </Link>
-              </Reveal>
-            )}
-
-            <Reveal className="mt-[clamp(48px,6vw,88px)] grid gap-10 md:grid-cols-[1.3fr_1fr] md:gap-16">
+            <div className="mt-[clamp(48px,6vw,88px)] grid gap-10 md:grid-cols-[1.3fr_1fr] md:gap-16 lg:mt-12">
               <div>
-                <h2 className="font-display text-[clamp(34px,4.2vw,58px)] leading-[1.05] font-medium tracking-tight">{t("proj.about")}</h2>
-                <p className="mt-6 max-w-[60ch] text-[clamp(16px,1.4vw,18px)] leading-relaxed text-ink/70">{(project.long ?? project.desc)[lang]}</p>
-                <Button onClick={openCall} size="lg" className="mt-8 h-12 rounded-full bg-ink px-7 text-[15px] font-semibold text-paper hover:bg-ink-2">
-                  {t("proj.cta")}
-                </Button>
+                <h2 className="font-display text-[clamp(34px,4.2vw,58px)] leading-[1.05] font-medium tracking-tight"><Words text={t("proj.about")} v="flip" /></h2>
+                <Reveal kind="left" delay={350} className="mt-6 max-w-[60ch] text-[clamp(16px,1.4vw,18px)] leading-relaxed text-ink/70">{(project.long ?? project.desc)[lang]}</Reveal>
+                <Reveal kind="pop" delay={650}>
+                  <Button onClick={openCall} size="lg" className={`mt-8 h-12 rounded-full bg-ink px-7 text-[15px] font-semibold text-paper hover:bg-ink ${fx.ink}`}>
+                    {t("proj.cta")}
+                  </Button>
+                </Reveal>
               </div>
               {project.features.length > 0 && (
                 <div>
-                  <h3 className="mb-5 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">{t("proj.features")}</h3>
-                  <ul className="grid gap-3.5">
+                  <Reveal kind="right" className="mb-5 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">{t("proj.features")}</Reveal>
+                  <Reveal as="ul" kind="stagger" from="right" delay={300} className="grid gap-3.5">
                     {project.features.map((f, i) => (
                       <li key={i} className="relative pl-7 before:absolute before:top-[.6em] before:left-0 before:h-2.5 before:w-3.5 before:bg-gold before:[clip-path:polygon(50%_0,100%_100%,0_100%)]">
                         {f[lang]}
                       </li>
                     ))}
-                  </ul>
+                  </Reveal>
                 </div>
               )}
-            </Reveal>
-
-            {project.facts.length > 0 && (
-              <Reveal className="mt-[clamp(48px,6vw,88px)]">
-                <FactsGrid facts={project.facts} />
-              </Reveal>
-            )}
-
-            {parseVideo(project.video) && (
-              <div className="mt-[clamp(56px,7vw,104px)]">
-                <VideoTour url={project.video!} cover={project.cover} name={project.name[lang]} id={project.id} />
-              </div>
-            )}
-
-            {project.gallery.length > 0 && (
-              <div className="mt-[clamp(56px,7vw,104px)]">
-                <ProjectGallery photos={project.gallery} title={t("vatan.gallery")} name={project.name[lang]} />
-              </div>
-            )}
+            </div>
           </div>
         </section>
 
+        {project.facts.length > 0 && (
+          <section data-curtain className={cn("bg-cream py-[clamp(56px,7vw,104px)]", SLIDE)}>
+            <div className={WRAP}>
+              <h2 className="mb-10 font-display text-[clamp(30px,3.6vw,52px)] leading-[1.05] font-medium tracking-tight"><Words text={project.name[lang]} v="slide" /></h2>
+              <FactsGrid facts={project.facts} />
+            </div>
+          </section>
+        )}
+
+        {project.showroom && project.showroom.length > 0 && (
+          <section data-curtain className={cn("bg-paper py-[clamp(56px,7vw,104px)]", SLIDE)}>
+            <div className={WRAP}>
+              <Link href={`/projects/${project.id}/showroom`} {...imgReveal("diag")} className="group relative isolate block overflow-hidden rounded-[28px] bg-ink text-white shadow-[0_40px_80px_-35px_rgba(60,45,20,0.55)] ring-1 ring-gold/40">
+                <Image src={project.showroom[0].image} alt="" fill sizes="(min-width: 1240px) 1240px, 100vw" className="-z-10 object-cover opacity-80 transition-transform duration-[1200ms] group-hover:scale-105" />
+                <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/10" />
+                <span className="grid min-h-[300px] content-end gap-5 p-7 sm:min-h-[360px] sm:p-12 lg:min-h-[min(64svh,560px)]">
+                  <Reveal as="span" kind="pop" delay={700} className="grid size-14 place-items-center rounded-full bg-gold text-ink"><LuView className="size-7" /></Reveal>
+                  <span className="block max-w-[18ch] font-display text-[clamp(32px,4.4vw,60px)] leading-[1.03] font-medium"><Words text={t("showroom.cta.title")} delay={800} v="flip" /></span>
+                  <Reveal as="span" kind="blur" delay={1100} className="block max-w-[46ch] text-white/80">{t("showroom.cta.text")}</Reveal>
+                  <Reveal as="span" kind="left" delay={1250} className="inline-flex w-fit items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-[15px] font-semibold text-ink transition-colors group-hover:bg-gold-light">
+                    {t("showroom.cta.btn")} <LuArrowRight className="transition-transform group-hover:translate-x-1" />
+                  </Reveal>
+                </span>
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {parseVideo(project.video) && (
+          <section data-curtain className={cn("bg-cream py-[clamp(56px,7vw,104px)]", SLIDE)}>
+            <div className={WRAP}>
+              <VideoTour url={project.video!} cover={project.cover} name={project.name[lang]} id={project.id} />
+            </div>
+          </section>
+        )}
+
+        {project.gallery.length > 0 && (
+          <section data-curtain className={cn("bg-paper py-[clamp(56px,7vw,104px)]", SLIDE)}>
+            <div className={WRAP}>
+              <ProjectGallery photos={project.gallery} title={t("vatan.gallery")} name={project.name[lang]} strip />
+            </div>
+          </section>
+        )}
+
         {others.length > 0 && (
-          <section className="bg-sand py-[clamp(56px,7vw,104px)]">
+          <section data-curtain className={cn("bg-sand py-[clamp(56px,7vw,104px)]", SLIDE)}>
             <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
-              <h2 className="mb-10 font-display text-[clamp(30px,3.6vw,52px)] leading-[1.05] font-medium tracking-tight">{t("proj.other")}</h2>
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <h2 className="mb-10 font-display text-[clamp(30px,3.6vw,52px)] leading-[1.05] font-medium tracking-tight"><Words text={t("proj.other")} v="flip" /></h2>
+              <Reveal kind="stagger" from="cards" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {others.map((o) => (
                   <Link key={o.id} href={`/projects/${o.id}`} className="group overflow-hidden rounded-[22px] bg-white ring-1 ring-gold/20 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                    <div className="relative aspect-[3/2] overflow-hidden bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
+                    <div {...imgReveal("diag", 500)} className="relative aspect-[3/2] overflow-hidden bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
                       {o.cover ? (
                         <Image src={o.cover} alt={o.name[lang]} fill sizes="(min-width: 1024px) 400px, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                       ) : (
@@ -145,7 +161,7 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
                     </div>
                   </Link>
                 ))}
-              </div>
+              </Reveal>
             </div>
           </section>
         )}

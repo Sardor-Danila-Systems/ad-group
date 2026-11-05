@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Reveal } from "@/components/site/reveal";
+import { Line, Reveal, SLIDE, Words } from "@/components/site/reveal";
+import { cn } from "@/lib/utils";
+import { fx } from "@/components/site/fx";
 import { useSite } from "@/components/site/site-provider";
 import { installment, LIMITS, type Currency } from "@/lib/installment";
 
@@ -49,19 +51,22 @@ export function Calculator() {
   };
 
   return (
-    <section id="calculator" className="bg-cream py-[clamp(72px,9vw,128px)]">
+    <section id="calculator" data-curtain className={cn("bg-cream py-[clamp(72px,9vw,128px)]", SLIDE)}>
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
-        <Reveal className="mb-12">
-          <p className="mb-5 flex items-center gap-3 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">
-            <span aria-hidden="true" className="h-px w-10 bg-gold" />
+        <div className="mb-12 lg:mb-8 lg:grid lg:grid-cols-[1fr_minmax(0,46ch)] lg:items-end lg:gap-12">
+          <div>
+          <Reveal kind="left" className="mb-5 flex items-center gap-3 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">
+            <Line />
             {t("calc.eyebrow")}
-          </p>
-          <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight">{t("calc.title")}</h2>
-          <p className="mt-4 max-w-[60ch] text-ink/70">{t("calc.lead")}</p>
-        </Reveal>
+          </Reveal>
+          <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight lg:text-[clamp(34px,4vw,56px)]"><Words text={t("calc.title")} delay={100} v="flip" /></h2>
+          </div>
+          <Reveal kind="blur" delay={450} className="mt-4 max-w-[60ch] text-ink/70 lg:mt-0">{t("calc.lead")}</Reveal>
+        </div>
 
-        <Reveal className="grid gap-6 lg:grid-cols-[1.05fr_1fr]">
-          <form onSubmit={(e) => e.preventDefault()} noValidate className="grid content-start gap-7 rounded-[22px] bg-white p-6 ring-1 ring-gold/20 sm:p-8">
+        <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr]">
+          <Reveal kind="left" delay={300}>
+          <form onSubmit={(e) => e.preventDefault()} noValidate className="grid h-full content-start gap-7 rounded-[22px] bg-white p-6 ring-1 ring-gold/20 sm:p-8 lg:gap-5 lg:p-7">
             <ToggleGroup type="single" value={cur} onValueChange={(v) => v && switchCur(v as Currency)} spacing={0} aria-label="Currency" className="w-fit rounded-full bg-cream p-1">
               {(["USD", "UZS"] as const).map((c) => (
                 <ToggleGroupItem key={c} value={c} className="h-9 rounded-full px-5 text-[13px] font-semibold data-[state=on]:bg-ink data-[state=on]:text-paper">
@@ -127,8 +132,10 @@ export function Calculator() {
               </p>
             )}
           </form>
+          </Reveal>
 
-          <div className="flex flex-col rounded-[22px] bg-ink p-6 text-paper sm:p-8" aria-live="polite">
+          <Reveal kind="right" delay={450} className="flex flex-col rounded-[22px] bg-ink p-6 text-paper sm:p-8">
+          <div aria-live="polite" className="contents">
             <p className="text-sm text-paper/60">{t("calc.monthly")}</p>
             <p className="mt-2 font-display text-[clamp(40px,5vw,64px)] leading-none font-medium text-gold-light tabular-nums">{r.error ? "—" : fmt(r.monthly)}</p>
             <p className="mt-3 text-sm text-paper/60">
@@ -157,12 +164,13 @@ export function Calculator() {
               </div>
             </dl>
 
-            <Button onClick={openCall} size="lg" className="mt-8 h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-ink hover:bg-gold-light">
+            <Button onClick={openCall} size="lg" className={`mt-8 h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-ink hover:bg-gold ${fx.goldOnDark}`}>
               {t("calc.cta")}
             </Button>
             <p className="mt-5 text-xs leading-relaxed text-paper/50">{t("calc.note")}</p>
           </div>
-        </Reveal>
+          </Reveal>
+        </div>
       </div>
     </section>
   );

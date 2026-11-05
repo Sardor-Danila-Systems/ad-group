@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Manrope, Playfair_Display } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { Motion } from "@/components/site/motion";
 import { Preloader } from "@/components/site/preloader";
 import { SiteProvider } from "@/components/site/site-provider";
 import { getProjects, getSettings } from "@/lib/content-source";
@@ -40,6 +41,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-screen bg-background font-sans text-foreground">
         <Suspense fallback={null}>
           <Preloader />
+          <Motion />
         </Suspense>
         <SiteProvider projects={projects} contacts={settings.contacts}>
           {children}

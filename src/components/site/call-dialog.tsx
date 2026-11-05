@@ -11,10 +11,10 @@ export function CallDialog({ open, onOpenChange, projects, options }: { open: bo
   const { t } = useSite();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92dvh] max-w-[calc(100%-1.5rem)] gap-0 overflow-y-auto rounded-3xl border-0 bg-paper p-0 ring-1 ring-gold/30 sm:max-w-4xl">
+      <DialogContent className="max-h-[92dvh] max-w-[calc(100%-1.5rem)] gap-0 overflow-y-auto rounded-3xl border-0 bg-paper p-0 ring-1 ring-gold/30 dlg-wipe sm:max-w-4xl">
         <div className="grid md:grid-cols-[0.85fr_1fr]">
-          <div className="relative hidden min-h-[520px] md:block">
-            <Image src="/vatan/03.jpg" alt="" fill sizes="400px" className="object-cover" />
+          <div className="relative hidden min-h-[520px] overflow-hidden md:block">
+            <Image src="/vatan/03.jpg" alt="" fill sizes="400px" className="dlg-photo object-cover" />
             <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-8 text-paper">
               <Image src="/assets/logo-ad-gold.png" alt="AD Group" width={150} height={24} className="mb-4 h-5 w-auto" />

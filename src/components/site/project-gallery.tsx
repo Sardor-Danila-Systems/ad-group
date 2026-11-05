@@ -7,13 +7,19 @@ import { LuArrowLeft, LuArrowRight, LuX } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Reveal, Words, imgReveal } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
 import type { GalleryPhoto } from "@/lib/types";
 
-/** Masonry gallery with a full-screen lightbox. `limit` shows a teaser with a link to the full set. */
-export function ProjectGallery({ photos, title, name, limit, moreHref }: { photos: GalleryPhoto[]; title: string; name: string; limit?: number; moreHref?: string }) {
+/**
+ * Project photos with a full-screen lightbox. Masonry by default (`limit` shows a teaser with a link to the
+ * full set); `strip` lays them out as one row of equal-height photos to drag or page through, so the whole
+ * gallery fits one screen.
+ */
+export function ProjectGallery({ photos, title, name, limit, moreHref, strip }: { photos: GalleryPhoto[]; title: string; name: string; limit?: number; moreHref?: string; strip?: boolean }) {
   const { t, lang } = useSite();
   const [open, setOpen] = useState<number | null>(null);
+  const [api, setApi] = useState<CarouselApi>();
   const shown = limit ? photos.slice(0, limit) : photos;
   const alt = (p: GalleryPhoto) => p.alt?.[lang] || name;
 
@@ -21,17 +27,55 @@ export function ProjectGallery({ photos, title, name, limit, moreHref }: { photo
   return (
     <div>
       <div className="mb-8 flex items-end justify-between gap-4">
-        <h3 className="font-display text-[clamp(30px,3.6vw,48px)] leading-none font-medium">{title}</h3>
-        <span className="text-sm text-muted-foreground">{photos.length} {t("gallery.photos")}</span>
+        <h3 className="font-display text-[clamp(30px,3.6vw,48px)] leading-none font-medium"><Words text={title} v={strip ? "flip" : undefined} /></h3>
+        {strip ? (
+          <Reveal kind="right" delay={300} className="flex items-center gap-4">
+            <span className="hidden text-sm text-muted-foreground sm:inline">{photos.length} {t("gallery.photos")}</span>
+            <Button variant="outline" size="icon-lg" className="size-12 rounded-full border-gold/40 hover:bg-ink hover:text-white" onClick={() => api?.scrollPrev()} aria-label="prev">
+              <LuArrowLeft />
+            </Button>
+            <Button variant="outline" size="icon-lg" className="size-12 rounded-full border-gold/40 hover:bg-ink hover:text-white" onClick={() => api?.scrollNext()} aria-label="next">
+              <LuArrowRight />
+            </Button>
+          </Reveal>
+        ) : (
+          <span className="text-sm text-muted-foreground">{photos.length} {t("gallery.photos")}</span>
+        )}
       </div>
 
-      <div className="columns-2 gap-3 md:columns-3 md:gap-4">
+      {strip && (
+        <Carousel setApi={setApi} opts={{ align: "start", dragFree: true }}>
+          <CarouselContent data-reveal="stagger" data-from="cards" className="-ml-4">
+            {photos.map((ph, i) => (
+              <CarouselItem key={ph.src} className="basis-auto pl-4">
+                <button
+                  type="button"
+                  onClick={() => setOpen(i)}
+                  aria-label={alt(ph)}
+                  {...imgReveal("right", 400 + Math.min(i, 5) * 120)}
+                  style={{ aspectRatio: `${ph.w} / ${ph.h}`, ...imgReveal("right", 400 + Math.min(i, 5) * 120).style }}
+                  className="group relative block h-[min(50svh,460px)] max-w-[82vw] overflow-hidden rounded-2xl bg-sand"
+                >
+                  <Image src={ph.src} alt={alt(ph)} fill sizes="(min-width: 768px) 640px, 82vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pt-8 pb-2.5 text-left text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                    {alt(ph)}
+                  </span>
+                </button>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+      )}
+
+      {!strip && <div className="columns-2 gap-3 md:columns-3 md:gap-4">
         {shown.map((ph, i) => (
           <button
             key={ph.src}
             type="button"
             onClick={() => setOpen(i)}
             aria-label={alt(ph)}
+            data-reveal="img"
+            style={{ "--d": `${(i % 3) * 120}ms` } as React.CSSProperties}
             className="group relative mb-3 block w-full overflow-hidden rounded-xl bg-sand break-inside-avoid md:mb-4"
           >
             <Image src={ph.src} alt={alt(ph)} width={ph.w} height={ph.h} sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 50vw" className="h-auto w-full transition-transform duration-500 group-hover:scale-105" />
@@ -40,9 +84,9 @@ export function ProjectGallery({ photos, title, name, limit, moreHref }: { photo
             </span>
           </button>
         ))}
-      </div>
+      </div>}
 
-      {limit && moreHref && photos.length > limit && (
+      {!strip && limit && moreHref && photos.length > limit && (
         <div className="mt-8 text-center">
           <Button asChild variant="outline" size="lg" className="h-12 rounded-full border-gold bg-transparent px-8 text-gold-deep hover:bg-gold/10 hover:text-gold-deep">
             <Link href={moreHref}>{t("gallery.all")} ({photos.length})</Link>

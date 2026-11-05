@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Counter } from "@/components/site/counter";
 import { useSite } from "@/components/site/site-provider";
 import { Button } from "@/components/ui/button";
+import { fx } from "@/components/site/fx";
 
 /*
  * Scroll-driven first screen: the construction video is played by the scroll position, then the
@@ -187,6 +188,8 @@ export function Hero() {
     <section
       ref={section}
       data-scroll-hero
+      data-curtain="exit"
+      data-stops="0,0.42,1"
       aria-label={t("hero.title")}
       className="relative h-[360svh] bg-ink md:h-[420svh] motion-reduce:h-svh"
       style={{ "--reveal": 0, "--hint": 1 } as React.CSSProperties}
@@ -199,7 +202,7 @@ export function Hero() {
         {/* The frame spans the full width in its own 4:3 shape. Phones: right under the header, the dark
             background below holds the text. Wide screens: the frame is taller than the screen, so a
             little of the top and more of the bottom (the ground) fall outside. */}
-        <div className="absolute inset-x-0 top-[76px] aspect-[4/3] [@media(min-aspect-ratio:4/3)]:top-[calc((100svh-75vw)*0.2)]">
+        <div className="hero-intro absolute inset-x-0 top-[76px] aspect-[4/3] [@media(min-aspect-ratio:4/3)]:top-[calc((100svh-75vw)*0.2)]">
           {/* First frame from the server: visible during the preloader and before frames arrive. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/hero/first.jpg" alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 size-full" />
@@ -227,10 +230,10 @@ export function Hero() {
               <h1 style={piece(1)} className="font-display text-[clamp(40px,6vw,88px)] leading-[0.98] font-medium tracking-tight">{t("hero.title")}</h1>
               <p style={piece(2)} className="mt-6 max-w-[44ch] text-[clamp(15px,1.3vw,18px)] leading-relaxed text-white/80">{t("hero.lead")}</p>
               <div style={piece(3)} className="mt-8 flex flex-wrap gap-3">
-                <Button onClick={openCall} size="lg" className="h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-ink hover:bg-gold-light">
+                <Button onClick={openCall} size="lg" className={`h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-ink hover:bg-gold ${fx.goldOnDark}`}>
                   {t("lead.send")}
                 </Button>
-                <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-white/40 bg-white/5 px-7 text-[15px] font-semibold text-white backdrop-blur-sm hover:bg-white/15 hover:text-white">
+                <Button asChild size="lg" variant="outline" className={`h-12 rounded-full border-white/40 bg-white/5 px-7 text-[15px] font-semibold text-white backdrop-blur-sm hover:bg-white/5 ${fx.goldOnDark}`}>
                   <a href="#projects">{t("hero.cta1")}</a>
                 </Button>
               </div>
