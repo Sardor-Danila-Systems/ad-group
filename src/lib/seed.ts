@@ -84,6 +84,9 @@ const YANGI_URGUT_GALLERY: GalleryPhoto[] = [
  * Initial content, written to data/content.json on first run. Vatan Residence figures come from the
  * official catalog; Sogdiana Diamond House text is derived from its renders. Dates, vacancies and news are placeholders.
  */
+/** Matterport tour of a Vatan Residence apartment from the client. */
+export const VATAN_MATTERPORT = "https://my.matterport.com/show/?m=F81totvRM7Q";
+
 export const SEED_PROJECTS: Project[] = [
   {
     id: "vatan",
@@ -93,6 +96,8 @@ export const SEED_PROJECTS: Project[] = [
     cover: "/vatan/08.jpg",
     logo: "/assets/logo-vatan.png",
     video: "/video/vatan-showroom.mp4",
+    // The client's Matterport scan of an apartment (05.11).
+    matterport: VATAN_MATTERPORT,
     tagline: l("Постройте будущее на прочном фундаменте", "Kelajagingizni mustahkam poydevor ustiga quring", "Build your future on a solid foundation"),
     featured: true,
     gallery: VATAN_GALLERY,

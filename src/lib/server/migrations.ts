@@ -1,4 +1,4 @@
-import { SEED_DIRECTIONS, SEED_PROJECTS } from "@/lib/seed";
+import { SEED_DIRECTIONS, SEED_PROJECTS, VATAN_MATTERPORT } from "@/lib/seed";
 import { instagramList } from "@/lib/instagram";
 import type { NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
@@ -104,6 +104,14 @@ export const MIGRATIONS: Migration[] = [
         const links = instagramList(d.instagram);
         d.instagram = links.length ? links : [...(seed?.instagram ?? [])];
       }
+    },
+  },
+  {
+    // The client's Matterport tour becomes the Vatan Residence showroom, unless one is set already.
+    id: "2026-11-05-vatan-matterport",
+    run(c) {
+      const vatan = c.projects.find((p) => p.id === "vatan");
+      if (vatan && !vatan.matterport) vatan.matterport = VATAN_MATTERPORT;
     },
   },
 ];

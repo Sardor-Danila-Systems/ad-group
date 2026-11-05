@@ -11,6 +11,7 @@ import { Header } from "@/components/site/header";
 import { ProjectGallery } from "@/components/site/project-gallery";
 import { VideoTour } from "@/components/site/video-tour";
 import { parseVideo } from "@/lib/video";
+import { hasShowroom } from "@/lib/matterport";
 import { FactsGrid } from "@/components/site/facts-grid";
 import { Reveal, SLIDE, Words, imgReveal } from "@/components/site/reveal";
 import { cn } from "@/lib/utils";
@@ -103,11 +104,11 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
           </section>
         )}
 
-        {project.showroom && project.showroom.length > 0 && (
+        {hasShowroom(project) && (
           <section data-curtain className={cn("bg-paper py-[clamp(56px,7vw,104px)]", SLIDE)}>
             <div className={WRAP}>
               <Link href={`/projects/${project.id}/showroom`} {...imgReveal("diag")} className="group relative isolate block overflow-hidden rounded-[28px] bg-ink text-white shadow-[0_40px_80px_-35px_rgba(60,45,20,0.55)] ring-1 ring-gold/40">
-                <Image src={project.showroom[0].image} alt="" fill sizes="(min-width: 1240px) 1240px, 100vw" className="-z-10 object-cover opacity-80 transition-transform duration-[1200ms] group-hover:scale-105" />
+                <Image src={project.showroom?.[0]?.image ?? project.cover ?? "/vatan/08.jpg"} alt="" fill sizes="(min-width: 1240px) 1240px, 100vw" className="-z-10 object-cover opacity-80 transition-transform duration-[1200ms] group-hover:scale-105" />
                 <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/10" />
                 <span className="grid min-h-[300px] content-end gap-5 p-7 sm:min-h-[360px] sm:p-12 lg:min-h-[min(64svh,560px)]">
                   <Reveal as="span" kind="pop" delay={700} className="grid size-14 place-items-center rounded-full bg-gold text-ink"><LuView className="size-7" /></Reveal>
