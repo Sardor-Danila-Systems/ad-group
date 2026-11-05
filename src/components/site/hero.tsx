@@ -15,7 +15,7 @@ import { fx } from "@/components/site/fx";
  * a frame sequence is what premium product pages use for this.
  */
 const FRAME_COUNT = 193;
-/** Full-size frames (1664×1248) for larger screens, a lighter set with every second frame for phones. */
+/** Full-size frames (1340×952) for larger screens, a lighter set (900 px, every second frame) for phones. */
 const frameSrc = (i: number, light: boolean) => `/hero/${light ? "frames-m" : "frames"}/${String(i).padStart(4, "0")}.webp`;
 
 /** Share of the pinned scroll that plays the video; the rest reveals the final screen. */
@@ -98,7 +98,7 @@ export function Hero() {
     const draw = (i: number) => {
       const img = nearest(i);
       if (!img) return;
-      // The canvas box has the frame's own 4:3 shape, so the frame fills it exactly.
+      // The canvas box has the frame's own shape (1340:952), so the frame fills it exactly.
       ctx.drawImage(img, 0, 0, cv.width, cv.height);
       drawn = i;
       dirty = false;
@@ -199,10 +199,10 @@ export function Hero() {
       </noscript>
 
       <div className="sticky top-0 h-svh overflow-hidden">
-        {/* The frame spans the full width in its own 4:3 shape. Phones: right under the header, the dark
+        {/* The frame spans the full width in its own 1340:952 shape. Phones: right under the header, the dark
             background below holds the text. Wide screens: the frame is taller than the screen, so a
             little of the top and more of the bottom (the ground) fall outside. */}
-        <div className="hero-intro absolute inset-x-0 top-[76px] aspect-[4/3] [@media(min-aspect-ratio:4/3)]:top-[calc((100svh-75vw)*0.2)]">
+        <div className="hero-intro absolute inset-x-0 top-[76px] aspect-[1340/952] [@media(min-aspect-ratio:1340/952)]:top-[calc((100svh-71.04vw)*0.2)]">
           {/* First frame from the server: visible during the preloader and before frames arrive. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/hero/first.jpg" alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 size-full" />
