@@ -9,7 +9,7 @@ export function FactsGrid({ facts }: { facts: Fact[] }) {
   const fill2 = (2 - (facts.length % 2)) % 2;
   const fill4 = (4 - (facts.length % 4)) % 4;
   return (
-    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 md:grid-cols-4">
+    <dl data-reveal="stagger" className="grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 md:grid-cols-4">
       {facts.map((f) => (
         <div key={f.label.ru} className="bg-white p-5 sm:p-7">
           <dd className="font-display text-[clamp(26px,3vw,44px)] leading-none font-medium whitespace-nowrap text-gold-deep">{f.value}</dd>

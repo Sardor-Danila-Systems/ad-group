@@ -7,6 +7,7 @@ import { LuArrowLeft, LuArrowRight, LuX } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Words } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
 import type { GalleryPhoto } from "@/lib/types";
 
@@ -21,7 +22,7 @@ export function ProjectGallery({ photos, title, name, limit, moreHref }: { photo
   return (
     <div>
       <div className="mb-8 flex items-end justify-between gap-4">
-        <h3 className="font-display text-[clamp(30px,3.6vw,48px)] leading-none font-medium">{title}</h3>
+        <h3 className="font-display text-[clamp(30px,3.6vw,48px)] leading-none font-medium"><Words text={title} /></h3>
         <span className="text-sm text-muted-foreground">{photos.length} {t("gallery.photos")}</span>
       </div>
 
@@ -32,6 +33,8 @@ export function ProjectGallery({ photos, title, name, limit, moreHref }: { photo
             type="button"
             onClick={() => setOpen(i)}
             aria-label={alt(ph)}
+            data-reveal="img"
+            style={{ "--d": `${(i % 3) * 120}ms` } as React.CSSProperties}
             className="group relative mb-3 block w-full overflow-hidden rounded-xl bg-sand break-inside-avoid md:mb-4"
           >
             <Image src={ph.src} alt={alt(ph)} width={ph.w} height={ph.h} sizes="(min-width: 1280px) 400px, (min-width: 768px) 33vw, 50vw" className="h-auto w-full transition-transform duration-500 group-hover:scale-105" />

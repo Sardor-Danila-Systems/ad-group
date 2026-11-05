@@ -7,24 +7,24 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
 import { BuildingArt } from "@/components/site/building-art";
-import { Reveal } from "@/components/site/reveal";
+import { Reveal, Words } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
 import { HISTORY } from "@/lib/content";
 import type { NewsItem, ProjectKind } from "@/lib/types";
 
 function Head({ title, api }: { title: string; api?: CarouselApi }) {
   return (
-    <Reveal className="mb-12 flex items-end justify-between gap-5">
-      <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight">{title}</h2>
-      <div className="flex gap-2.5">
+    <div className="mb-12 flex items-end justify-between gap-5">
+      <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight"><Words text={title} /></h2>
+      <Reveal kind="fade" delay={300} className="flex gap-2.5">
         <Button variant="outline" size="icon-lg" className="size-12 rounded-full border-gold/40 hover:bg-ink hover:text-white" onClick={() => api?.scrollPrev()} aria-label="prev">
           <ArrowLeftIcon />
         </Button>
         <Button variant="outline" size="icon-lg" className="size-12 rounded-full border-gold/40 hover:bg-ink hover:text-white" onClick={() => api?.scrollNext()} aria-label="next">
           <ArrowRightIcon />
         </Button>
-      </div>
-    </Reveal>
+      </Reveal>
+    </div>
   );
 }
 
@@ -34,11 +34,11 @@ export function History() {
   const { t, lang } = useSite();
   const [api, setApi] = useState<CarouselApi>();
   return (
-    <section id="history" className="bg-sand py-[clamp(72px,9vw,128px)]">
+    <section id="history" data-curtain className="bg-sand py-[clamp(72px,9vw,128px)]">
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
         <Head title={t("history.title")} api={api} />
         <Carousel setApi={setApi} opts={{ align: "start", dragFree: true }}>
-          <CarouselContent className="-ml-5">
+          <CarouselContent data-reveal="stagger" className="-ml-5">
             {HISTORY.map((h) => (
               <CarouselItem key={h.y} className={`pl-5 ${ITEM}`}>
                 <Card className="h-full gap-2.5 rounded-[18px] border-0 bg-white p-7 ring-0">
@@ -62,18 +62,18 @@ export function News({ news }: { news: NewsItem[] }) {
   const [api, setApi] = useState<CarouselApi>();
   const locale = lang === "uz" ? "uz-UZ" : lang === "en" ? "en-GB" : "ru-RU";
   return (
-    <section id="news" className="bg-paper py-[clamp(72px,9vw,128px)]">
+    <section id="news" data-curtain className="bg-paper py-[clamp(72px,9vw,128px)]">
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
         <Head title={t("news.title")} api={api} />
         <Carousel setApi={setApi} opts={{ align: "start", dragFree: true }}>
-          <CarouselContent className="-ml-5">
+          <CarouselContent data-reveal="stagger" className="-ml-5">
             {news.map((n, i) => (
               <CarouselItem key={n.date} className={`pl-5 ${ITEM}`}>
-                <a href="#" className="block h-full">
+                <a href="#" className="group block h-full">
                   <Card className="h-full gap-2.5 overflow-hidden rounded-[18px] border-0 bg-background p-0 pb-7 ring-1 ring-gold/25 transition-transform duration-300 hover:-translate-y-1">
-                    <div className="mb-1.5 aspect-[2/1] bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
+                    <div data-reveal="img" style={{ "--d": "300ms" } as React.CSSProperties} className="mb-1.5 aspect-[2/1] overflow-hidden bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
                       {n.image ? (
-                        <Image src={n.image} alt={n.title[lang]} width={600} height={300} className="size-full object-cover" />
+                        <Image src={n.image} alt={n.title[lang]} width={600} height={300} className="size-full object-cover transition-transform duration-700 group-hover:scale-105" />
                       ) : (
                         <BuildingArt kind={NEWS_KINDS[i % 4]} w={300} h={160} className="size-full" />
                       )}

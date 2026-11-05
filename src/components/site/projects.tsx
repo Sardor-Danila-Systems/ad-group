@@ -7,7 +7,7 @@ import { LuArrowRight } from "react-icons/lu";
 import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { BuildingArt } from "@/components/site/building-art";
-import { Reveal } from "@/components/site/reveal";
+import { Reveal, Words } from "@/components/site/reveal";
 import { useSite } from "@/components/site/site-provider";
 import type { Project } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -28,23 +28,23 @@ export function Projects({ projects }: { projects: Project[] }) {
   const list = projects.filter((p) => filter === "all" || p.cat === filter || (filter === "done" && p.status === "done"));
 
   return (
-    <section id="projects" className="bg-cream py-[clamp(72px,9vw,128px)]">
+    <section id="projects" data-curtain className="bg-cream py-[clamp(72px,9vw,128px)]">
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
-        <Reveal className="mb-12 flex flex-wrap items-end justify-between gap-5">
-          <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight">{t("projects.title")}</h2>
-          {options.length > 1 && <ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} className="flex-wrap" spacing={2}>
+        <div className="mb-12 flex flex-wrap items-end justify-between gap-5">
+          <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight"><Words text={t("projects.title")} /></h2>
+          {options.length > 1 && <Reveal kind="fade" delay={300}><ToggleGroup type="single" value={filter} onValueChange={(v) => v && setFilter(v as typeof filter)} className="flex-wrap" spacing={2}>
             {options.map(([v, k]) => (
               <ToggleGroupItem key={v} value={v} className="h-10 rounded-full border border-gold/40 px-5 text-sm font-medium text-ink/80 data-[state=on]:border-ink data-[state=on]:bg-ink data-[state=on]:text-paper">
                 {t(k)}
               </ToggleGroupItem>
             ))}
-          </ToggleGroup>}
-        </Reveal>
+          </ToggleGroup></Reveal>}
+        </div>
 
-        <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))]">
+        <Reveal kind="stagger" className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))]">
           {list.map((p) => (
             <article key={p.id} className="group relative overflow-hidden rounded-[22px] bg-white ring-1 ring-gold/20 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_60px_-30px_rgba(60,45,20,0.45)]">
-              <div className="relative aspect-[3/2] overflow-hidden bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
+              <div data-reveal="img" style={{ "--d": "250ms" } as React.CSSProperties} className="relative aspect-[3/2] overflow-hidden bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
                 {p.cover ? (
                   <Image src={p.cover} alt={p.name[lang]} fill sizes="(min-width: 1024px) 400px, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                 ) : (
@@ -67,7 +67,7 @@ export function Projects({ projects }: { projects: Project[] }) {
               </div>
             </article>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

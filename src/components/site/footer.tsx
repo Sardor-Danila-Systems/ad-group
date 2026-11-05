@@ -6,18 +6,21 @@ import Link from "next/link";
 import { FaInstagram, FaTelegramPlane } from "react-icons/fa";
 import { LuArrowUp } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
-import { Reveal } from "@/components/site/reveal";
+import { Line, Reveal, Words } from "@/components/site/reveal";
+import { fx } from "@/components/site/fx";
 import { useSite } from "@/components/site/site-provider";
 import { useLocalValue } from "@/lib/local-store";
 
 export function Cta() {
   const { t, openCall } = useSite();
   return (
-    <section className="bg-marble-strong py-[clamp(64px,8vw,112px)]">
-      <Reveal className="mx-auto flex w-[min(1240px,100%-32px)] flex-wrap items-center justify-between gap-8 md:w-[min(1240px,100%-48px)]">
-        <h2 className="font-display max-w-[20ch] text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight">{t("cta2.title")}</h2>
-        <Button onClick={openCall} size="lg" className="h-13 rounded-full bg-ink px-8 text-[15px] font-semibold text-paper hover:bg-ink-2">{t("cta.call")}</Button>
-      </Reveal>
+    <section data-curtain className="bg-marble-strong py-[clamp(64px,8vw,112px)]">
+      <div className="mx-auto flex w-[min(1240px,100%-32px)] flex-wrap items-center justify-between gap-8 md:w-[min(1240px,100%-48px)]">
+        <h2 className="font-display max-w-[20ch] text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight"><Words text={t("cta2.title")} /></h2>
+        <Reveal delay={350}>
+          <Button onClick={openCall} size="lg" className={`h-13 rounded-full bg-ink px-8 text-[15px] font-semibold text-paper hover:bg-ink ${fx.ink}`}>{t("cta.call")}</Button>
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -25,8 +28,8 @@ export function Cta() {
 export function Footer() {
   const { t, lang, contacts } = useSite();
   return (
-    <footer id="contacts" className="bg-ink pt-[72px] pb-7 text-paper">
-      <div className="mx-auto grid w-[min(1240px,100%-32px)] gap-12 md:w-[min(1240px,100%-48px)] md:grid-cols-[1.4fr_1fr_1fr]">
+    <footer id="contacts" data-curtain className="bg-ink pt-[72px] pb-7 text-paper">
+      <Reveal kind="stagger" className="mx-auto grid w-[min(1240px,100%-32px)] gap-12 md:w-[min(1240px,100%-48px)] md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <Image src="/assets/logo-ad-gold.png" alt="AD Group" width={160} height={26} className="h-[26px] w-auto" />
           <p className="mt-5 max-w-[32ch] text-paper/60">{t("footer.slogan")}</p>
@@ -49,8 +52,11 @@ export function Footer() {
           <span>{contacts.address[lang]}</span>
           {contacts.hours && <span className="text-paper/55">{contacts.hours}</span>}
         </Col>
+      </Reveal>
+      <div className="mx-auto mt-14 w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
+        <Line className="w-full bg-gold/25" />
       </div>
-      <div className="mx-auto mt-14 flex w-[min(1240px,100%-32px)] flex-wrap justify-between gap-3 border-t border-gold/20 pt-6 text-xs text-paper/45 md:w-[min(1240px,100%-48px)]">
+      <div className="mx-auto flex w-[min(1240px,100%-32px)] flex-wrap justify-between gap-3 pt-6 text-xs text-paper/45 md:w-[min(1240px,100%-48px)]">
         <small>{t("footer.disc")}</small>
         <small>© 2011–2026 AD Group</small>
       </div>
@@ -60,7 +66,7 @@ export function Footer() {
 
 function Col({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-2.5 text-paper/80 [&_a:hover]:text-gold-light">
+    <div className="flex flex-col items-start gap-2.5 text-paper/80 [&_a]:fx-link [&_a:hover]:text-gold-light">
       <h3 className="mb-2 text-[13px] font-semibold tracking-[.14em] text-gold uppercase">{title}</h3>
       {children}
     </div>
@@ -74,7 +80,7 @@ export function ToTop() {
       size="icon-lg"
       aria-label="Up"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className={`fixed right-6 bottom-6 z-40 size-12 rounded-full bg-gold text-ink shadow-lg transition-all hover:bg-gold-light ${on ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"}`}
+      className={`fixed right-6 bottom-6 z-40 size-12 rounded-full bg-gold text-ink shadow-lg transition-all hover:-translate-y-1 hover:bg-gold-light ${on ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"}`}
     >
       <LuArrowUp className="size-5" />
     </Button>

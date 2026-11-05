@@ -1,40 +1,62 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
-/** Fade/slide in once on first view. Content is visible without JS/IntersectionObserver. */
-export function Reveal({ children, className, as: Tag = "div" }: { children: React.ReactNode; className?: string; as?: "div" | "section" | "blockquote" }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [armed, setArmed] = useState(false);
-  const [shown, setShown] = useState(false);
+/**
+ * How an element comes in when it scrolls into view (styles in globals.css, «Motion»):
+ * - up: rises and fades in (default);
+ * - fade: fades in only;
+ * - stagger: its direct children come in one after another;
+ * - img: an image frame; the picture opens from the bottom and settles from a slight zoom;
+ * - line: a hairline grows from the left.
+ */
+export type RevealKind = "up" | "fade" | "stagger" | "img" | "line";
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || !("IntersectionObserver" in window)) return;
-    // Already on screen at mount: show as-is, otherwise it would flash out and back in.
-    if (el.getBoundingClientRect().top < window.innerHeight * 0.9) return;
-    setArmed(true);
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setShown(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.15 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
+/** Entrance animation on first view. The page is complete without JS or with reduced motion. */
+export function Reveal({
+  children,
+  className,
+  as: Tag = "div",
+  kind = "up",
+  delay,
+  id,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  as?: "div" | "section" | "blockquote" | "span" | "ul" | "ol" | "li" | "dl" | "p";
+  kind?: RevealKind;
+  /** Milliseconds before it starts. */
+  delay?: number;
+  id?: string;
+}) {
   const Comp = Tag as "div";
   return (
-    <Comp
-      ref={ref}
-      className={cn(armed && "transition-all duration-700 ease-out", armed && !shown && "translate-y-7 opacity-0", className)}
-    >
+    <Comp id={id} data-reveal={kind} className={className} style={delay ? ({ "--d": `${delay}ms` } as React.CSSProperties) : undefined}>
       {children}
     </Comp>
   );
+}
+
+/**
+ * A heading whose words rise one by one from under a mask (the Sheron-style title).
+ * Pass plain text; spaces and line breaks stay as they are.
+ */
+export function Words({ text, delay = 0, className }: { text: string; delay?: number; className?: string }) {
+  let i = 0;
+  return (
+    <span data-reveal="words" className={className} style={{ "--d": `${delay}ms` } as React.CSSProperties}>
+      {text.split(/(\s+)/).map((w, k) =>
+        /^\s+$/.test(w) || !w ? (
+          w
+        ) : (
+          <span key={k} className="sw">
+            <span style={{ "--w": i++ } as React.CSSProperties}>{w}</span>
+          </span>
+        ),
+      )}
+    </span>
+  );
+}
+
+/** A short gold hairline (the eyebrow dash) that grows in. */
+export function Line({ className }: { className?: string }) {
+  return <span aria-hidden="true" data-reveal="line" className={cn("block h-px w-10 shrink-0 bg-gold", className)} />;
 }

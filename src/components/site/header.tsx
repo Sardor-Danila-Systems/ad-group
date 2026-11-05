@@ -8,6 +8,7 @@ import { LuCheck, LuMenu } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { fx } from "@/components/site/fx";
 import { useSite } from "@/components/site/site-provider";
 import type { Lang } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -31,10 +32,20 @@ const LANGS: { code: Lang; name: string }[] = [
 export function Header() {
   const { t, lang, setLang, openCall } = useSite();
   const [solid, setSolid] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [menu, setMenu] = useState(false);
 
+  // Solid once scrolled; slides away while scrolling down and comes back on the way up.
   useEffect(() => {
-    const on = () => setSolid(window.scrollY > 24);
+    let last = window.scrollY;
+    const on = () => {
+      const y = window.scrollY;
+      setSolid(y > 24);
+      if (Math.abs(y - last) > 6) {
+        setHidden(y > last && y > 240);
+        last = y;
+      }
+    };
     on();
     window.addEventListener("scroll", on, { passive: true });
     return () => window.removeEventListener("scroll", on);
@@ -45,8 +56,9 @@ export function Header() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b text-ink transition-all duration-300",
+        "hdr-enter fixed inset-x-0 top-0 z-50 border-b text-ink transition-[translate,background-color,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
         solid ? "border-gold/25 bg-paper/90 shadow-sm backdrop-blur-xl" : "border-transparent bg-paper/60 backdrop-blur-md",
+        hidden && !menu && "-translate-y-full",
       )}
     >
       <div className="mx-auto flex h-[76px] w-[min(1240px,100%-32px)] items-center gap-8 md:w-[min(1240px,100%-48px)]">
@@ -55,7 +67,7 @@ export function Header() {
         </Link>
         <nav className="ml-auto hidden gap-7 text-sm font-medium whitespace-nowrap xl:flex" aria-label="Main">
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className={cn("text-ink/70 transition-colors hover:text-gold-deep", n.wide && "hidden 2xl:block")}>
+            <Link key={n.href} href={n.href} className={cn("fx-link pb-0.5 text-ink/70 hover:text-gold-deep", n.wide && "hidden 2xl:block")}>
               {label(n.key)}
             </Link>
           ))}
@@ -77,7 +89,7 @@ export function Header() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button onClick={openCall} className="hidden h-10 rounded-full bg-gold px-5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-gold-light sm:inline-flex">
+          <Button onClick={openCall} className={cn("hidden h-10 rounded-full bg-gold px-5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-gold sm:inline-flex", fx.gold)}>
             {t("cta.call")}
           </Button>
           <Sheet open={menu} onOpenChange={setMenu}>
@@ -89,13 +101,14 @@ export function Header() {
             <SheetContent side="right" className="border-gold/20 bg-paper p-6 pt-16 text-ink">
               <SheetTitle className="sr-only">Menu</SheetTitle>
               <nav className="flex flex-col">
-                {NAV.map((n) => (
-                  <Link key={n.href} href={n.href} onClick={() => setMenu(false)} className="border-b border-gold/20 py-4 font-display text-2xl">
+                {NAV.map((n, i) => (
+                  <Link key={n.href} href={n.href} onClick={() => setMenu(false)} style={{ "--i": i } as React.CSSProperties} className="menu-item group flex items-center justify-between border-b border-gold/20 py-4 font-display text-2xl transition-colors hover:text-gold-deep">
                     {label(n.key)}
+                    <span aria-hidden="true" className="h-px w-0 bg-gold transition-all duration-500 group-hover:w-10" />
                   </Link>
                 ))}
               </nav>
-              <Button onClick={() => { setMenu(false); openCall(); }} className="mt-4 h-12 rounded-full bg-gold text-base font-semibold text-ink hover:bg-gold-light">
+              <Button onClick={() => { setMenu(false); openCall(); }} style={{ "--i": NAV.length } as React.CSSProperties} className={cn("menu-item mt-4 h-12 rounded-full bg-gold text-base font-semibold text-ink hover:bg-gold", fx.gold)}>
                 {t("cta.call")}
               </Button>
             </SheetContent>

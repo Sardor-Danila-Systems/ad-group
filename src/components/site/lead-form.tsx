@@ -1,5 +1,6 @@
 "use client";
 
+import { fx } from "@/components/site/fx";
 import { useState } from "react";
 import { toast } from "sonner";
 import { submitLead } from "@/actions/leads";
@@ -61,7 +62,7 @@ export function LeadForm({ projects, source, onDone, className, vacancy }: { pro
       <Textarea name="message" rows={3} maxLength={1000} placeholder={vacancy ? t("vac.about") : t("lead.message")} className="rounded-xl border-input bg-paper px-4 py-3 text-[15px] focus-visible:border-gold focus-visible:ring-gold/30" />
       {/* Honeypot: hidden from people, filled by bots. */}
       <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="sr-only" />
-      <Button type="submit" disabled={busy} className="h-12 rounded-full bg-ink text-[15px] font-semibold text-paper hover:bg-ink-2">
+      <Button type="submit" disabled={busy} className={`h-12 rounded-full bg-ink text-[15px] font-semibold text-paper hover:bg-ink ${fx.ink}`}>
         {vacancy ? t("vac.send") : t("lead.send")}
       </Button>
       <p className="text-xs leading-relaxed text-muted-foreground">{t("lead.privacy")}</p>
