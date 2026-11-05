@@ -74,11 +74,11 @@ function MatterportTour({ id, projectName, backHref }: { id: string; projectName
   );
 }
 
-/** The project's showroom: its Matterport tour when one is set, otherwise the panorama tour. */
+/** The project's showroom: our own panorama tour when it has one, otherwise its Matterport tour. */
 export function ShowroomView({ project }: { project: Project }) {
   const { lang } = useSite();
   const backHref = `/projects/${project.id}`;
   const mp = matterportId(project.matterport);
-  if (mp) return <MatterportTour id={mp} projectName={project.name[lang]} backHref={backHref} />;
+  if (mp && !project.showroom?.length) return <MatterportTour id={mp} projectName={project.name[lang]} backHref={backHref} />;
   return <ShowroomViewer scenes={project.showroom ?? []} projectName={project.name[lang]} backHref={backHref} />;
 }
