@@ -1,4 +1,4 @@
-import { SEED_DIRECTIONS, SEED_PROJECTS } from "@/lib/seed";
+import { SEED_DIRECTIONS, SEED_PROJECTS, VATAN_SHOWROOM } from "@/lib/seed";
 import { instagramList } from "@/lib/instagram";
 import type { NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
@@ -104,6 +104,20 @@ export const MIGRATIONS: Migration[] = [
         const links = instagramList(d.instagram);
         d.instagram = links.length ? links : [...(seed?.instagram ?? [])];
       }
+    },
+  },
+  {
+    // Vatan Residence gets its own panorama showroom (stitched from the client's scans); the stand-in video
+    // tour and the Matterport link tried out on 05.11 go away. Panoramas set in the admin panel stay.
+    id: "2026-11-05-vatan-showroom-final",
+    run(c) {
+      const vatan = c.projects.find((p) => p.id === "vatan");
+      if (!vatan) return;
+      // Replace an empty showroom or an earlier built-in one; rooms uploaded in the admin panel are kept.
+      const builtIn = vatan.showroom?.every((sc) => sc.image.startsWith("/showroom/vatan/"));
+      if (!vatan.showroom?.length || builtIn) vatan.showroom = structuredClone(VATAN_SHOWROOM);
+      if (vatan.video === "/video/vatan-showroom.mp4") delete vatan.video;
+      if (vatan.matterport === "https://my.matterport.com/show/?m=F81totvRM7Q") delete vatan.matterport;
     },
   },
 ];

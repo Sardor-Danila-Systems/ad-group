@@ -4,6 +4,7 @@ import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { instagramList, instagramUrl } from "@/lib/instagram";
 import { parseVideo } from "@/lib/video";
+import { matterportId, matterportLink } from "@/lib/matterport";
 import { assertAdmin, checkPassword, endSession, startSession, adminEnabled } from "@/lib/server/auth";
 import * as store from "@/lib/server/store";
 import type { DirectionId, DirectionMedia, Fact, GalleryPhoto, L10n, NewsItem, Person, Project, ProjectKind, Settings, ShowroomScene, Status, Vacancy, VacancyType } from "@/lib/types";
@@ -185,6 +186,10 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
   const videoRaw = str(fd.get("video"), 500);
   if (videoRaw && !parseVideo(videoRaw)) return { error: "Не удалось распознать ссылку на видео. Нужна ссылка YouTube, Vimeo или файл .mp4/.webm." };
 
+  const matterportRaw = str(fd.get("matterport"), 300);
+  const mpId = matterportId(matterportRaw);
+  if (matterportRaw && !mpId) return { error: "Не удалось распознать ссылку Matterport. Нужна ссылка вида https://my.matterport.com/show/?m=… (кнопка Share в Matterport)." };
+
   const showroomRaw = jsonArray(fd, "showroom");
   const showroom = readShowroom(showroomRaw, existing?.showroom);
   if ("error" in showroom) return { error: showroom.error };
@@ -204,6 +209,7 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
     gallery,
     video: videoRaw || undefined,
     showroom: showroom.length > 0 ? showroom : undefined,
+    matterport: mpId ? matterportLink(mpId) : undefined,
     name,
     desc: l10n(fd, "desc", 200),
     long: longText.ru ? longText : undefined,

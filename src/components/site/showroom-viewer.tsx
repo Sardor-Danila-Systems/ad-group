@@ -45,56 +45,66 @@ export default function ShowroomViewer({ scenes, projectName, backHref }: { scen
   }, [lang, scenes]);
 
   useEffect(() => {
-    if (!box.current) return;
-    const nodes: VirtualTourNode[] = scenes.map((sc) => ({
-      id: sc.id,
-      panorama: sc.image,
-      name: sc.name[langRef.current],
-      links: sc.links.map((l) => ({ nodeId: l.to, position: { yaw: l.yaw, pitch: l.pitch } })),
-    }));
-    const v = new Viewer({
-      container: box.current,
-      navbar: ["zoom", "move", "gyroscope"],
-      keyboard: false,
-      touchmoveTwoFingers: false,
-      mousewheelCtrlKey: false,
-      defaultZoomLvl: 25,
-      loadingTxt: labels.current.loading,
-      plugins: [
-        MarkersPlugin,
-        GyroscopePlugin,
-        [
-          VirtualTourPlugin,
-          {
-            positionMode: "manual",
-            renderMode: "3d",
-            nodes,
-            startNodeId: scenes[0].id,
-            preload: true,
-            showLinkTooltip: true,
-            arrowStyle: { image: ARROW, size: { width: 110, height: 110 } },
-            transitionOptions: { effect: "fade", speed: "24rpm", rotation: true, showLoader: true },
-          },
+    const container = box.current;
+    if (!container) return;
+    // Created on the next tick: React's development double mount then never builds a second viewer whose
+    // panorama preloading would outlive it.
+    let v: Viewer | null = null;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const start = setTimeout(() => {
+      const nodes: VirtualTourNode[] = scenes.map((sc) => ({
+        id: sc.id,
+        panorama: sc.image,
+        name: sc.name[langRef.current],
+        links: sc.links.map((l) => ({ nodeId: l.to, position: { yaw: l.yaw, pitch: l.pitch } })),
+      }));
+      v = new Viewer({
+        container,
+        navbar: ["zoom", "move", "gyroscope"],
+        keyboard: false,
+        touchmoveTwoFingers: false,
+        mousewheelCtrlKey: false,
+        defaultZoomLvl: 25,
+        // Start facing the entrance's first doorway, so even a narrow phone screen opens on a way to go.
+        defaultYaw: scenes[0].links[0]?.yaw ?? 0,
+        loadingTxt: labels.current.loading,
+        plugins: [
+          MarkersPlugin,
+          GyroscopePlugin,
+          [
+            VirtualTourPlugin,
+            {
+              positionMode: "manual",
+              renderMode: "3d",
+              nodes,
+              startNodeId: scenes[0].id,
+              preload: true,
+              showLinkTooltip: true,
+              arrowStyle: { image: ARROW, size: { width: 110, height: 110 } },
+              transitionOptions: { effect: "fade", speed: "24rpm", rotation: true, showLoader: true },
+            },
+          ],
         ],
-      ],
-    });
-    viewer.current = v;
-    const vt = v.getPlugin<VirtualTourPlugin>(VirtualTourPlugin);
-    tour.current = vt;
-    vt.addEventListener("node-changed", ({ node }) => {
-      setCurrent(node.id);
-      setReady(true);
-      const h = history.current;
-      if (h[h.length - 1] !== node.id) h.push(node.id);
-    });
-    v.addEventListener("panorama-error", () => setFailed(true));
-    v.addEventListener("panorama-loaded", () => setReady(true));
-    const hide = () => setHint(false);
-    v.addEventListener("position-updated", hide, { once: true });
-    const timer = setTimeout(hide, 9000);
+      });
+      viewer.current = v;
+      const vt = v.getPlugin<VirtualTourPlugin>(VirtualTourPlugin);
+      tour.current = vt;
+      vt.addEventListener("node-changed", ({ node }) => {
+        setCurrent(node.id);
+        setReady(true);
+        const h = history.current;
+        if (h[h.length - 1] !== node.id) h.push(node.id);
+      });
+      v.addEventListener("panorama-error", () => setFailed(true));
+      v.addEventListener("panorama-loaded", () => setReady(true));
+      const hide = () => setHint(false);
+      v.addEventListener("position-updated", hide, { once: true });
+      timer = setTimeout(hide, 9000);
+    }, 0);
     return () => {
+      clearTimeout(start);
       clearTimeout(timer);
-      v.destroy();
+      v?.destroy();
       viewer.current = null;
       tour.current = null;
     };
@@ -176,13 +186,13 @@ export default function ShowroomViewer({ scenes, projectName, backHref }: { scen
       </div>
 
       {/* Hint */}
-      <div className={cn("pointer-events-none absolute inset-x-0 top-24 flex justify-center px-4 transition-opacity duration-700", hint && ready ? "opacity-100" : "opacity-0")}>
+      <div className={cn("pointer-events-none absolute inset-x-0 bottom-20 flex justify-center px-4 transition-opacity duration-700 sm:bottom-24", hint && ready ? "opacity-100" : "opacity-0")}>
         <p className="max-w-md rounded-full bg-black/55 px-5 py-2.5 text-center text-sm backdrop-blur-md">{t("showroom.hint")}</p>
       </div>
 
-      {/* Rooms */}
+      {/* Rooms: at the top, so the walking arrows on the floor stay free */}
       {scenes.length > 1 && (
-        <nav aria-label={t("showroom.rooms")} className="absolute inset-x-0 bottom-0 flex justify-center p-3 pb-[calc(3rem+env(safe-area-inset-bottom))] sm:p-6 sm:pb-16">
+        <nav aria-label={t("showroom.rooms")} className="pointer-events-none absolute inset-x-0 top-[72px] flex justify-center px-3 sm:top-[84px] sm:px-6 [&_ul]:pointer-events-auto">
           <ul className="flex max-w-full gap-2 overflow-x-auto rounded-3xl bg-black/50 p-2 backdrop-blur-md">
             {scenes.map((sc) => (
               <li key={sc.id} className="shrink-0">
@@ -190,7 +200,7 @@ export default function ShowroomViewer({ scenes, projectName, backHref }: { scen
                   type="button"
                   onClick={() => go(sc.id)}
                   aria-current={sc.id === current}
-                  className={cn("group relative block h-16 w-28 overflow-hidden rounded-2xl ring-2 transition-all sm:h-20 sm:w-36", sc.id === current ? "ring-gold" : "ring-transparent hover:ring-white/50")}
+                  className={cn("group relative block h-14 w-24 overflow-hidden rounded-2xl ring-2 transition-all sm:h-16 sm:w-28", sc.id === current ? "ring-gold" : "ring-transparent hover:ring-white/50")}
                 >
                   <Image src={sc.image} alt="" width={288} height={144} sizes="144px" className="size-full object-cover" />
                   <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 pt-4 pb-1 text-left text-[11px] leading-tight font-medium sm:text-xs">{sc.name[lang]}</span>

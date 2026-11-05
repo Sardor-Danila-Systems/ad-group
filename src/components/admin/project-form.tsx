@@ -95,6 +95,13 @@ export function ProjectForm({ project }: { project?: Project }) {
         </div>
       </Section>
 
+      <Section title="3D-тур Matterport" hint="В Matterport нажмите Share, выберите доступ Public или Unlisted и вставьте ссылку. Пока ссылка есть, шоурумом проекта будет этот тур (по нему можно ходить, смотреть 3D-модель и план). Оставьте пустым, чтобы показывать панорамы ниже.">
+        <div className="grid gap-2">
+          <Label htmlFor="matterport">Ссылка на тур</Label>
+          <Input id="matterport" name="matterport" type="text" inputMode="url" autoComplete="off" defaultValue={project?.matterport} placeholder="https://my.matterport.com/show/?m=..." className="h-10 bg-white" />
+        </div>
+      </Section>
+
       <Section title="3D-шоурум" hint="Интерактивный тур в стиле панорам: человек ходит по комнатам стрелками. Для каждой комнаты нужна панорама 360°. Комната №1 это вход. На странице проекта появится блок «Посмотреть шоурум».">
         <ShowroomEditor name="showroom" initial={project?.showroom ?? []} />
       </Section>

@@ -1,4 +1,4 @@
-import type { GalleryPhoto, L10n, NewsItem, Person, Project, Settings, Vacancy } from "@/lib/types";
+import type { GalleryPhoto, L10n, NewsItem, Person, Project, Settings, Vacancy, ShowroomScene } from "@/lib/types";
 
 const l = (ru: string, uz: string, en: string): L10n => ({ ru, uz, en });
 const ph = (n: number, w: number, h: number, alt: L10n): GalleryPhoto => ({ src: `/vatan/${String(n).padStart(2, "0")}.jpg`, w, h, alt });
@@ -84,6 +84,23 @@ const YANGI_URGUT_GALLERY: GalleryPhoto[] = [
  * Initial content, written to data/content.json on first run. Vatan Residence figures come from the
  * official catalog; Sogdiana Diamond House text is derived from its renders. Dates, vacancies and news are placeholders.
  */
+const D = Math.PI / 180;
+const link = (to: string, yawDeg: number) => ({ to, yaw: yawDeg * D, pitch: -5 * D });
+/**
+ * Showroom of a furnished Vatan Residence apartment: panoramas stitched from the client's own phone scans
+ * (see scripts/matterport-pano), arrows placed at the doorways. The entrance hall is the first scene.
+ * All panoramas share one orientation (an arrow and the one coming back differ by 180°), so after walking
+ * through a door the visitor keeps facing the way they went.
+ */
+export const VATAN_SHOWROOM: ShowroomScene[] = [
+  { id: "hall", name: { ru: "Прихожая", uz: "Dahliz", en: "Entrance hall" }, image: "/showroom/vatan/hall.jpg", links: [link("living", 28), link("bedroom", -120), link("corridor", -167)] },
+  { id: "living", name: { ru: "Гостиная", uz: "Mehmonxona", en: "Living room" }, image: "/showroom/vatan/living.jpg", links: [link("hall", -161)] },
+  { id: "bedroom", name: { ru: "Спальня", uz: "Yotoqxona", en: "Bedroom" }, image: "/showroom/vatan/bedroom.jpg", links: [link("hall", 63)] },
+  { id: "corridor", name: { ru: "Коридор", uz: "Yo‘lak", en: "Corridor" }, image: "/showroom/vatan/corridor.jpg", links: [link("kitchen", -91), link("bathroom", 149), link("hall", 30)] },
+  { id: "kitchen", name: { ru: "Кухня-столовая", uz: "Oshxona", en: "Kitchen and dining" }, image: "/showroom/vatan/kitchen.jpg", links: [link("corridor", 96)] },
+  { id: "bathroom", name: { ru: "Санузел", uz: "Hammom", en: "Bathroom" }, image: "/showroom/vatan/bathroom.jpg", links: [link("corridor", -35)] },
+];
+
 export const SEED_PROJECTS: Project[] = [
   {
     id: "vatan",
@@ -92,7 +109,7 @@ export const SEED_PROJECTS: Project[] = [
     kind: "vatan",
     cover: "/vatan/08.jpg",
     logo: "/assets/logo-vatan.png",
-    video: "/video/vatan-showroom.mp4",
+    showroom: VATAN_SHOWROOM,
     tagline: l("Постройте будущее на прочном фундаменте", "Kelajagingizni mustahkam poydevor ustiga quring", "Build your future on a solid foundation"),
     featured: true,
     gallery: VATAN_GALLERY,

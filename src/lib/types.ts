@@ -47,6 +47,8 @@ export interface Project {
   video?: string;
   /** Interactive 360° tour made of linked panoramas. The first scene is the entrance. */
   showroom?: ShowroomScene[];
+  /** Matterport 3D tour (share link https://my.matterport.com/show/?m=...). Shown as the showroom when set. */
+  matterport?: string;
   name: L10n;
   desc: L10n;
   long?: L10n;

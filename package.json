@@ -13,7 +13,8 @@
     "test:video": "tsx scripts/test-video.ts",
     "test:migrations": "NODE_OPTIONS=--conditions=react-server tsx scripts/test-migrations.ts",
     "test:installment": "tsx scripts/test-installment.ts",
-    "test:instagram": "tsx scripts/test-instagram.ts"
+    "test:instagram": "tsx scripts/test-instagram.ts",
+    "test:matterport": "tsx scripts/test-matterport.ts"
   },
   "dependencies": {
     "@photo-sphere-viewer/core": "^5.15.1",
