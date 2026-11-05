@@ -58,8 +58,10 @@ function RouteArt() {
 export function DirectionsView({ media }: { media: Settings["directions"] }) {
   const { t, openCall } = useSite();
 
+  // One root element, not a fragment: on navigation Next.js scrolls to a page's first element, and with a
+  // fragment (fixed header, main, footer) it could land on the footer.
   return (
-    <>
+    <div>
       <Header />
       <main>
         <section data-curtain="exit" className="bg-marble pt-[76px] lg:flex lg:min-h-svh lg:flex-col lg:justify-center">
@@ -160,6 +162,6 @@ export function DirectionsView({ media }: { media: Settings["directions"] }) {
       <Footer />
       <ToTop />
       <CookieBar />
-    </>
+    </div>
   );
 }

@@ -26,3 +26,15 @@ scripts/matterport-pano/run.sh "Кухня Vatan.zip" public/showroom/vatan/kitc
 
 Then turn the panoramas so that a door's arrow and the arrow coming back differ by 180°
 (see `VATAN_SHOWROOM` in `src/lib/seed.ts`), and place the arrows at the doorways.
+
+## Removing a person
+
+- **Seen by one shot only where another shot also covers the spot:** put an `exclude.json` next to the
+  capture (`{"<shot index>": [[x0, y0, x1, y1]]}`, pixel boxes in that shot) and stitch again. The box fades
+  over 30 px, so the swap leaves no seam.
+- **Seen by every shot that covers the spot:** cover it with a nearby clean piece of the panorama:
+  `node scripts/matterport-pano/patch.mjs <in> <out> <x> <y> <w> <h> <dx> <dy>` (source = target + (dx, dy)).
+
+Vatan Residence bedroom (06.11): shot 3 box `[1380, 760, 1640, 920]` (a head at the door), then in the
+turned panorama two patches over the reflection in the mirror:
+`patch 4088 1445 76 120 -5 -112` and `patch 4088 1548 76 122 -10 -222`.

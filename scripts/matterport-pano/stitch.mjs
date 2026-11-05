@@ -5,6 +5,19 @@ const W = Number(Warg || 4096), H = W / 2;
 const meta = JSON.parse(readFileSync(`${dir}/hires/poses.json`, "utf8"));
 const { f, mats } = JSON.parse(readFileSync(`${dir}/align.json`, "utf8"));
 const photos = await Promise.all(meta.images.map((p) => loadRGB(p)));
+// Optional exclude.json: {"<photo index>": [[x0, y0, x1, y1], ...]} — pixel boxes (in that photo) not to use,
+// e.g. a person who walked into one shot; the other photos fill the spot where they see it.
+let exclude = {};
+try { exclude = JSON.parse(readFileSync(`${dir}/exclude.json`, "utf8")); } catch {}
+/** 1 = use this pixel, 0 = skip it; boxes fade over 30 px at their edges so the swap leaves no seam. */
+const keep = (k, px, py) => {
+  let f = 1;
+  for (const [x0, y0, x1, y1] of exclude[k] ?? []) {
+    const d = Math.min(px - x0, x1 - px, py - y0, y1 - py);
+    if (d > 0) f = Math.min(f, Math.max(0, 1 - d / 30));
+  }
+  return f;
+};
 const faces = await Promise.all(faceFiles(dir).map((p) => loadRGB(p)));
 const poles = JSON.parse(readFileSync(`${dir}/poles.json`, "utf8"));
 const fallback = cubeSampler(faces, poles.up, poles.down);
@@ -19,10 +32,12 @@ const buf = renderEquirect(W, H, (rx, ry, rz, o) => {
     const P = photos[k];
     const px = (X / Z) * f + P.w / 2, py = (Y / Z) * f + P.h / 2;
     if (px < 0 || py < 0 || px >= P.w - 1 || py >= P.h - 1) continue;
+    const kf = keep(k, px, py);
+    if (kf === 0) continue;
     const e = Math.min(px, py, P.w - 1 - px, P.h - 1 - py) + 1;
     if (e > maxE) maxE = e;
     // strongly prefer the photo that sees this point closest to its centre: narrow seams, no ghosting
-    const wgt = (e / 100) ** 6;
+    const wgt = (e / 100) ** 6 * kf;
     sample(P, px, py, tmp, 0);
     acc[0] += tmp[0] * wgt; acc[1] += tmp[1] * wgt; acc[2] += tmp[2] * wgt; wsum += wgt;
   }

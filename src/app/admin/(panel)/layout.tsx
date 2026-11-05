@@ -2,22 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { LuBriefcase, LuBuilding2, LuExternalLink, LuFileText, LuInbox, LuLayoutDashboard, LuLogOut, LuSettings } from "react-icons/lu";
+import { LuExternalLink, LuLogOut } from "react-icons/lu";
 import { logout } from "@/actions/admin";
+import { AdminCrumb, AdminNav } from "@/components/admin/admin-nav";
 import { RouteLoader } from "@/components/site/preloader";
 import { Button } from "@/components/ui/button";
 import { requireAdmin } from "@/lib/server/auth";
 
 export const metadata: Metadata = { title: "Админка AD Group", robots: { index: false, follow: false } };
-
-const NAV = [
-  { href: "/admin", label: "Обзор", Icon: LuLayoutDashboard },
-  { href: "/admin/projects", label: "ЖК и проекты", Icon: LuBuilding2 },
-  { href: "/admin/news", label: "Новости", Icon: LuFileText },
-  { href: "/admin/vacancies", label: "Вакансии", Icon: LuBriefcase },
-  { href: "/admin/leads", label: "Заявки", Icon: LuInbox },
-  { href: "/admin/settings", label: "Настройки", Icon: LuSettings },
-];
 
 async function Gate({ children }: { children: React.ReactNode }) {
   await requireAdmin();
@@ -27,19 +19,16 @@ async function Gate({ children }: { children: React.ReactNode }) {
         <Link href="/admin" className="mb-4 block lg:mb-8">
           <Image src="/assets/logo-ad-gold.png" alt="AD Group" width={140} height={23} className="h-[22px] w-auto" />
         </Link>
-        <nav className="flex gap-1 overflow-x-auto lg:flex-col">
-          {NAV.map(({ href, label, Icon }) => (
-            <Link key={href} href={href} className="flex shrink-0 items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-ink/80 transition-colors hover:bg-gold/10 hover:text-gold-deep">
-              <Icon className="size-[18px]" /> {label}
-            </Link>
-          ))}
-        </nav>
+        <AdminNav />
         <div className="mt-4 flex gap-2 lg:mt-10 lg:flex-col">
           <Button asChild variant="outline" size="sm" className="justify-start gap-2"><Link href="/" target="_blank"><LuExternalLink /> Открыть сайт</Link></Button>
           <form action={logout}><Button type="submit" variant="ghost" size="sm" className="w-full justify-start gap-2"><LuLogOut /> Выйти</Button></form>
         </div>
       </aside>
-      <main className="mx-auto w-full max-w-5xl p-4 sm:p-8">{children}</main>
+      <main className="mx-auto w-full max-w-5xl p-4 sm:p-8">
+        <AdminCrumb />
+        {children}
+      </main>
     </div>
   );
 }
