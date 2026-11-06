@@ -1,4 +1,5 @@
 import { SEED_DIRECTIONS, SEED_PROJECTS, VATAN_SHOWROOM } from "@/lib/seed";
+import { VATAN_SECTIONS } from "@/lib/vatan-guide";
 import { instagramList } from "@/lib/instagram";
 import type { NewsItem, Project, Settings, Vacancy } from "@/lib/types";
 
@@ -118,6 +119,14 @@ export const MIGRATIONS: Migration[] = [
       if (!vatan.showroom?.length || builtIn) vatan.showroom = structuredClone(VATAN_SHOWROOM);
       if (vatan.video === "/video/vatan-showroom.mp4") delete vatan.video;
       if (vatan.matterport === "https://my.matterport.com/show/?m=F81totvRM7Q") delete vatan.matterport;
+    },
+  },
+  {
+    // Detailed blocks from the Vatan Residence guidebook (location, architecture, lobby, lifts, apartments…).
+    id: "2026-11-07-vatan-guidebook",
+    run(c) {
+      const vatan = c.projects.find((p) => p.id === "vatan");
+      if (vatan && !vatan.sections?.length) vatan.sections = structuredClone(VATAN_SECTIONS);
     },
   },
 ];
