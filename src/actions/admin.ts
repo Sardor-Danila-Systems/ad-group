@@ -215,6 +215,8 @@ export async function saveProject(_prev: FormState, fd: FormData): Promise<FormS
     long: longText.ru ? longText : undefined,
     facts,
     features,
+    // Guidebook blocks are not edited in the form yet: keep them.
+    sections: existing?.sections,
     featured: str(fd.get("featured"), 2) === "1",
   };
   await store.saveProject(project);

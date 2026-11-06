@@ -22,6 +22,36 @@ export interface ShowroomLink {
   pitch: number;
 }
 
+/** A figure inside a project section, e.g. «46,4 м²» — «площадь лобби». */
+export interface ProjectStat {
+  /** A plain figure ("46,4 m²") or words that need translating ("up to 1.6 t"). */
+  value: string | L10n;
+  label: L10n;
+}
+
+/** A card in a section laid out as a grid (shops, fitness, kids club…). */
+export interface ProjectCard {
+  title: L10n;
+  text: L10n;
+  image?: string;
+  stat?: string | L10n;
+}
+
+/**
+ * A detailed block of the project page (location, architecture, lobby, apartments…), one screen each.
+ * With `cards` it is shown as a grid of cards instead of an image beside the text.
+ */
+export interface ProjectSection {
+  id: string;
+  eyebrow?: L10n;
+  title: L10n;
+  text: L10n;
+  image?: string;
+  stats?: ProjectStat[];
+  points?: L10n[];
+  cards?: ProjectCard[];
+}
+
 /** One viewpoint of the 3D showroom: an equirectangular (2:1) panorama and the arrows leaving it. */
 export interface ShowroomScene {
   id: string;
@@ -56,6 +86,8 @@ export interface Project {
   price?: number;
   facts: Fact[];
   features: L10n[];
+  /** Detailed blocks shown after the overview (from the project's guidebook). */
+  sections?: ProjectSection[];
   /** Highlighted on the home page and sorted first. */
   featured?: boolean;
 }

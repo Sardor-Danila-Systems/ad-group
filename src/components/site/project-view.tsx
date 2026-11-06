@@ -12,6 +12,7 @@ import { ProjectGallery } from "@/components/site/project-gallery";
 import { VideoTour } from "@/components/site/video-tour";
 import { parseVideo } from "@/lib/video";
 import { hasShowroom } from "@/lib/matterport";
+import { ProjectSections } from "@/components/site/project-sections";
 import { FactsGrid } from "@/components/site/facts-grid";
 import { Reveal, SLIDE, Words, imgReveal } from "@/components/site/reveal";
 import { cn } from "@/lib/utils";
@@ -105,6 +106,8 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
             </div>
           </section>
         )}
+
+        {project.sections && project.sections.length > 0 && <ProjectSections sections={project.sections} />}
 
         {hasShowroom(project) && (
           <section data-curtain className={cn("bg-paper py-[clamp(56px,7vw,104px)]", SLIDE)}>

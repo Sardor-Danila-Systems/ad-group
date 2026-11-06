@@ -1,3 +1,4 @@
+import { VATAN_SECTIONS } from "@/lib/vatan-guide";
 import type { GalleryPhoto, L10n, NewsItem, Person, Project, Settings, Vacancy, ShowroomScene } from "@/lib/types";
 
 const l = (ru: string, uz: string, en: string): L10n => ({ ru, uz, en });
@@ -110,6 +111,7 @@ export const SEED_PROJECTS: Project[] = [
     cover: "/vatan/08.jpg",
     logo: "/assets/logo-vatan.png",
     showroom: VATAN_SHOWROOM,
+    sections: VATAN_SECTIONS,
     tagline: l("Постройте будущее на прочном фундаменте", "Kelajagingizni mustahkam poydevor ustiga quring", "Build your future on a solid foundation"),
     featured: true,
     gallery: VATAN_GALLERY,
