@@ -56,7 +56,7 @@ export function ProjectGallery({ photos, title, name, limit, moreHref, strip }: 
                   style={{ aspectRatio: `${ph.w} / ${ph.h}`, ...imgReveal("right", 400 + Math.min(i, 5) * 120).style }}
                   className="group relative block h-[min(50svh,460px)] max-w-[82vw] overflow-hidden rounded-2xl bg-sand"
                 >
-                  <Image src={ph.src} alt={alt(ph)} fill sizes="(min-width: 768px) 640px, 82vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <Image src={ph.src} alt={alt(ph)} fill sizes={`(min-width: 768px) ${Math.round((460 * ph.w) / ph.h)}px, 82vw`} className="object-cover transition-transform duration-700 group-hover:scale-105" />
                   <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pt-8 pb-2.5 text-left text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                     {alt(ph)}
                   </span>

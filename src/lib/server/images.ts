@@ -36,7 +36,7 @@ export async function processImage(file: File, kind: ImageKind = "photo"): Promi
       kind === "panorama"
         ? pipeline.resize({ width: 6144, withoutEnlargement: true })
         : pipeline.resize({ width: 2400, height: 2400, fit: "inside", withoutEnlargement: true });
-    const { data, info } = await resized.webp({ quality: kind === "panorama" ? 80 : 82 }).toBuffer({ resolveWithObject: true });
+    const { data, info } = await resized.webp({ quality: kind === "panorama" ? 88 : 90, smartSubsample: true }).toBuffer({ resolveWithObject: true });
     return { name: `${Date.now().toString(36)}-${randomBytes(5).toString("hex")}.webp`, data, w: info.width, h: info.height };
   } catch (e) {
     if (e instanceof UploadError) throw e;

@@ -137,7 +137,7 @@ export const VATAN_SECTIONS: ProjectSection[] = [
       {
         title: { ru: "Шопинг-аллея", uz: "Shopping xiyoboni", en: "Shopping alley" },
         text: { ru: "Бутики мировых брендов на 1–2 этажах, супермаркет и гастрозоны.", uz: "1–2-qavatlarda jahon brendlari butiklari, supermarket va gastrozonalar.", en: "World-brand boutiques on floors 1–2, a supermarket and food halls." },
-        image: "/vatan/guide/shopping.jpg",
+        image: "/vatan/04.jpg",
         stat: { ru: "1–2 этажи", uz: "1–2-qavatlar", en: "floors 1–2" },
       },
       {
@@ -169,7 +169,7 @@ export const VATAN_SECTIONS: ProjectSection[] = [
       uz: "Uch darajali pentxaus — O‘zbekiston ko‘chmas mulk bozorida tengi yo‘q eksklyuziv taklif. Obodonlashtirilgan shaxsiy ruftop, xonadon ichidagi shaxsiy lift va har kuni shaharning panorama manzaralari. Yashash sathlarida shift 4,2 m, yopiq terrasada 6,8 m.",
       en: "Three-level penthouses, an exclusive offer for Uzbekistan's market: a private landscaped rooftop with a garden and a pool, a personal lift inside the apartment and city views every morning. Ceilings are 4.2 m on the living levels and 6.8 m on the covered terrace.",
     },
-    image: "/vatan/guide/penthouse.jpg",
+    image: "/vatan/18.jpg",
     stats: [
       { value: "53 m", label: { ru: "высота террасы", uz: "terrasa balandligi", en: "terrace height" } },
       { value: "4,2 m", label: { ru: "потолки", uz: "shift balandligi", en: "ceilings" } },
@@ -186,7 +186,7 @@ export const VATAN_SECTIONS: ProjectSection[] = [
       uz: "Majmua perimetri bo‘ylab soyabon daraxtlar, manzarali butalar va gullar, ichki hovlida bolalar uchun xavfsiz maydonchalar va sayr uchun yo‘lakchalar. Avtomobillar keng joylarga ega 2 qavatli yerosti avtoturargohida.",
       en: "Shady trees, ornamental shrubs and seasonal flowers line the complex, with safe playgrounds for every age and walking paths in the courtyard. Cars go to a two-level underground car park with wide bays, ready for electric-car charging stations.",
     },
-    image: "/vatan/guide/yard.jpg",
+    image: "/vatan/11.jpg",
     stats: [
       { value: "4 204 m²", label: { ru: "озеленения", uz: "yashil hudud", en: "of greenery" } },
       { value: "246", label: { ru: "машиномест", uz: "avtoturargoh", en: "parking spaces" } },

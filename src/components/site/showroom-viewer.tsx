@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { LuArrowLeft, LuChevronUp, LuLayoutGrid, LuMaximize, LuMinimize } from "react-icons/lu";
 import { useSite } from "@/components/site/site-provider";
 import { useLocalValue } from "@/lib/local-store";
+import { lightPanorama, panoramaFor } from "@/lib/panorama";
 import type { ShowroomScene } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -59,7 +60,7 @@ export default function ShowroomViewer({ scenes, projectName, backHref }: { scen
     const start = setTimeout(() => {
       const nodes: VirtualTourNode[] = scenes.map((sc) => ({
         id: sc.id,
-        panorama: sc.image,
+        panorama: panoramaFor(sc.image),
         name: sc.name[langRef.current],
         links: sc.links.map((l) => ({ nodeId: l.to, position: { yaw: l.yaw, pitch: l.pitch } })),
       }));
@@ -216,7 +217,7 @@ export default function ShowroomViewer({ scenes, projectName, backHref }: { scen
                   aria-current={sc.id === current}
                   className={cn("group relative block h-14 w-24 overflow-hidden rounded-2xl ring-2 transition-all sm:h-16 sm:w-28", sc.id === current ? "ring-gold" : "ring-transparent hover:ring-white/50")}
                 >
-                  <Image src={sc.image} alt="" width={288} height={144} sizes="144px" className="size-full object-cover" />
+                  <Image src={lightPanorama(sc.image)} alt="" width={288} height={144} sizes="144px" className="size-full object-cover" />
                   <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-2 pt-4 pb-1 text-left text-[11px] leading-tight font-medium sm:text-xs">{sc.name[lang]}</span>
                 </button>
               </li>
