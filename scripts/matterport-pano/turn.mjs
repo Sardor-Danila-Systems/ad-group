@@ -1,4 +1,4 @@
-import { sharp } from "./lib.mjs";
+import { saveRGB, sharp } from "./lib.mjs";
 // Turns an equirectangular panorama by `deg` degrees: what was at yaw y ends up at yaw y + deg.
 const [inp, out, degArg] = process.argv.slice(2);
 const deg = Number(degArg);
@@ -12,5 +12,5 @@ for (let y = 0; y < H; y++) {
   data.copy(res, row + shift * 3, row, row + (W - shift) * 3);
   data.copy(res, row, row + (W - shift) * 3, row + W * 3);
 }
-await sharp(res, { raw: { width: W, height: H, channels: 3 } }).jpeg({ quality: 84, mozjpeg: true }).toFile(out);
+await saveRGB(res, W, H, out);
 console.log(out, deg, shift);

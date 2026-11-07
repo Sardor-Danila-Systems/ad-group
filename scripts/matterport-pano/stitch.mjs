@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { sharp, loadRGB, sample, faceFiles, cubeSampler, renderEquirect } from "./lib.mjs";
+import { saveRGB, loadRGB, sample, faceFiles, cubeSampler, renderEquirect } from "./lib.mjs";
 const [dir, out, Warg] = process.argv.slice(2);
 const W = Number(Warg || 4096), H = W / 2;
 const meta = JSON.parse(readFileSync(`${dir}/hires/poses.json`, "utf8"));
@@ -48,5 +48,5 @@ const buf = renderEquirect(W, H, (rx, ry, rz, o) => {
   if (wsum === 0) { o[0] = fb[0]; o[1] = fb[1]; o[2] = fb[2]; return; }
   o[0] = (acc[0] / wsum) * t + fb[0] * (1 - t); o[1] = (acc[1] / wsum) * t + fb[1] * (1 - t); o[2] = (acc[2] / wsum) * t + fb[2] * (1 - t);
 });
-await sharp(buf, { raw: { width: W, height: H, channels: 3 } }).jpeg({ quality: 84, mozjpeg: true }).toFile(out);
+await saveRGB(buf, W, H, out);
 console.log("ok", out);

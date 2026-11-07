@@ -129,6 +129,22 @@ export const MIGRATIONS: Migration[] = [
       if (vatan && !vatan.sections?.length) vatan.sections = structuredClone(VATAN_SECTIONS);
     },
   },
+  {
+    // Guidebook pictures that also exist as full-size renders now use those renders.
+    id: "2026-11-07-vatan-guide-hires",
+    run(c) {
+      const swap: Record<string, string> = {
+        "/vatan/guide/shopping.jpg": "/vatan/04.jpg",
+        "/vatan/guide/penthouse.jpg": "/vatan/18.jpg",
+        "/vatan/guide/yard.jpg": "/vatan/11.jpg",
+        "/vatan/guide/parking.jpg": "/vatan/11.jpg",
+      };
+      for (const s of c.projects.find((p) => p.id === "vatan")?.sections ?? []) {
+        if (s.image && swap[s.image]) s.image = swap[s.image];
+        for (const card of s.cards ?? []) if (card.image && swap[card.image]) card.image = swap[card.image];
+      }
+    },
+  },
 ];
 
 export const ALL_MIGRATION_IDS = MIGRATIONS.map((m) => m.id);

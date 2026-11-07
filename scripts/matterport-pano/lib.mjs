@@ -3,6 +3,15 @@ import { readdirSync } from "node:fs";
 import sharpModule from "sharp";
 export const sharp = sharpModule;
 
+/**
+ * Saves raw RGB pixels. A .png keeps every pixel (use it between steps, so stitching, turning and patching
+ * do not stack JPEG losses); a .jpg is the final, high-quality file the site serves.
+ */
+export function saveRGB(data, width, height, out) {
+  const img = sharp(data, { raw: { width, height, channels: 3 } });
+  return (out.endsWith(".png") ? img.png({ compressionLevel: 3 }) : img.jpeg({ quality: 92, mozjpeg: true, chromaSubsampling: "4:4:4" })).toFile(out);
+}
+
 export async function loadRGB(path, w, h) {
   let img = sharp(path);
   if (w) img = img.resize(w, h, { fit: "fill" });

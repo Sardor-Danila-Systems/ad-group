@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { fitImage } from "@/lib/client-image";
+import { lightPanorama } from "@/lib/panorama";
 import type { L10n, ShowroomLink, ShowroomScene } from "@/lib/types";
 
 const PanoramaLinkPicker = dynamic(() => import("@/components/admin/panorama-link-picker"), {
@@ -81,7 +82,7 @@ export function ShowroomEditor({ name, initial }: { name: string; initial: Showr
         {scenes.map((sc, i) => (
           <li key={sc.id} className="grid gap-4 rounded-2xl border border-border bg-muted/30 p-4 sm:grid-cols-[200px_1fr]">
             <div className="grid content-start gap-2">
-              <Image src={sc.image} alt="" width={400} height={200} sizes="200px" className="aspect-[2/1] w-full rounded-xl object-cover" />
+              <Image src={lightPanorama(sc.image)} alt="" width={400} height={200} sizes="200px" className="aspect-[2/1] w-full rounded-xl object-cover" />
               <p className="text-xs text-muted-foreground">Комната {i + 1}{i === 0 ? " (вход)" : ""} · стрелок: {sc.links.length}</p>
               <div className="flex items-center gap-1">
                 <Button type="button" variant="ghost" size="icon" className="size-8" aria-label="Выше" onClick={() => move(i, -1)}><LuArrowUp /></Button>
@@ -155,7 +156,7 @@ function LinkDialog({ scene, scenes, labelOf, onChange }: { scene: ShowroomScene
         <DialogDescription>Выберите, куда ведёт стрелка, нажмите «Поставить» и кликните по панораме в том месте, где находится проход.</DialogDescription>
       </DialogHeader>
       <div className="h-[46dvh] min-h-[280px] overflow-hidden rounded-2xl bg-ink">
-        <PanoramaLinkPicker image={scene.image} links={links} labelOf={labelOf} placing={placing} onPick={add} />
+        <PanoramaLinkPicker image={lightPanorama(scene.image)} links={links} labelOf={labelOf} placing={placing} onPick={add} />
       </div>
       <div className="grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
         <div className="grid gap-3">
