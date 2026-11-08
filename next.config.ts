@@ -8,6 +8,19 @@ const nextConfig: NextConfig = {
     serverActions: { bodySizeLimit: "100mb" },
   },
   partialPrefetching: true,
+  async headers() {
+    // Public files are served with max-age=0 by default, so every visit asked the server about every
+    // picture again (193 hero frames among them).
+    const week = "public, max-age=604800, stale-while-revalidate=2592000";
+    return [
+      // Versioned folder (the hero changes only under a new name): cache for good.
+      { source: "/hero/:version/:path*", headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }] },
+      ...["assets", "directions", "showroom", "sogdiana", "team", "textures", "urgut", "vatan", "yangi-urgut"].map((dir) => ({
+        source: `/${dir}/:path*`,
+        headers: [{ key: "Cache-Control", value: week }],
+      })),
+    ];
+  },
   images: {
     // AVIF first (sharper at the same weight), WebP for browsers without it.
     formats: ["image/avif", "image/webp"],

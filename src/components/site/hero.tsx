@@ -10,13 +10,32 @@ import { fx } from "@/components/site/fx";
  * Scroll-driven first screen: the construction video is played by the scroll position, then the
  * final frame stays on screen and the headline, buttons and numbers fade in over it.
  *
- * The video is shipped as an image sequence (public/hero/frames, made by scripts/hero-frames) and drawn
+ * The video is shipped as an image sequence (public/hero/v2, made by scripts/hero-frames) and drawn
  * on a canvas. Seeking an MP4 on every scroll tick stutters, especially in Safari and on phones;
  * a frame sequence is what premium product pages use for this.
  */
-const FRAME_COUNT = 193;
-/** Full-size frames (1340×952) for larger screens, a lighter set (900 px, every second frame) for phones. */
-const frameSrc = (i: number, light: boolean) => `/hero/${light ? "frames-m" : "frames"}/${String(i).padStart(4, "0")}.webp`;
+/** Frames in the sequence (scripts/hero-frames/retime.mjs prints it). */
+const FRAME_COUNT = 223;
+const num = (i: number) => String(i).padStart(4, "0");
+
+interface FrameSet {
+  /** Every n-th frame is shipped. */
+  step: number;
+  /** Decoded frames kept ahead of the current one (and a third of that behind). */
+  window: number;
+  src: (i: number) => string;
+}
+/**
+ * The client's render is 1340×952; the frames are upscaled ×2 on device (scripts/hero-frames) and
+ * shipped at 1920 px for larger screens and 1080 px (every second frame) for phones, as AVIF.
+ * Browsers that cannot decode AVIF get the phone set as WebP. The folder name is the version: change it
+ * whenever the frames change, they are cached for a year.
+ */
+const SETS = {
+  desktop: { step: 1, window: 12, src: (i: number) => `/hero/v2/d/${num(i)}.avif` },
+  phone: { step: 2, window: 10, src: (i: number) => `/hero/v2/m/${num(i)}.avif` },
+  fallback: { step: 2, window: 10, src: (i: number) => `/hero/v2/m/${num(i)}.webp` },
+} satisfies Record<string, FrameSet>;
 
 /** Share of the pinned scroll that plays the video; the rest reveals the final screen. */
 const VIDEO_END = 0.78;
@@ -61,28 +80,90 @@ export function Hero() {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    // Phones and data-saver: every second frame is plenty and halves the download.
+    // Phones and data-saver: the lighter set (every second frame) is plenty and a fraction of the download.
     const phone = window.matchMedia("(max-width: 767px)");
-    const light = phone.matches || Boolean(conn?.saveData);
-    const step = light ? 2 : 1;
-    const frames: (HTMLImageElement | undefined)[] = new Array(FRAME_COUNT);
+    let set: FrameSet = phone.matches || conn?.saveData ? SETS.phone : SETS.desktop;
+    // Compressed frames (small) are all kept; decoded ones (large) only around the current position.
+    let blobs: (Blob | undefined)[] = new Array(FRAME_COUNT);
+    const bitmaps = new Map<number, ImageBitmap>();
+    const decoding = new Set<number>();
 
     let current = 0; // smoothed frame position
-    let drawn = -1;
+    let drawn = -1; // position on the canvas (between two frames while they are blended)
     let dirty = true;
     let raf = 0;
     let visible = true;
     let wasRevealed = false;
     let disposed = false;
+    let heading = 1; // which way the frames are moving, to decode ahead
 
+    const snap = (i: number) => Math.min(FRAME_COUNT - 1, Math.max(0, Math.round(i / set.step) * set.step));
+    /** The decoded frame closest to `i`, or -1. */
     const nearest = (i: number) => {
-      for (let d = 0; d < FRAME_COUNT; d++) {
-        const a = frames[i - d];
-        if (a) return a;
-        const b = frames[i + d];
-        if (b) return b;
+      const c = snap(i);
+      for (let d = 0; d < FRAME_COUNT; d += set.step) {
+        if (bitmaps.has(c - d)) return c - d;
+        if (bitmaps.has(c + d)) return c + d;
       }
-      return undefined;
+      return -1;
+    };
+
+    /*
+     * Decoding happens off the main thread (createImageBitmap), a window of frames around the current one,
+     * reaching further in the direction of travel. Drawing a decoded bitmap is then a plain GPU copy:
+     * no decode in the middle of a scroll frame, which is what made the hero stutter.
+     */
+    const pump = () => {
+      if (disposed) return;
+      const c = snap(current);
+      const ahead = set.window * set.step, behind = Math.round(set.window / 3) * set.step;
+      const lo = heading > 0 ? c - behind : c - ahead;
+      const hi = heading > 0 ? c + ahead : c + behind;
+      for (const [i, b] of bitmaps) {
+        if (i < lo || i > hi) {
+          b.close();
+          bitmaps.delete(i);
+        }
+      }
+      // Nearest first, so the frame needed now is never queued behind far ones.
+      const want: number[] = [];
+      for (let d = 0; d <= ahead; d += set.step) {
+        for (const i of d === 0 ? [c] : heading > 0 ? [c + d, c - d] : [c - d, c + d]) {
+          if (i >= lo && i <= hi && i >= 0 && i < FRAME_COUNT && blobs[i] && !bitmaps.has(i) && !decoding.has(i)) want.push(i);
+        }
+      }
+      for (const i of want) {
+        if (decoding.size >= 6) break;
+        decoding.add(i);
+        const blob = blobs[i]!;
+        createImageBitmap(blob)
+          .then((bmp) => {
+            decoding.delete(i);
+            const c2 = snap(current);
+            const reach = set.window * set.step;
+            if (disposed || Math.abs(i - c2) > reach) {
+              bmp.close();
+            } else {
+              bitmaps.set(i, bmp);
+              // Repaint if this frame is one of the pair being shown, or closer than what is on screen.
+              if (drawn === -1 || Math.abs(i - current) <= set.step || Math.abs(i - c2) < Math.abs(drawn - c2)) {
+                dirty = true;
+                kick();
+              }
+            }
+            pump();
+          })
+          .catch(() => {
+            decoding.delete(i);
+            blobs[i] = undefined; // never retry a frame that cannot be decoded
+            // This browser cannot decode the format (AVIF): switch to the WebP fallback once.
+            if (set !== SETS.fallback && drawn === -1) {
+              set = SETS.fallback;
+              blobs = new Array(FRAME_COUNT);
+              startLoading();
+            }
+          });
+      }
     };
 
     const resize = () => {
@@ -95,12 +176,40 @@ export function Hero() {
       dirty = true;
     };
 
-    const draw = (i: number) => {
-      const img = nearest(i);
-      if (!img) return;
-      // The canvas box has the frame's own shape (1340:952), so the frame fills it exactly.
-      ctx.drawImage(img, 0, 0, cv.width, cv.height);
-      drawn = i;
+    /*
+     * Draws position `pos`, which is usually between two frames: the next frame is laid over the previous
+     * one in proportion. So the picture moves on every screen refresh, also at the slow start and end of a
+     * glide, where the position creeps less than a frame per refresh and whole frames alone would step.
+     * Until both frames are decoded, the closest decoded one is shown.
+     */
+    const draw = (pos: number) => {
+      const step = set.step;
+      const a = Math.min(FRAME_COUNT - 1, Math.floor(pos / step) * step);
+      const b = Math.min(FRAME_COUNT - 1, a + step);
+      const t = b === a ? 0 : clamp((pos - a) / (b - a));
+      const A = bitmaps.get(a), B = bitmaps.get(b);
+      let shown: number;
+      // The canvas box has the frame's own shape (1340:952), so a frame fills it exactly.
+      if (A && (t < 0.01 || (B && t <= 0.99))) {
+        if (pos === drawn && !dirty) return;
+        ctx.globalAlpha = 1;
+        ctx.drawImage(A, 0, 0, cv.width, cv.height);
+        if (B && t >= 0.01) {
+          ctx.globalAlpha = t;
+          ctx.drawImage(B, 0, 0, cv.width, cv.height);
+          ctx.globalAlpha = 1;
+        }
+        shown = pos;
+      } else {
+        const k = nearest(pos);
+        if (k === -1 || (k === drawn && !dirty)) return;
+        ctx.globalAlpha = 1;
+        ctx.drawImage(bitmaps.get(k)!, 0, 0, cv.width, cv.height);
+        shown = k;
+      }
+      // The server-rendered poster stays visible until the canvas holds a real frame.
+      if (drawn === -1) cv.style.opacity = "1";
+      drawn = shown;
       dirty = false;
     };
 
@@ -115,10 +224,12 @@ export function Hero() {
       if (disposed) return;
       const p = reduced ? 1 : progress();
       const target = clamp(p / VIDEO_END) * (FRAME_COUNT - 1);
+      if (Math.abs(target - current) > 0.5) heading = target > current ? 1 : -1;
+      const before = snap(current);
       current += (target - current) * 0.2;
       if (Math.abs(target - current) < 0.02) current = target;
-      const idx = Math.round(current);
-      if (idx !== drawn || dirty) draw(idx);
+      if (snap(current) !== before) pump();
+      if (current !== drawn || dirty) draw(current);
 
       const [from, to] = phone.matches ? [TEXT_FROM_PHONE, TEXT_TO_PHONE] : [TEXT_FROM, TEXT_TO];
       const reveal = reduced ? 1 : phone.matches ? clamp((p - from) / (to - from)) : ease(clamp((p - from) / (to - from)));
@@ -136,29 +247,31 @@ export function Hero() {
       if (!raf) raf = requestAnimationFrame(tick);
     };
 
-    // Progressive loading with a few parallel requests.
-    const queue = loadOrder(step);
-    const worker = async () => {
-      while (queue.length && !disposed) {
-        const i = queue.shift()!;
-        const img = new Image();
-        img.decoding = "async";
-        img.src = frameSrc(i, light);
-        try {
-          await img.decode();
-        } catch {
-          continue;
+    // Downloads: ends first, then ever finer strides, a few requests at a time. A new set (the fallback)
+    // starts a new generation and the old downloads stop.
+    let generation = 0;
+    function startLoading() {
+      const gen = ++generation;
+      const { step, src } = set;
+      const queue = loadOrder(step);
+      const worker = async () => {
+        while (queue.length && !disposed && gen === generation) {
+          const i = queue.shift()!;
+          try {
+            const res = await fetch(src(i));
+            if (!res.ok) continue;
+            const blob = await res.blob();
+            if (disposed || gen !== generation) return;
+            blobs[i] = blob;
+            pump();
+          } catch {
+            // a missing frame is covered by its neighbours
+          }
         }
-        if (disposed) return;
-        frames[i] = img;
-        // Repaint if this frame is closer to where the viewer is than what is on screen.
-        if (Math.abs(i - Math.round(current)) <= Math.abs(drawn - Math.round(current)) || drawn === -1) {
-          dirty = true;
-          kick();
-        }
-      }
-    };
-    for (let k = 0; k < 6; k++) void worker();
+      };
+      for (let k = 0; k < 6; k++) void worker();
+    }
+    startLoading();
 
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
@@ -178,6 +291,8 @@ export function Hero() {
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
+      for (const b of bitmaps.values()) b.close();
+      bitmaps.clear();
       io.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
@@ -205,8 +320,8 @@ export function Hero() {
         <div className="hero-intro absolute inset-x-0 top-[76px] aspect-[1340/952] [@media(min-aspect-ratio:1340/952)]:top-[calc((100svh-71.04vw)*0.2)]">
           {/* First frame from the server: visible during the preloader and before frames arrive. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/hero/first.jpg" alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 size-full" />
-          <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 size-full" />
+          <img src="/hero/v2/first.jpg" alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 size-full" />
+          <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 size-full opacity-0" />
         </div>
 
         {/* Darkening for legible text, faded in together with it. */}
@@ -233,7 +348,7 @@ export function Hero() {
                 <Button onClick={openCall} size="lg" className={`h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-ink hover:bg-gold ${fx.goldOnDark}`}>
                   {t("lead.send")}
                 </Button>
-                <Button asChild size="lg" variant="outline" className={`h-12 rounded-full border-white/40 bg-white/5 px-7 text-[15px] font-semibold text-white backdrop-blur-sm hover:bg-white/5 ${fx.goldOnDark}`}>
+                <Button asChild size="lg" variant="outline" className={`h-12 rounded-full border-white/40 bg-white/10 px-7 text-[15px] font-semibold text-white hover:bg-white/10 ${fx.goldOnDark}`}>
                   <a href="#projects">{t("hero.cta1")}</a>
                 </Button>
               </div>
