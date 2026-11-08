@@ -3,7 +3,7 @@
 import "@photo-sphere-viewer/core/index.css";
 import "@photo-sphere-viewer/markers-plugin/index.css";
 import "@photo-sphere-viewer/virtual-tour-plugin/index.css";
-import { Viewer } from "@photo-sphere-viewer/core";
+import { SYSTEM, Viewer } from "@photo-sphere-viewer/core";
 import { GyroscopePlugin } from "@photo-sphere-viewer/gyroscope-plugin";
 import { MarkersPlugin } from "@photo-sphere-viewer/markers-plugin";
 import { VirtualTourPlugin, type VirtualTourNode } from "@photo-sphere-viewer/virtual-tour-plugin";
@@ -23,6 +23,24 @@ const ARROW =
   encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 12 88 62 68 62 50 36 32 62 12 62Z" fill="#b8924f" stroke="#fff" stroke-width="5" stroke-linejoin="round"/></svg>',
   );
+
+/**
+ * Room changes used to freeze the page for 150–270 ms: the viewer decoded the 8192 px panorama on the
+ * main thread when uploading it. Here it is decoded in the background (createImageBitmap), and preloading
+ * the next rooms only downloads their files, so no decoded panorama waits in memory.
+ * An ImageBitmap ignores WebGL's flip flag, so it is decoded already flipped. On a GPU that cannot hold
+ * the panorama in one texture the viewer shrinks it on a canvas (which does flip): there nothing changes.
+ */
+function fastPanoramas(v: Viewer) {
+  // three.js asks the GPU whether each new shader compiled; that query waits until the GPU has finished
+  // everything queued, the panorama upload included (a 250 ms freeze on the first room change).
+  const gl = (v.renderer as unknown as { renderer?: { debug?: { checkShaderErrors: boolean } } }).renderer;
+  if (gl?.debug) gl.debug.checkShaderErrors = false;
+  const loader = v.textureLoader;
+  loader.preloadPanorama = (panorama: unknown) => (typeof panorama === "string" ? loader.loadFile(panorama, undefined, panorama) : Promise.resolve());
+  if (typeof createImageBitmap !== "function" || SYSTEM.maxTextureWidth < 8192) return;
+  loader.blobToImage = (blob: Blob) => createImageBitmap(blob, { imageOrientation: "flipY" }) as unknown as Promise<HTMLImageElement>;
+}
 
 const TAU = Math.PI * 2;
 const angleDiff = (a: number, b: number) => Math.abs(((a - b + Math.PI * 3) % TAU) - Math.PI);
@@ -93,6 +111,7 @@ export default function ShowroomViewer({ scenes, projectName, backHref }: { scen
         ],
       });
       viewer.current = v;
+      fastPanoramas(v);
       const vt = v.getPlugin<VirtualTourPlugin>(VirtualTourPlugin);
       tour.current = vt;
       vt.addEventListener("node-changed", ({ node }) => {

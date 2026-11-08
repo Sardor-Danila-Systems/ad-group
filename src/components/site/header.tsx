@@ -57,7 +57,7 @@ export function Header() {
     <header
       className={cn(
         "hdr-enter fixed inset-x-0 top-0 z-50 border-b text-ink transition-[translate,background-color,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-        solid ? "border-gold/25 bg-paper/90 shadow-sm backdrop-blur-xl" : "border-transparent bg-paper/60 backdrop-blur-md",
+        solid ? "border-gold/25 bg-paper/95 shadow-sm" : "border-transparent bg-paper/60 backdrop-blur-md",
         hidden && !menu && "-translate-y-full",
       )}
     >
