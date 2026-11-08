@@ -96,6 +96,8 @@ export function Hero() {
     let wasRevealed = false;
     let disposed = false;
     let heading = 1; // which way the frames are moving, to decode ahead
+    /** Furthest apart two decoded frames may be and still be blended (while the rest is downloading). */
+    const GAP = 12;
 
     const snap = (i: number) => Math.min(FRAME_COUNT - 1, Math.max(0, Math.round(i / set.step) * set.step));
     /** The decoded frame closest to `i`, or -1. */
@@ -116,7 +118,7 @@ export function Hero() {
     const pump = () => {
       if (disposed) return;
       const c = snap(current);
-      const ahead = set.window * set.step, behind = Math.round(set.window / 3) * set.step;
+      const ahead = set.window * set.step, behind = Math.max(GAP, Math.round(set.window / 3) * set.step);
       const lo = heading > 0 ? c - behind : c - ahead;
       const hi = heading > 0 ? c + ahead : c + behind;
       for (const [i, b] of bitmaps) {
@@ -146,7 +148,7 @@ export function Hero() {
             } else {
               bitmaps.set(i, bmp);
               // Repaint if this frame is one of the pair being shown, or closer than what is on screen.
-              if (drawn === -1 || Math.abs(i - current) <= set.step || Math.abs(i - c2) < Math.abs(drawn - c2)) {
+              if (drawn === -1 || Math.abs(i - current) <= GAP || Math.abs(i - c2) < Math.abs(drawn - c2)) {
                 dirty = true;
                 kick();
               }
@@ -176,27 +178,37 @@ export function Hero() {
       dirty = true;
     };
 
+    const below = (p: number) => {
+      for (let k = Math.floor(p / set.step) * set.step; k >= 0 && k >= p - GAP; k -= set.step) if (bitmaps.has(k)) return k;
+      return -1;
+    };
+    const above = (p: number) => {
+      for (let k = Math.ceil(p / set.step) * set.step; k <= p + GAP; k += set.step) {
+        const f = Math.min(k, FRAME_COUNT - 1); // the last frame is in every set
+        if (bitmaps.has(f)) return f;
+        if (f === FRAME_COUNT - 1) break;
+      }
+      return -1;
+    };
+
     /*
-     * Draws position `pos`, which is usually between two frames: the next frame is laid over the previous
+     * Draws position `pos`, which is usually between two frames: the later frame is laid over the earlier
      * one in proportion. So the picture moves on every screen refresh, also at the slow start and end of a
      * glide, where the position creeps less than a frame per refresh and whole frames alone would step.
-     * Until both frames are decoded, the closest decoded one is shown.
+     * While frames are still downloading, the nearest decoded ones on either side are blended the same way.
      */
     const draw = (pos: number) => {
-      const step = set.step;
-      const a = Math.min(FRAME_COUNT - 1, Math.floor(pos / step) * step);
-      const b = Math.min(FRAME_COUNT - 1, a + step);
-      const t = b === a ? 0 : clamp((pos - a) / (b - a));
-      const A = bitmaps.get(a), B = bitmaps.get(b);
+      const lo = below(pos), hi = above(pos);
       let shown: number;
       // The canvas box has the frame's own shape (1340:952), so a frame fills it exactly.
-      if (A && (t < 0.01 || (B && t <= 0.99))) {
+      if (lo !== -1 && hi !== -1) {
         if (pos === drawn && !dirty) return;
+        const t = hi === lo ? 0 : clamp((pos - lo) / (hi - lo));
         ctx.globalAlpha = 1;
-        ctx.drawImage(A, 0, 0, cv.width, cv.height);
-        if (B && t >= 0.01) {
+        ctx.drawImage(bitmaps.get(t > 0.99 ? hi : lo)!, 0, 0, cv.width, cv.height);
+        if (t >= 0.01 && t <= 0.99) {
           ctx.globalAlpha = t;
-          ctx.drawImage(B, 0, 0, cv.width, cv.height);
+          ctx.drawImage(bitmaps.get(hi)!, 0, 0, cv.width, cv.height);
           ctx.globalAlpha = 1;
         }
         shown = pos;
