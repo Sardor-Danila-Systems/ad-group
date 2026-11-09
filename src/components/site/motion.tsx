@@ -305,7 +305,6 @@ export function Motion() {
     };
 
     let busy = false;
-    let doneAt = 0;
     let safety: ReturnType<typeof setTimeout> | undefined;
     /** The glide under way when it is a long one: another push may speed it up or turn it back. */
     let long: { from: number; target: number; dir: number } | null = null;
@@ -319,7 +318,6 @@ export function Motion() {
         if (id !== run) return;
         busy = false;
         long = null;
-        doneAt = performance.now();
         clearTimeout(safety);
       };
       clearTimeout(safety);
@@ -379,7 +377,8 @@ export function Motion() {
     };
 
     let lastWheel = 0;
-    let lastDelta = 0;
+    /** Whether the current gesture has already moved the page. */
+    let used = false;
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey || !active()) return;
       const target = e.target as Element;
@@ -387,15 +386,16 @@ export function Motion() {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       e.preventDefault();
       const now = performance.now();
-      const gap = now - lastWheel;
-      const fresh = Math.abs(e.deltaY) > Math.abs(lastDelta) * 1.4 + 4;
+      // One unbroken stream of wheel events is one gesture, and it moves the page once. A sharp trackpad
+      // flick sends a rising burst and then one to two seconds of momentum; each rise used to count as a
+      // new push (racing through the hero, skipping sections). The next move needs a short pause first.
+      if (now - lastWheel > 200) used = false;
       lastWheel = now;
-      lastDelta = e.deltaY;
-      if (busy && (fresh || gap > 250) && Math.abs(e.deltaY) >= 2) steer(e.deltaY > 0 ? 1 : -1);
-      if (busy || Math.abs(e.deltaY) < 2) return;
-      // A trackpad keeps sending a fading stream after a glide: wait for a pause or a fresh push.
-      if (now - doneAt < 650 && gap < 160 && !fresh) return;
-      go(e.deltaY > 0 ? 1 : -1);
+      if (used || Math.abs(e.deltaY) < 2) return;
+      used = true;
+      const dir = e.deltaY > 0 ? 1 : -1;
+      if (busy) steer(dir);
+      else go(dir);
     };
 
     const onKey = (e: KeyboardEvent) => {
