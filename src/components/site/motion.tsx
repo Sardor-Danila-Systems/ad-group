@@ -18,8 +18,19 @@ import { useEffect, useLayoutEffect } from "react";
  */
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-/** Softer start and finish for long glides through a scroll-played video. */
+/** Softer start and finish for long glides. */
 const easeSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
+/**
+ * For playing a video by the scroll: a short soft start, then a steady pace, then a short soft stop
+ * (constant acceleration over the first and last 16 %), so the video runs evenly instead of rushing.
+ */
+const RAMP = 0.16;
+const easeVideo = (t: number) => {
+  const v = 1 / (1 - RAMP);
+  if (t < RAMP) return (v * t * t) / (2 * RAMP);
+  if (t > 1 - RAMP) return 1 - (v * (1 - t) * (1 - t)) / (2 * RAMP);
+  return v * (t - RAMP / 2);
+};
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 /** Where the page scrolls by itself: dialogs, menus, popovers, the 360° viewer. */
 const OWN_SCROLL = "[data-lenis-prevent],[role=dialog],[data-radix-popper-content-wrapper],[data-slot=sheet-content],[data-slot=dialog-overlay],[data-slot=sheet-overlay]";
@@ -296,12 +307,29 @@ export function Motion() {
     let busy = false;
     let doneAt = 0;
     let safety: ReturnType<typeof setTimeout> | undefined;
-    /** The glide under way, when it is a long one that a new push may hurry. */
-    let long: { target: number; dir: number } | null = null;
+    /** The glide under way when it is a long one: another push may speed it up or turn it back. */
+    let long: { from: number; target: number; dir: number } | null = null;
+    /** Each glide has a number, so a glide cut short by a newer one cannot end the newer one. */
+    let run = 0;
+
+    const move = (target: number, duration: number, easing: (t: number) => number) => {
+      const id = ++run;
+      busy = true;
+      const finish = () => {
+        if (id !== run) return;
+        busy = false;
+        long = null;
+        doneAt = performance.now();
+        clearTimeout(safety);
+      };
+      clearTimeout(safety);
+      safety = setTimeout(finish, duration * 1000 + 400);
+      lenis.scrollTo(target, { duration, easing, lock: true, force: true, onComplete: finish });
+    };
 
     /*
      * A section can set its own glide length (data-glide, seconds on a computer): the home hero plays its
-     * whole video in one calm glide instead of two quick ones with a stop in the middle.
+     * whole video in one slow, steady glide; going back up through it takes under half as long.
      */
     const ownGlide = (from: number, to: number) => {
       for (const el of document.querySelectorAll<HTMLElement>("[data-glide]")) {
@@ -313,41 +341,25 @@ export function Motion() {
     };
 
     const glide = (target: number) => {
-      const dist = Math.abs(target - window.scrollY) / window.innerHeight;
-      const own = ownGlide(window.scrollY, target);
-      const duration = own ? own * (fine ? 1 : 0.85) : (fine ? 1.65 : 1.2) * Math.min(1.3, Math.max(0.8, dist));
-      long = own ? { target, dir: Math.sign(target - window.scrollY) } : null;
-      busy = true;
-      const done = () => {
-        busy = false;
-        long = null;
-        doneAt = performance.now();
-        clearTimeout(safety);
-      };
-      safety = setTimeout(done, duration * 1000 + 400);
-      lenis.scrollTo(target, { duration, easing: own ? easeSine : ease, lock: true, force: true, onComplete: done });
+      const from = window.scrollY;
+      const dir = Math.sign(target - from);
+      const own = ownGlide(from, target);
+      if (own) {
+        const seconds = (dir > 0 ? own : own * 0.45) * (fine ? 1 : 0.85);
+        move(target, seconds, dir > 0 ? easeVideo : easeSine);
+        long = { from, target, dir };
+        return;
+      }
+      const dist = Math.abs(target - from) / window.innerHeight;
+      move(target, (fine ? 1.65 : 1.2) * Math.min(1.3, Math.max(0.8, dist)), ease);
     };
-    /** Another push the same way during a long glide finishes it quickly instead of being ignored. */
-    const hurry = (dir: number) => {
-      if (!long || long.dir !== dir) return;
-      const { target } = long;
+    /** A push during a long glide: the same way finishes it quickly, the other way heads back. */
+    const steer = (dir: number) => {
+      if (!long) return;
+      const { from, target } = long;
+      const ahead = dir === long.dir;
       long = null;
-      clearTimeout(safety);
-      safety = setTimeout(() => {
-        busy = false;
-        doneAt = performance.now();
-      }, 1100);
-      lenis.scrollTo(target, {
-        duration: 0.7,
-        easing: easeOut,
-        lock: true,
-        force: true,
-        onComplete: () => {
-          busy = false;
-          doneAt = performance.now();
-          clearTimeout(safety);
-        },
-      });
+      move(ahead ? target : from, ahead ? 0.7 : 1.3, ahead ? easeOut : easeSine);
     };
     const go = (dir: 1 | -1) => {
       const y = window.scrollY;
@@ -379,7 +391,7 @@ export function Motion() {
       const fresh = Math.abs(e.deltaY) > Math.abs(lastDelta) * 1.4 + 4;
       lastWheel = now;
       lastDelta = e.deltaY;
-      if (busy && (fresh || gap > 250) && Math.abs(e.deltaY) >= 2) hurry(e.deltaY > 0 ? 1 : -1);
+      if (busy && (fresh || gap > 250) && Math.abs(e.deltaY) >= 2) steer(e.deltaY > 0 ? 1 : -1);
       if (busy || Math.abs(e.deltaY) < 2) return;
       // A trackpad keeps sending a fading stream after a glide: wait for a pause or a fresh push.
       if (now - doneAt < 650 && gap < 160 && !fresh) return;
@@ -400,7 +412,7 @@ export function Motion() {
       }
       if (!down && !up) return;
       e.preventDefault();
-      if (busy) hurry(down ? 1 : -1);
+      if (busy) steer(down ? 1 : -1);
       else go(down ? 1 : -1);
     };
 
@@ -424,7 +436,7 @@ export function Motion() {
       const dx = sx - t.clientX;
       const dy = sy - t.clientY;
       if (Math.abs(dy) < 40 || Math.abs(dy) < Math.abs(dx)) return;
-      if (busy) hurry(dy > 0 ? 1 : -1);
+      if (busy) steer(dy > 0 ? 1 : -1);
       else go(dy > 0 ? 1 : -1);
     };
 
