@@ -325,7 +325,7 @@ export function Hero() {
       data-scroll-hero
       data-curtain="exit"
       data-stops="0,1"
-      data-glide="4.4"
+      data-glide="7"
       aria-label={t("hero.title")}
       className="relative h-[360svh] bg-ink md:h-[420svh] motion-reduce:h-svh"
       style={{ "--reveal": 0, "--hint": 1 } as React.CSSProperties}
