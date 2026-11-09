@@ -27,14 +27,14 @@ interface FrameSet {
 }
 /**
  * The client's render is 1340×952; the frames are upscaled ×2 on device (scripts/hero-frames) and
- * shipped at 1920 px for larger screens and 1080 px (every second frame) for phones, as AVIF.
- * Browsers that cannot decode AVIF get the phone set as WebP. The folder name is the version: change it
+ * shipped at 1920 px for larger screens and 1080 px for phones (every frame on both), as AVIF.
+ * Browsers that cannot decode AVIF get every second phone frame as WebP. The folder name is the version: change it
  * whenever the frames change, they are cached for a year.
  */
 const SETS = {
-  desktop: { step: 1, window: 12, src: (i: number) => `/hero/v2/d/${num(i)}.avif` },
-  phone: { step: 2, window: 10, src: (i: number) => `/hero/v2/m/${num(i)}.avif` },
-  fallback: { step: 2, window: 10, src: (i: number) => `/hero/v2/m/${num(i)}.webp` },
+  desktop: { step: 1, window: 12, src: (i: number) => `/hero/v3/d/${num(i)}.avif` },
+  phone: { step: 1, window: 12, src: (i: number) => `/hero/v3/m/${num(i)}.avif` },
+  fallback: { step: 2, window: 10, src: (i: number) => `/hero/v3/m/${num(i)}.webp` },
 } satisfies Record<string, FrameSet>;
 
 /** Share of the pinned scroll that plays the video; the rest reveals the final screen. */
@@ -80,7 +80,7 @@ export function Hero() {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    // Phones and data-saver: the lighter set (every second frame) is plenty and a fraction of the download.
+    // Phones and data-saver: the lighter set (1080 px) is plenty for their screens and a third of the download.
     const phone = window.matchMedia("(max-width: 767px)");
     let set: FrameSet = phone.matches || conn?.saveData ? SETS.phone : SETS.desktop;
     // Compressed frames (small) are all kept; decoded ones (large) only around the current position.
@@ -97,7 +97,7 @@ export function Hero() {
     let disposed = false;
     let heading = 1; // which way the frames are moving, to decode ahead
     /** Furthest apart two decoded frames may be and still be blended (while the rest is downloading). */
-    const GAP = 12;
+    const GAP = 16;
 
     const snap = (i: number) => Math.min(FRAME_COUNT - 1, Math.max(0, Math.round(i / set.step) * set.step));
     /** The decoded frame closest to `i`, or -1. */
@@ -169,7 +169,8 @@ export function Hero() {
     };
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Phones draw at their full pixel density (3× on most), so the frame is as sharp as the screen.
+      const dpr = Math.min(window.devicePixelRatio || 1, phone.matches ? 3 : 2);
       cv.width = Math.round(cv.clientWidth * dpr);
       cv.height = Math.round(cv.clientHeight * dpr);
       // Resizing the canvas resets its state; ask for the best scaling filter again.
@@ -316,7 +317,8 @@ export function Hero() {
       ref={section}
       data-scroll-hero
       data-curtain="exit"
-      data-stops="0,0.42,1"
+      data-stops="0,1"
+      data-glide="4.4"
       aria-label={t("hero.title")}
       className="relative h-[360svh] bg-ink md:h-[420svh] motion-reduce:h-svh"
       style={{ "--reveal": 0, "--hint": 1 } as React.CSSProperties}
@@ -332,7 +334,7 @@ export function Hero() {
         <div className="hero-intro absolute inset-x-0 top-[76px] aspect-[1340/952] [@media(min-aspect-ratio:1340/952)]:top-[calc((100svh-71.04vw)*0.2)]">
           {/* First frame from the server: visible during the preloader and before frames arrive. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/hero/v2/first.jpg" alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 size-full" />
+          <img src="/hero/v3/first.jpg" srcSet="/hero/v3/first-m.jpg 1280w, /hero/v3/first.jpg 1920w" sizes="100vw" alt="" aria-hidden="true" fetchPriority="high" className="absolute inset-0 size-full" />
           <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 size-full opacity-0" />
         </div>
 

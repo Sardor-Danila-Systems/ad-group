@@ -30,7 +30,7 @@ function Leader({ person, priority }: { person: Person; priority?: boolean }) {
       {person.quote[lang] && (
         <blockquote className="col-span-2 border-l border-gold/50 pl-5 sm:col-span-1 sm:col-start-2">
           <QuoteMark className="mb-3 h-4 w-5 text-gold" />
-          <p className="font-display text-[clamp(17px,1.4vw,20px)] leading-snug text-paper/85 italic">{person.quote[lang]}</p>
+          <p className="font-[family-name:var(--font-playfair-italic)] text-[clamp(17px,1.4vw,20px)] leading-snug text-paper/85 italic">{person.quote[lang]}</p>
         </blockquote>
       )}
     </figure>

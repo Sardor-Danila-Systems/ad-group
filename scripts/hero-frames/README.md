@@ -21,21 +21,21 @@ node scripts/hero-frames/upscale.mjs /tmp/hero/png /tmp/hero/sr /tmp/upscale
 swiftc -O scripts/hero-frames/interpolate.swift -o /tmp/interpolate
 node scripts/hero-frames/retime.mjs /tmp/hero/sr /tmp/hero/rt /tmp/interpolate
 
-# 4. the sets the site loads: public/hero/<version>/{d,m,first.jpg}
-node scripts/hero-frames/encode.mjs /tmp/hero/rt v2
+# 4. the sets the site loads: public/hero/<version>/{d,m,first.jpg,first-m.jpg}
+node scripts/hero-frames/encode.mjs /tmp/hero/rt v3
 ```
 
 Why step 3: the render repeats a frame every few frames and then jumps twice as far, and the end (the
 camera rising fast) moves three times as much per frame as the rest. Played by the scroll, both read as
 stutter. After it every frame moves about the same amount (IMG_6248: 193 → 223 frames).
 
-The folder name (`v2`) is the version: `/hero/<version>/…` is cached for a year (`next.config.ts`), so
+The folder name (`v3`) is the version: `/hero/<version>/…` is cached for a year (`next.config.ts`), so
 frames that change get a new folder name, and `SETS` in `hero.tsx` points to it.
 
 | Set | Size | Frames | Format | For |
 | --- | --- | --- | --- | --- |
-| `d` | 1920 px | all 223 | AVIF | screens wider than 767 px |
-| `m` | 1080 px | every 2nd + last | AVIF | phones and data-saver |
-| `m/*.webp` | 1080 px | every 2nd + last | WebP | browsers without AVIF |
+| `d` | 1920 px | all 223 | AVIF q62 (34 MB) | screens wider than 767 px |
+| `m` | 1080 px | all 223 | AVIF q54 (14 MB) | phones and data-saver |
+| `m/*.webp` | 1080 px | every 2nd + last | WebP q78 | browsers without AVIF |
 
 The current source is the client's `IMG_6248.MP4` (HEVC, 1340×952, 24 fps, 8 s).

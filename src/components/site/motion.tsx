@@ -18,6 +18,9 @@ import { useEffect, useLayoutEffect } from "react";
  */
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+/** Softer start and finish for long glides through a scroll-played video. */
+const easeSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 /** Where the page scrolls by itself: dialogs, menus, popovers, the 360° viewer. */
 const OWN_SCROLL = "[data-lenis-prevent],[role=dialog],[data-radix-popper-content-wrapper],[data-slot=sheet-content],[data-slot=dialog-overlay],[data-slot=sheet-overlay]";
 /** Controls that use vertical drags or keys themselves. */
@@ -159,17 +162,58 @@ export function Motion() {
     let busy = false;
     let doneAt = 0;
     let safety: ReturnType<typeof setTimeout> | undefined;
+    /** The glide under way, when it is a long one that a new push may hurry. */
+    let long: { target: number; dir: number } | null = null;
+
+    /*
+     * A section can set its own glide length (data-glide, seconds on a computer): the home hero plays its
+     * whole video in one calm glide instead of two quick ones with a stop in the middle.
+     */
+    const ownGlide = (from: number, to: number) => {
+      for (const el of document.querySelectorAll<HTMLElement>("[data-glide]")) {
+        const top = el.getBoundingClientRect().top + window.scrollY;
+        const bottom = top + el.offsetHeight - window.innerHeight;
+        if (Math.min(from, to) >= top - 2 && Math.max(from, to) <= bottom + 2) return Number(el.dataset.glide) || 0;
+      }
+      return 0;
+    };
+
     const glide = (target: number) => {
       const dist = Math.abs(target - window.scrollY) / window.innerHeight;
-      const duration = (fine ? 1.65 : 1.2) * Math.min(1.3, Math.max(0.8, dist));
+      const own = ownGlide(window.scrollY, target);
+      const duration = own ? own * (fine ? 1 : 0.85) : (fine ? 1.65 : 1.2) * Math.min(1.3, Math.max(0.8, dist));
+      long = own ? { target, dir: Math.sign(target - window.scrollY) } : null;
       busy = true;
       const done = () => {
         busy = false;
+        long = null;
         doneAt = performance.now();
         clearTimeout(safety);
       };
       safety = setTimeout(done, duration * 1000 + 400);
-      lenis.scrollTo(target, { duration, easing: ease, lock: true, force: true, onComplete: done });
+      lenis.scrollTo(target, { duration, easing: own ? easeSine : ease, lock: true, force: true, onComplete: done });
+    };
+    /** Another push the same way during a long glide finishes it quickly instead of being ignored. */
+    const hurry = (dir: number) => {
+      if (!long || long.dir !== dir) return;
+      const { target } = long;
+      long = null;
+      clearTimeout(safety);
+      safety = setTimeout(() => {
+        busy = false;
+        doneAt = performance.now();
+      }, 1100);
+      lenis.scrollTo(target, {
+        duration: 0.7,
+        easing: easeOut,
+        lock: true,
+        force: true,
+        onComplete: () => {
+          busy = false;
+          doneAt = performance.now();
+          clearTimeout(safety);
+        },
+      });
     };
     const go = (dir: 1 | -1) => {
       const y = window.scrollY;
@@ -201,6 +245,7 @@ export function Motion() {
       const fresh = Math.abs(e.deltaY) > Math.abs(lastDelta) * 1.4 + 4;
       lastWheel = now;
       lastDelta = e.deltaY;
+      if (busy && (fresh || gap > 250) && Math.abs(e.deltaY) >= 2) hurry(e.deltaY > 0 ? 1 : -1);
       if (busy || Math.abs(e.deltaY) < 2) return;
       // A trackpad keeps sending a fading stream after a glide: wait for a pause or a fresh push.
       if (now - doneAt < 650 && gap < 160 && !fresh) return;
@@ -221,7 +266,8 @@ export function Motion() {
       }
       if (!down && !up) return;
       e.preventDefault();
-      if (!busy) go(down ? 1 : -1);
+      if (busy) hurry(down ? 1 : -1);
+      else go(down ? 1 : -1);
     };
 
     let tracking = false;
@@ -244,7 +290,8 @@ export function Motion() {
       const dx = sx - t.clientX;
       const dy = sy - t.clientY;
       if (Math.abs(dy) < 40 || Math.abs(dy) < Math.abs(dx)) return;
-      if (!busy) go(dy > 0 ? 1 : -1);
+      if (busy) hurry(dy > 0 ? 1 : -1);
+      else go(dy > 0 ? 1 : -1);
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });

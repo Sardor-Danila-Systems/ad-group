@@ -5,8 +5,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-const MIN_MS = 1500;
+const MIN_MS = 1100;
 const OPEN_MS = 900;
+/** On a slow connection the page opens after this long even if pictures are still loading. */
+const MAX_WAIT_MS = 3000;
 
 /**
  * Splash with the AD Group logo. Two marble curtains meet on a diagonal seam and
@@ -27,10 +29,18 @@ export function Preloader() {
         t2 = setTimeout(() => setPhase("gone"), OPEN_MS);
       }, wait);
     };
-    if (document.readyState === "complete") finish();
-    else window.addEventListener("load", finish, { once: true });
+    let done = false;
+    const once = () => {
+      if (done) return;
+      done = true;
+      finish();
+    };
+    const cap = setTimeout(once, MAX_WAIT_MS);
+    if (document.readyState === "complete") once();
+    else window.addEventListener("load", once, { once: true });
     return () => {
-      window.removeEventListener("load", finish);
+      window.removeEventListener("load", once);
+      clearTimeout(cap);
       clearTimeout(t1);
       clearTimeout(t2);
     };
