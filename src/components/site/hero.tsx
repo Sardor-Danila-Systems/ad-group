@@ -118,7 +118,8 @@ export function Hero() {
     const pump = () => {
       if (disposed) return;
       const c = snap(current);
-      const ahead = set.window * set.step, behind = Math.max(GAP, Math.round(set.window / 3) * set.step);
+      // Reach at least GAP ahead: while frames are still downloading, the next one to blend may be that far.
+      const ahead = Math.max(GAP, set.window * set.step), behind = Math.max(GAP, Math.round(set.window / 3) * set.step);
       const lo = heading > 0 ? c - behind : c - ahead;
       const hi = heading > 0 ? c + ahead : c + behind;
       for (const [i, b] of bitmaps) {
@@ -142,7 +143,7 @@ export function Hero() {
           .then((bmp) => {
             decoding.delete(i);
             const c2 = snap(current);
-            const reach = set.window * set.step;
+            const reach = Math.max(GAP, set.window * set.step);
             if (disposed || Math.abs(i - c2) > reach) {
               bmp.close();
             } else {
