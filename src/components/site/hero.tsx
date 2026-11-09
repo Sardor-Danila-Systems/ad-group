@@ -270,6 +270,9 @@ export function Hero() {
       const queue = loadOrder(step);
       const worker = async () => {
         while (queue.length && !disposed && gen === generation) {
+          // Once the visitor has moved past the hero, the rest waits, so the pictures below get the connection.
+          while (!visible && !disposed) await new Promise((r) => setTimeout(r, 400));
+          if (!queue.length || disposed) return;
           const i = queue.shift()!;
           try {
             const res = await fetch(src(i));

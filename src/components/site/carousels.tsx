@@ -72,9 +72,9 @@ export function News({ news }: { news: NewsItem[] }) {
               <CarouselItem key={n.date} className={`pl-5 ${ITEM}`}>
                 <a href="#" className="group block h-full">
                   <Card className="h-full gap-2.5 overflow-hidden rounded-[18px] border-0 bg-background p-0 pb-7 ring-1 ring-gold/25 transition-transform duration-300 hover:-translate-y-1">
-                    <div {...imgReveal("left", 600 + i * 140)} className="mb-1.5 aspect-[2/1] overflow-hidden bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
+                    <div {...imgReveal("left", 600 + i * 140)} className="relative mb-1.5 aspect-[2/1] overflow-hidden bg-gradient-to-b from-[#f1e9d9] to-sand text-white [--b:var(--ink-2)] [--b2:var(--gold)]">
                       {n.image ? (
-                        <Image src={n.image} alt={n.title[lang]} width={600} height={300} className="size-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                        <Image src={n.image} alt={n.title[lang]} width={600} height={300} sizes="(min-width: 1024px) 400px, 85vw" className="size-full object-cover transition-transform duration-700 group-hover:scale-105" />
                       ) : (
                         <BuildingArt kind={NEWS_KINDS[i % 4]} w={300} h={160} className="size-full" />
                       )}
