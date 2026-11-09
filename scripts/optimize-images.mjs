@@ -5,7 +5,7 @@
 // For each source under public/<DIRS> it writes WebP at a few widths, named by the content:
 //   public/_img/<key>/<width>.webp   (cached for a year: a changed picture gets a new key)
 //   src/lib/image-manifest.json      (source path → key and widths; read by src/lib/image-loader.ts)
-// The WebP files are not committed. `npm run build` and `npm run dev` make them, and keep them in
+// The WebP files are not committed. next.config.ts runs this on every build and dev start, keeping them in
 // .next/cache/img (kept between Vercel builds), so only new or changed pictures are encoded again.
 // The manifest is committed; it only changes when a picture or the settings below change.
 import { createHash } from "node:crypto";
