@@ -268,6 +268,9 @@ export function Hero() {
       const gen = ++generation;
       const { step, src } = set;
       const queue = loadOrder(step);
+      // The first, coarse pass (both ends and every 16th frame) is what the hero needs to play at all; the
+      // rest fills in at low priority, so photos further down the page are not held up behind it.
+      const urgent = new Set(queue.slice(0, Math.ceil(FRAME_COUNT / 16) + 2));
       const worker = async () => {
         while (queue.length && !disposed && gen === generation) {
           // Once the visitor has moved past the hero, the rest waits, so the pictures below get the connection.
@@ -275,7 +278,7 @@ export function Hero() {
           if (!queue.length || disposed) return;
           const i = queue.shift()!;
           try {
-            const res = await fetch(src(i));
+            const res = await fetch(src(i), { priority: urgent.has(i) ? "high" : "low" });
             if (!res.ok) continue;
             const blob = await res.blob();
             if (disposed || gen !== generation) return;

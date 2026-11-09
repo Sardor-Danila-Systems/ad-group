@@ -139,7 +139,7 @@ export function Motion() {
     const onLoad = (e: Event) => {
       const img = e.target;
       // Priority pictures (page covers) are never hidden, so there is no fade to wait for.
-      if (img instanceof HTMLImageElement && img.matches(PHOTO)) shown(img, !img.matches('[fetchpriority="high"]'));
+      if (img instanceof HTMLImageElement && img.matches(PHOTO)) shown(img, !img.matches('[fetchpriority="high"]:not([data-boost])'));
     };
     document.addEventListener("load", onLoad, true);
     document.addEventListener("error", onLoad, true);
@@ -181,6 +181,9 @@ export function Motion() {
           if (!e.isIntersecting) continue;
           for (const img of pictures.get(e.target) ?? []) {
             queue.delete(img);
+            // The section about to arrive goes ahead of everything still downloading (hero frames included).
+            img.dataset.boost = ""; // still fades in, unlike a page cover
+            img.fetchPriority = "high";
             start(img);
           }
           near.unobserve(e.target);

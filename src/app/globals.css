@@ -330,7 +330,7 @@ html.motion[data-ready] .hdr-enter { animation: hdr-in 1s var(--ease-out) 0.3s b
  * html.imgfx, which JS sets, so without JS photos simply appear. Logos (no sizes) are left alone. */
 @keyframes img-shimmer { from { background-position: 130% 0; } to { background-position: -30% 0; } }
 html.imgfx :is(img[data-nimg="fill"], img[data-nimg="1"][sizes]) { transition: opacity 0.6s ease; }
-html.imgfx :is(img[data-nimg="fill"], img[data-nimg="1"][sizes]):not([data-loaded]):not([fetchpriority="high"]) { opacity: 0; }
+html.imgfx :is(img[data-nimg="fill"], img[data-nimg="1"][sizes]):not([data-loaded]):not([fetchpriority="high"]:not([data-boost])) { opacity: 0; }
 /* The frame keeps its own stacking while loading, so the shimmer sits under its text and over its background. */
 html.imgfx :has(> :is(img[data-nimg="fill"], img[data-nimg="1"][sizes]):not([data-shown])) { isolation: isolate; }
 html.imgfx :has(> :is(img[data-nimg="fill"], img[data-nimg="1"][sizes]):not([data-shown]))::before {
