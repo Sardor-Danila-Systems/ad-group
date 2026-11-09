@@ -114,6 +114,137 @@ export function Motion() {
     };
   }, [admin]);
 
+  /*
+   * Pictures. They start loading two to three screens before they come into view (the browser's own lazy
+   * loading waits until they are almost there, too late with paged glides and a distant CDN), a warm
+   * shimmer holds their frame until they arrive, and then they fade in (styles: globals.css «Pictures»).
+   */
+  useEffect(() => {
+    if (admin) return;
+    const root = document.documentElement;
+    root.classList.add("imgfx");
+    const PHOTO = 'img[data-nimg="fill"], img[data-nimg="1"][sizes]';
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    const shown = (img: HTMLImageElement, fade: boolean) => {
+      if (img.hasAttribute("data-loaded")) return;
+      img.setAttribute("data-loaded", "");
+      // The shimmer stays under the picture until it has faded in.
+      if (!fade) return img.setAttribute("data-shown", "");
+      const t = setTimeout(() => {
+        timers.delete(t);
+        img.setAttribute("data-shown", "");
+      }, 650);
+      timers.add(t);
+    };
+    const onLoad = (e: Event) => {
+      const img = e.target;
+      // Priority pictures (page covers) are never hidden, so there is no fade to wait for.
+      if (img instanceof HTMLImageElement && img.matches(PHOTO)) shown(img, !img.matches('[fetchpriority="high"]'));
+    };
+    document.addEventListener("load", onLoad, true);
+    document.addEventListener("error", onLoad, true);
+
+    /*
+     * What is watched is the picture's section ([data-curtain]), not the picture: while a section waits
+     * below the screen its content is shifted up into view but clipped by the section, and the browser
+     * (its lazy loading, an IntersectionObserver on the picture) counts a clipped picture as not there,
+     * so pictures only began to load as their section was already sliding in.
+     * A section about a screen away loads its pictures at once; further ones (up to 4.5 screens, enough to
+     * reach past the home hero) queue,
+     * three pictures at a time and nearest first, so they do not split the connection.
+     */
+    const pictures = new Map<Element, Set<HTMLImageElement>>();
+    const start = (img: HTMLImageElement) => {
+      if (img.loading === "lazy") img.loading = "eager";
+    };
+    const queue = new Set<HTMLImageElement>();
+    let active = 0;
+    const distance = (img: HTMLImageElement) => Math.abs((img.closest("[data-curtain]") ?? img).getBoundingClientRect().top);
+    const pumpQueue = () => {
+      while (active < 3 && queue.size) {
+        const next = [...queue].sort((a, b) => distance(a) - distance(b))[0];
+        queue.delete(next);
+        if (next.loading !== "lazy" || next.complete) continue;
+        active++;
+        const settle = () => {
+          active--;
+          pumpQueue();
+        };
+        next.addEventListener("load", settle, { once: true });
+        next.addEventListener("error", settle, { once: true });
+        start(next);
+      }
+    };
+    const near = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          for (const img of pictures.get(e.target) ?? []) {
+            queue.delete(img);
+            start(img);
+          }
+          near.unobserve(e.target);
+        }
+      },
+      { rootMargin: "110% 60% 110% 60%" },
+    );
+    const far = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          far.unobserve(e.target);
+          for (const img of pictures.get(e.target) ?? []) if (img.loading === "lazy") queue.add(img);
+        }
+        pumpQueue();
+      },
+      { rootMargin: "450% 100% 450% 100%" },
+    );
+    const watch = (img: HTMLImageElement) => {
+      const target = img.closest("[data-curtain]") ?? img;
+      let set = pictures.get(target);
+      if (!set) {
+        set = new Set();
+        pictures.set(target, set);
+      }
+      set.add(img);
+      // Observing again after the section was already handled reports it again, which starts this picture.
+      near.observe(target);
+      far.observe(target);
+    };
+    const seen = new WeakSet<Element>();
+    // Every next/image picture loads ahead (logos too); photos also get the shimmer and the fade.
+    const scan = () =>
+      document.querySelectorAll<HTMLImageElement>("img[data-nimg]").forEach((img) => {
+        // Already in (from the cache, or before this ran): no fade, nothing to wait for.
+        if (img.complete && img.naturalWidth > 0 && img.matches(PHOTO)) shown(img, false);
+        if (seen.has(img)) return;
+        seen.add(img);
+        if (img.loading === "lazy") watch(img);
+      });
+    scan();
+    let queued = false;
+    const mo = new MutationObserver(() => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        scan();
+      });
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+    return () => {
+      document.removeEventListener("load", onLoad, true);
+      document.removeEventListener("error", onLoad, true);
+      near.disconnect();
+      far.disconnect();
+      queue.clear();
+      pictures.clear();
+      mo.disconnect();
+      for (const t of timers) clearTimeout(t);
+      root.classList.remove("imgfx");
+    };
+  }, [admin]);
+
   // Paged scrolling.
   useEffect(() => {
     const root = document.documentElement;
