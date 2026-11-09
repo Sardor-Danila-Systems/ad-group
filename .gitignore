@@ -49,3 +49,6 @@ next-env.d.ts
 
 # headless browser session logs
 .playwright-cli/
+
+# pre-encoded pictures (scripts/optimize-images.mjs makes them at build time)
+/public/_img/
