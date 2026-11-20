@@ -34,6 +34,7 @@ export const metadata: Metadata = {
   description:
     "Демо-сайт строительной компании AD Group: жилые и коммерческие комплексы, Vatan Residence, инвестиционный калькулятор.",
   icons: { icon: "/assets/favicon.svg" },
+  verification: { google: "9ghKXNbzfm3MMNr8168GikX-tGmurqdj9Q8GBGy_x9M" },
 };
 
 export const viewport: Viewport = { themeColor: "#F5F0E6" };
