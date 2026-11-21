@@ -51,22 +51,22 @@ export function Calculator() {
   };
 
   return (
-    <section id="calculator" data-curtain className={cn("bg-cream py-[clamp(72px,9vw,128px)]", SLIDE)}>
+    <section id="calculator" data-curtain className={cn("bg-cream", SLIDE)}>
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
-        <div className="mb-12 lg:mb-8 lg:grid lg:grid-cols-[1fr_minmax(0,46ch)] lg:items-end lg:gap-12">
+        <div className="mb-4 lg:mb-8 lg:grid lg:grid-cols-[1fr_minmax(0,46ch)] lg:items-end lg:gap-12">
           <div>
-          <Reveal kind="left" className="mb-5 flex items-center gap-3 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">
+          <Reveal kind="left" className="mb-2 hidden items-center sm:flex lg:mb-5 gap-3 text-[13px] font-semibold tracking-[.18em] text-gold-deep uppercase">
             <Line />
             {t("calc.eyebrow")}
           </Reveal>
-          <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight lg:text-[clamp(34px,4vw,56px)]"><Words text={t("calc.title")} delay={100} v="flip" /></h2>
+          <h2 className="font-display text-[clamp(28px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight lg:text-[clamp(34px,4vw,56px)]"><Words text={t("calc.title")} delay={100} v="flip" /></h2>
           </div>
-          <Reveal kind="blur" delay={450} className="mt-4 max-w-[60ch] text-ink/70 lg:mt-0">{t("calc.lead")}</Reveal>
+          <Reveal kind="blur" delay={450} className="mt-4 hidden max-w-[60ch] sm:block text-ink/70 lg:mt-0">{t("calc.lead")}</Reveal>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr]">
+        <div className="grid gap-3 sm:gap-6 lg:grid-cols-[1.05fr_1fr]">
           <Reveal kind="left" delay={300}>
-          <form onSubmit={(e) => e.preventDefault()} noValidate className="grid h-full content-start gap-7 rounded-[22px] bg-white p-6 ring-1 ring-gold/20 sm:p-8 lg:gap-5 lg:p-7">
+          <form onSubmit={(e) => e.preventDefault()} noValidate className="grid h-full content-start gap-4 rounded-[22px] bg-white p-4 ring-1 ring-gold/20 sm:gap-7 sm:p-8 lg:gap-5 lg:p-7">
             <ToggleGroup type="single" value={cur} onValueChange={(v) => v && switchCur(v as Currency)} spacing={0} aria-label="Currency" className="w-fit rounded-full bg-cream p-1">
               {(["USD", "UZS"] as const).map((c) => (
                 <ToggleGroupItem key={c} value={c} className="h-9 rounded-full px-5 text-[13px] font-semibold data-[state=on]:bg-ink data-[state=on]:text-paper">
@@ -75,7 +75,7 @@ export function Calculator() {
               ))}
             </ToggleGroup>
 
-            <div className="grid gap-2.5">
+            <div className="grid gap-1.5 sm:gap-2.5">
               <Label htmlFor="calc-price" className="text-sm font-semibold">{t("calc.price")}</Label>
               <div className="relative">
                 <Input
@@ -86,13 +86,13 @@ export function Calculator() {
                   onChange={(e) => setPrice(e.target.value.replace(/\D/g, "").slice(0, 12))}
                   aria-invalid={r.error === "price"}
                   aria-describedby={r.error === "price" ? "calc-error" : undefined}
-                  className="h-12 rounded-xl bg-paper pr-16 text-lg font-semibold"
+                  className="h-11 rounded-xl bg-paper pr-16 text-lg font-semibold"
                 />
                 <span className="pointer-events-none absolute inset-y-0 right-4 grid place-items-center text-sm text-muted-foreground">{cur === "USD" ? "USD" : t("cur.suffix")}</span>
               </div>
             </div>
 
-            <div className="grid gap-3">
+            <div className="grid gap-2 sm:gap-3">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="calc-down" className="text-sm font-semibold">{t("calc.down")}</Label>
                 <span className="text-sm font-semibold text-gold-deep tabular-nums">
@@ -103,7 +103,7 @@ export function Calculator() {
               <div className="flex justify-between text-xs text-muted-foreground"><span>{LIMITS.minDownPct}%</span><span>{LIMITS.maxDownPct}%</span></div>
             </div>
 
-            <div className="grid gap-3">
+            <div className="grid gap-2 sm:gap-3">
               <div className="flex items-center justify-between gap-3">
                 <Label htmlFor="calc-term" className="text-sm font-semibold">{t("calc.term")}</Label>
                 <div className="flex items-center gap-2">
@@ -134,10 +134,10 @@ export function Calculator() {
           </form>
           </Reveal>
 
-          <Reveal kind="right" delay={450} className="flex flex-col rounded-[22px] bg-ink p-6 text-paper sm:p-8">
+          <Reveal kind="right" delay={450} className="flex flex-col rounded-[22px] bg-ink p-4 text-paper sm:p-8">
           <div aria-live="polite" className="contents">
             <p className="text-sm text-paper/60">{t("calc.monthly")}</p>
-            <p className="mt-2 font-display text-[clamp(40px,5vw,64px)] leading-none font-medium text-gold-light tabular-nums">{r.error ? "—" : fmt(r.monthly)}</p>
+            <p className="mt-1 font-display text-[clamp(34px,5vw,64px)] leading-none font-medium text-gold-light tabular-nums">{r.error ? "—" : fmt(r.monthly)}</p>
             <p className="mt-3 text-sm text-paper/60">
               × {r.error ? "—" : `${r.term} ${months(r.term)}`} · {t("calc.noInterest")}
             </p>
@@ -147,7 +147,7 @@ export function Calculator() {
               </p>
             )}
 
-            <dl className="mt-8 grid gap-4 border-t border-paper/15 pt-6 text-[15px]">
+            <dl className="mt-4 grid gap-2 border-t border-paper/15 pt-3 text-[14px] sm:mt-8 sm:gap-4 sm:pt-6 sm:text-[15px]">
               {[
                 [t("calc.price"), r.price],
                 [`${t("calc.down")} (${downPct}%)`, r.down],
@@ -158,16 +158,16 @@ export function Calculator() {
                   <dd className="font-semibold tabular-nums">{r.error ? "—" : fmt(Number(v))}</dd>
                 </div>
               ))}
-              <div className="flex items-baseline justify-between gap-4 border-t border-paper/15 pt-4">
+              <div className="flex items-baseline justify-between gap-4 border-t border-paper/15 pt-2 sm:pt-4">
                 <dt className="text-paper/65">{t("calc.total")}</dt>
                 <dd className="font-semibold text-gold-light tabular-nums">{r.error ? "—" : fmt(r.price)}</dd>
               </div>
             </dl>
 
-            <Button onClick={openCall} size="lg" className={`mt-8 h-12 rounded-full bg-gold px-7 text-[15px] font-semibold text-ink hover:bg-gold ${fx.goldOnDark}`}>
+            <Button onClick={openCall} size="lg" className={`mt-4 h-11 rounded-full bg-gold sm:mt-8 sm:h-12 px-7 text-[15px] font-semibold text-ink hover:bg-gold ${fx.goldOnDark}`}>
               {t("calc.cta")}
             </Button>
-            <p className="mt-5 text-xs leading-relaxed text-paper/50">{t("calc.note")}</p>
+            <p className="mt-5 hidden text-xs leading-relaxed text-paper/50 sm:block">{t("calc.note")}</p>
           </div>
           </Reveal>
         </div>

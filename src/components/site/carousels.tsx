@@ -15,7 +15,7 @@ import type { NewsItem, ProjectKind } from "@/lib/types";
 
 function Head({ title, api, v }: { title: string; api?: CarouselApi; v?: "flip" | "slide" }) {
   return (
-    <div className="mb-12 flex items-end justify-between gap-5">
+    <div className="mb-6 flex items-end justify-between gap-5">
       <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight"><Words text={title} v={v} /></h2>
       <Reveal kind="right" delay={300} className="flex gap-2.5">
         <Button variant="outline" size="icon-lg" className="size-12 rounded-full border-gold/40 hover:bg-ink hover:text-white" onClick={() => api?.scrollPrev()} aria-label="prev">
@@ -35,7 +35,7 @@ export function History() {
   const { t, lang } = useSite();
   const [api, setApi] = useState<CarouselApi>();
   return (
-    <section id="history" data-curtain className={cn("bg-sand py-[clamp(72px,9vw,128px)]", SLIDE)}>
+    <section id="history" data-curtain className={cn("bg-sand", SLIDE)}>
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
         <Head title={t("history.title")} api={api} v="slide" />
         <Carousel setApi={setApi} opts={{ align: "start", dragFree: true }}>
@@ -63,7 +63,7 @@ export function News({ news }: { news: NewsItem[] }) {
   const [api, setApi] = useState<CarouselApi>();
   const locale = lang === "uz" ? "uz-UZ" : lang === "en" ? "en-GB" : "ru-RU";
   return (
-    <section id="news" data-curtain className={cn("bg-paper py-[clamp(72px,9vw,128px)]", SLIDE)}>
+    <section id="news" data-curtain className={cn("bg-paper", SLIDE)}>
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
         <Head title={t("news.title")} api={api} v="flip" />
         <Carousel setApi={setApi} opts={{ align: "start", dragFree: true }}>

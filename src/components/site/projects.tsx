@@ -28,7 +28,7 @@ export function Projects({ projects }: { projects: Project[] }) {
   const list = projects.filter((p) => filter === "all" || p.cat === filter || (filter === "done" && p.status === "done"));
 
   return (
-    <section id="projects" data-curtain className={cn("bg-cream py-[clamp(72px,9vw,128px)]", SLIDE)}>
+    <section id="projects" data-curtain className={cn("bg-cream", SLIDE)}>
       <div className="mx-auto w-[min(1240px,100%-32px)] md:w-[min(1240px,100%-48px)]">
         <div className="mb-12 flex flex-wrap items-end justify-between gap-5">
           <h2 className="font-display text-[clamp(34px,4.6vw,64px)] leading-[1.04] font-medium tracking-tight"><Words text={t("projects.title")} v="flip" /></h2>
