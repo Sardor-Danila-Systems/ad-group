@@ -57,7 +57,7 @@ function MatterportTour({ id, projectName, backHref }: { id: string; projectName
           {full ? <LuMinimize className="size-5" /> : <LuMaximize className="size-5" />}
         </button>
       </div>
-      <div data-lenis-prevent className="relative min-h-0 flex-1">
+      <div className="relative min-h-0 flex-1">
         <iframe
           src={matterportEmbed(id, lang)}
           title={`3D-тур — ${projectName}`}

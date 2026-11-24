@@ -162,13 +162,6 @@ html[data-ready] .enter-up { animation: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 
   --ease-io: cubic-bezier(0.77, 0, 0.18, 1);
 }
 
-/* Lenis smooth scrolling (desktop). Native smooth scrolling would fight it. */
-html.lenis, html.lenis body { height: auto; }
-html.lenis.lenis-smooth { scroll-behavior: auto !important; }
-/* Paged scrolling: the screen stays still between glides, so there is no scrollbar to watch. */
-html.paged { scrollbar-width: none; overscroll-behavior: none; }
-html.paged::-webkit-scrollbar { display: none; }
-.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
 
 @keyframes rv-up { from { opacity: 0; translate: 0 90px; } }
 @keyframes rv-left { from { opacity: 0; translate: -140px 0; } }
