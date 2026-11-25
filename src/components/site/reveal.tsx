@@ -71,5 +71,5 @@ export function Line({ className }: { className?: string }) {
   return <span aria-hidden="true" data-reveal="line" className={cn("block h-px w-10 shrink-0 bg-gold", className)} />;
 }
 
-/** Classes that make a section one full screen, its content centred (the paged scroll stops once per block). */
+/** Classes that make a section one full screen, its content centred. */
 export const SLIDE = "flex min-h-svh flex-col justify-center pt-[88px] pb-8 lg:py-[clamp(84px,11svh,120px)]";

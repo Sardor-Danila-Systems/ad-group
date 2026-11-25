@@ -1,45 +1,23 @@
 "use client";
 
-import Lenis from "lenis";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect } from "react";
 
 /*
  * Site-wide motion, mounted once in the root layout.
  *
- * - Paged scrolling (the Sheron feel): the screen stays still and every wheel step, swipe or arrow key
- *   glides to the next stop in about 1.6 s with a slow start and a long, soft finish. Stops are the
- *   tops of the page sections ([data-curtain]); tall sections get extra stops one screen apart,
- *   and a section may set its own as fractions of its scroll range (data-stops="0,0.4,1").
- * - Curtains: while a section glides in, its content is held still and the edge moves up, like a wipe
+ * - Scrolling is the browser's own: wheel, trackpad, touch and keys are never intercepted, so the page
+ *   answers at once and scrolls on the compositor even while the main thread is busy. (Paged glides
+ *   with Lenis used to swallow pushes during a glide and the trackpad's momentum, so the page
+ *   sometimes did not move and sometimes lagged.)
+ * - Curtains: while a section scrolls in, its content is held still and the edge moves up, like a wipe
  *   (pure CSS, scroll-driven; here we only keep --h, the section height, up to date).
  * - Reveals: [data-reveal] elements start hidden (only under html.motion, so the page is complete
  *   without JS or with reduced motion) and get .in when they come into view. Looks: globals.css («Motion»).
  */
 
-const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-/** Softer start and finish for long glides. */
-const easeSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
-/**
- * For playing a video by the scroll: a short soft start, then a steady pace, then a short soft stop
- * (constant acceleration over the first and last 16 %), so the video runs evenly instead of rushing.
- */
-const RAMP = 0.16;
-const easeVideo = (t: number) => {
-  const v = 1 / (1 - RAMP);
-  if (t < RAMP) return (v * t * t) / (2 * RAMP);
-  if (t > 1 - RAMP) return 1 - (v * (1 - t) * (1 - t)) / (2 * RAMP);
-  return v * (t - RAMP / 2);
-};
-const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-/** Where the page scrolls by itself: dialogs, menus, popovers, the 360° viewer. */
-const OWN_SCROLL = "[data-lenis-prevent],[role=dialog],[data-radix-popper-content-wrapper],[data-slot=sheet-content],[data-slot=dialog-overlay],[data-slot=sheet-overlay]";
-/** Controls that use vertical drags or keys themselves. */
-const OWN_INPUT = "input,textarea,select,[contenteditable],[role=slider],[role=listbox],[role=menu],[role=dialog]";
-
 export function Motion() {
   const admin = usePathname().startsWith("/admin");
-
 
   // Before paint, so reveals are hidden in the first frame the user could see (the preloader covers the page at load).
   useLayoutEffect(() => {
@@ -127,7 +105,7 @@ export function Motion() {
 
   /*
    * Pictures. They start loading two to three screens before they come into view (the browser's own lazy
-   * loading waits until they are almost there, too late with paged glides and a distant CDN), a warm
+   * loading waits until they are almost there, too late for a fast flick and a distant CDN), a warm
    * shimmer holds their frame until they arrive, and then they fade in (styles: globals.css «Pictures»).
    */
   useEffect(() => {
@@ -256,206 +234,6 @@ export function Motion() {
       mo.disconnect();
       for (const t of timers) clearTimeout(t);
       root.classList.remove("imgfx");
-    };
-  }, [admin]);
-
-  // Paged scrolling.
-  useEffect(() => {
-    const root = document.documentElement;
-    if (admin || !root.classList.contains("motion")) return;
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    // Lenis only animates the glides; wheel and touch are handled below.
-    const lenis = new Lenis({ smoothWheel: false, syncTouch: false, anchors: { offset: -76, duration: 1.6, easing: ease } });
-    let raf = 0;
-    const loop = (t: number) => {
-      lenis.raf(t);
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-
-    const locked = () => root.style.overflow === "hidden" || document.body.hasAttribute("data-scroll-locked");
-    // Only on pages built from sections; others (the 360° showroom) scroll as usual.
-    const active = () => !locked() && document.querySelector("[data-curtain]") !== null && root.scrollHeight > window.innerHeight + 40;
-    const sync = () => root.classList.toggle("paged", Boolean(document.querySelector("[data-curtain]")));
-    sync();
-    const mo = new MutationObserver(sync);
-    mo.observe(document.body, { childList: true, subtree: true });
-
-    const stops = () => {
-      const vh = window.innerHeight;
-      const max = root.scrollHeight - vh;
-      const out: number[] = [0, max];
-      document.querySelectorAll<HTMLElement>("[data-curtain]").forEach((el) => {
-        const top = el.getBoundingClientRect().top + window.scrollY;
-        const range = el.offsetHeight - vh;
-        const own = el.dataset.stops?.split(",").map(Number).filter((f) => Number.isFinite(f));
-        if (own?.length) {
-          for (const f of own) out.push(top + f * Math.max(0, range));
-          return;
-        }
-        out.push(top);
-        if (range > vh * 0.2) {
-          const step = vh * 0.8;
-          for (let y = top + step; y < top + range - vh * 0.25; y += step) out.push(y);
-          out.push(top + range);
-        }
-      });
-      const sorted = out.map((y) => Math.round(Math.min(max, Math.max(0, y)))).sort((a, b) => a - b);
-      return sorted.filter((y, i) => i === 0 || y - sorted[i - 1] > 40);
-    };
-
-    let busy = false;
-    let safety: ReturnType<typeof setTimeout> | undefined;
-    /** The glide under way when it is a long one: another push may speed it up or turn it back. */
-    let long: { from: number; target: number; dir: number } | null = null;
-    /** Each glide has a number, so a glide cut short by a newer one cannot end the newer one. */
-    let run = 0;
-
-    const move = (target: number, duration: number, easing: (t: number) => number) => {
-      const id = ++run;
-      busy = true;
-      const finish = () => {
-        if (id !== run) return;
-        busy = false;
-        long = null;
-        clearTimeout(safety);
-      };
-      clearTimeout(safety);
-      safety = setTimeout(finish, duration * 1000 + 400);
-      lenis.scrollTo(target, { duration, easing, lock: true, force: true, onComplete: finish });
-    };
-
-    /*
-     * A section can set its own glide length (data-glide, seconds on a computer): the home hero plays its
-     * whole video in one slow, steady glide; going back up through it takes under half as long.
-     */
-    const ownGlide = (from: number, to: number) => {
-      for (const el of document.querySelectorAll<HTMLElement>("[data-glide]")) {
-        const top = el.getBoundingClientRect().top + window.scrollY;
-        const bottom = top + el.offsetHeight - window.innerHeight;
-        if (Math.min(from, to) >= top - 2 && Math.max(from, to) <= bottom + 2) return Number(el.dataset.glide) || 0;
-      }
-      return 0;
-    };
-
-    const glide = (target: number) => {
-      const from = window.scrollY;
-      const dir = Math.sign(target - from);
-      const own = ownGlide(from, target);
-      if (own) {
-        const seconds = (dir > 0 ? own : own * 0.45) * (fine ? 1 : 0.85);
-        move(target, seconds, dir > 0 ? easeVideo : easeSine);
-        long = { from, target, dir };
-        return;
-      }
-      const dist = Math.abs(target - from) / window.innerHeight;
-      move(target, (fine ? 1.65 : 1.2) * Math.min(1.3, Math.max(0.8, dist)), ease);
-    };
-    /** A push during a long glide: the same way finishes it quickly, the other way heads back. */
-    const steer = (dir: number) => {
-      if (!long) return;
-      const { from, target } = long;
-      const ahead = dir === long.dir;
-      long = null;
-      move(ahead ? target : from, ahead ? 0.7 : 1.3, ahead ? easeOut : easeSine);
-    };
-    const go = (dir: 1 | -1) => {
-      const y = window.scrollY;
-      const list = stops();
-      const target = dir > 0 ? list.find((s) => s > y + 4) : [...list].reverse().find((s) => s < y - 4);
-      if (target !== undefined) glide(target);
-    };
-
-    // A nested area that can still scroll this way keeps the wheel.
-    const scrollsItself = (node: Element | null, dy: number) => {
-      for (let el = node; el && el !== document.body && el !== root; el = el.parentElement) {
-        const s = getComputedStyle(el);
-        if (!/(auto|scroll)/.test(s.overflowY) || el.scrollHeight <= el.clientHeight + 1) continue;
-        if (dy > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 0) return true;
-      }
-      return false;
-    };
-
-    let lastWheel = 0;
-    /** Whether the current gesture has already moved the page. */
-    let used = false;
-    const onWheel = (e: WheelEvent) => {
-      if (e.ctrlKey || !active()) return;
-      const target = e.target as Element;
-      if (target.closest?.(OWN_SCROLL) || scrollsItself(target, e.deltaY)) return;
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
-      e.preventDefault();
-      const now = performance.now();
-      // One unbroken stream of wheel events is one gesture, and it moves the page once. A sharp trackpad
-      // flick sends a rising burst and then one to two seconds of momentum; each rise used to count as a
-      // new push (racing through the hero, skipping sections). The next move needs a short pause first.
-      if (now - lastWheel > 200) used = false;
-      lastWheel = now;
-      if (used || Math.abs(e.deltaY) < 2) return;
-      used = true;
-      const dir = e.deltaY > 0 ? 1 : -1;
-      if (busy) steer(dir);
-      else go(dir);
-    };
-
-    const onKey = (e: KeyboardEvent) => {
-      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || !active()) return;
-      const focus = document.activeElement;
-      if (focus?.closest(OWN_INPUT)) return;
-      const space = e.key === " " && !focus?.closest("button,a,[role=button]");
-      const down = e.key === "ArrowDown" || e.key === "PageDown" || (space && !e.shiftKey);
-      const up = e.key === "ArrowUp" || e.key === "PageUp" || (space && e.shiftKey);
-      if (e.key === "Home" || e.key === "End") {
-        e.preventDefault();
-        if (!busy) glide(e.key === "Home" ? 0 : root.scrollHeight - window.innerHeight);
-        return;
-      }
-      if (!down && !up) return;
-      e.preventDefault();
-      if (busy) steer(down ? 1 : -1);
-      else go(down ? 1 : -1);
-    };
-
-    let tracking = false;
-    let sx = 0;
-    let sy = 0;
-    const onTouchStart = (e: TouchEvent) => {
-      tracking = e.touches.length === 1 && active() && !(e.target as Element).closest?.(`${OWN_SCROLL},${OWN_INPUT}`);
-      sx = e.touches[0]?.clientX ?? 0;
-      sy = e.touches[0]?.clientY ?? 0;
-    };
-    // The page itself never scrolls under the finger; the swipe decides where to glide.
-    const onTouchMove = (e: TouchEvent) => {
-      if (tracking && e.touches.length === 1 && e.cancelable) e.preventDefault();
-    };
-    const onTouchEnd = (e: TouchEvent) => {
-      if (!tracking) return;
-      tracking = false;
-      const t = e.changedTouches[0];
-      if (!t) return;
-      const dx = sx - t.clientX;
-      const dy = sy - t.clientY;
-      if (Math.abs(dy) < 40 || Math.abs(dy) < Math.abs(dx)) return;
-      if (busy) steer(dy > 0 ? 1 : -1);
-      else go(dy > 0 ? 1 : -1);
-    };
-
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: false });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
-    return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("touchstart", onTouchStart);
-      window.removeEventListener("touchmove", onTouchMove);
-      window.removeEventListener("touchend", onTouchEnd);
-      clearTimeout(safety);
-      cancelAnimationFrame(raf);
-      mo.disconnect();
-      root.classList.remove("paged");
-      lenis.destroy();
     };
   }, [admin]);
 

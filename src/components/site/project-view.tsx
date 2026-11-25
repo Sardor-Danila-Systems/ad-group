@@ -61,7 +61,7 @@ export function ProjectView({ project, others }: { project: Project; others: Pro
           </div>
         </section>
 
-        {/* One block per screen: the paged scroll stops once on each. */}
+        {/* One block per screen. */}
         <section data-curtain className={cn("bg-paper py-[clamp(56px,7vw,104px)]", SLIDE)}>
           <div className={WRAP}>
             <Reveal kind="stagger" from="pop" className={`grid grid-cols-2 gap-px overflow-hidden rounded-[22px] bg-gold/25 ring-1 ring-gold/25 ${["", "", "lg:grid-cols-2", "lg:grid-cols-3", "lg:grid-cols-4"][facts.length] ?? "lg:grid-cols-4"}`}>
